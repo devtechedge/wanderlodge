@@ -3,11 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, SlidersHorizontal, MapPin, Users, Heart, Star, Compass, Shield, Flame, Map, Check, X } from "lucide-react";
+import { Search, SlidersHorizontal, MapPin, Users, Heart, Star, Compass, Shield, Flame, Map, Check, X, Leaf } from "lucide-react";
 import { useStore } from "@/lib/store";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DatePicker from "@/components/DatePicker";
+import EcoCommunityDashboard from "@/components/EcoCommunityDashboard";
 import { Property } from "@/lib/db";
 
 const ALL_AMENITIES = [
@@ -59,6 +60,10 @@ export default function Home() {
           params.push("location=woods");
         } else if (selectedCategory === "Pet Friendly") {
           params.push("amenities=pet");
+        } else if (selectedCategory === "Eco-Friendly") {
+          params.push("minEcoScore=90");
+        } else if (selectedCategory === "EV Equipped") {
+          params.push("evCharging=true");
         }
       }
 
@@ -298,6 +303,8 @@ export default function Home() {
             <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pr-32 w-full scroll-smooth snap-x">
               {[
                 { name: "All Stays", desc: "Every lodge" },
+                { name: "Eco-Friendly", desc: "Min 90% Eco-Score" },
+                { name: "EV Equipped", desc: "Charging on-site" },
                 { name: "Mountain Cabins", desc: "High altitude" },
                 { name: "Waterfront", desc: "Shore docks" },
                 { name: "Finnish Saunas", desc: "Steam therapy" },
@@ -334,6 +341,11 @@ export default function Home() {
             </div>
 
           </div>
+        </section>
+
+        {/* Eco-Impact Dashboard Panel */}
+        <section id="eco-dashboard-section" className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
+          <EcoCommunityDashboard />
         </section>
 
         {/* Featured Lodging Matrix Grid */}
@@ -424,10 +436,24 @@ export default function Home() {
                         >
                           {p.title}
                         </h3>
-                        <div className="flex items-center gap-1 text-xs font-bold text-amber-500">
+                        <div className="flex items-center gap-1 text-xs font-bold text-amber-500 shrink-0">
                           <Star className="h-4 w-4 fill-amber-500" />
                           <span>4.9</span>
                         </div>
+                      </div>
+
+                      {/* Eco and EV Badges row */}
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {p.ecoScore && (
+                          <span className="inline-flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-950/40 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 border border-emerald-100 dark:border-emerald-900/10">
+                            🌱 Eco-Score: {p.ecoScore}
+                          </span>
+                        )}
+                        {p.hasEVCharging && (
+                          <span className="inline-flex items-center gap-1 rounded bg-blue-50 dark:bg-blue-950/40 text-[9px] font-bold text-blue-700 dark:text-blue-400 px-1.5 py-0.5 border border-blue-100 dark:border-blue-900/10">
+                            🔌 EV Ready
+                          </span>
+                        )}
                       </div>
 
                       <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-2 leading-relaxed">

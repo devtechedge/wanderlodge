@@ -35,6 +35,12 @@ export interface Property {
   maxGuests: number;
   providerId: string;
   createdAt: string;
+  ecoScore?: number;
+  carbonFootprint?: number;
+  ecoAmenities?: string[];
+  hasEVCharging?: boolean;
+  chargingType?: string;
+  ecoPledged?: boolean;
 }
 
 export interface Reservation {
@@ -128,6 +134,12 @@ function getInitialDB(): DBStructure {
       maxGuests: 4,
       providerId: "user-1",
       createdAt: new Date("2026-03-01").toISOString(),
+      ecoScore: 92,
+      carbonFootprint: 4.2,
+      ecoAmenities: ["Solar Grid Power", "Greywater Recycling", "Composting Bin", "Wood Fireplace"],
+      hasEVCharging: true,
+      chargingType: "Level 2 J1772",
+      ecoPledged: true,
     },
     {
       id: "prop-2",
@@ -146,6 +158,11 @@ function getInitialDB(): DBStructure {
       maxGuests: 6,
       providerId: "user-1",
       createdAt: new Date("2026-03-15").toISOString(),
+      ecoScore: 88,
+      carbonFootprint: 6.1,
+      ecoAmenities: ["LED Energy Star bulbs", "Greywater recycling", "Local organic garden access"],
+      hasEVCharging: false,
+      ecoPledged: true,
     },
     {
       id: "prop-3",
@@ -163,6 +180,12 @@ function getInitialDB(): DBStructure {
       maxGuests: 2,
       providerId: "user-1",
       createdAt: new Date("2026-04-02").toISOString(),
+      ecoScore: 98,
+      carbonFootprint: 1.8,
+      ecoAmenities: ["100% Off-Grid Solar", "Composting system", "Rainwater collection", "Zero-Waste Initiative"],
+      hasEVCharging: true,
+      chargingType: "Level 2 Tesla",
+      ecoPledged: true,
     },
     {
       id: "prop-4",
@@ -180,6 +203,12 @@ function getInitialDB(): DBStructure {
       maxGuests: 4,
       providerId: "user-1",
       createdAt: new Date("2026-04-10").toISOString(),
+      ecoScore: 85,
+      carbonFootprint: 7.5,
+      ecoAmenities: ["Geothermal Heatpump", "Triple-Pane Windows", "Smart Off-Grid Battery"],
+      hasEVCharging: true,
+      chargingType: "Universal Level 2",
+      ecoPledged: false,
     },
     {
       id: "prop-5",
@@ -197,6 +226,11 @@ function getInitialDB(): DBStructure {
       maxGuests: 2,
       providerId: "user-1",
       createdAt: new Date("2026-04-18").toISOString(),
+      ecoScore: 95,
+      carbonFootprint: 2.4,
+      ecoAmenities: ["Off-Grid Solar", "Composting system", "Eco-friendly Water Filtration"],
+      hasEVCharging: false,
+      ecoPledged: false,
     }
   ];
 
@@ -296,7 +330,33 @@ export function readDB(): DBStructure {
       return initial;
     }
     const content = fs.readFileSync(DB_FILE_PATH, "utf-8");
-    return JSON.parse(content) as DBStructure;
+    const data = JSON.parse(content) as DBStructure;
+    
+    // Auto-migrate properties to include eco fields if missing
+    let modified = false;
+    const initial = getInitialDB();
+    data.properties = data.properties.map(p => {
+      const match = initial.properties.find(ip => ip.id === p.id);
+      if (match && p.ecoScore === undefined) {
+        modified = true;
+        return {
+          ...p,
+          ecoScore: match.ecoScore,
+          carbonFootprint: match.carbonFootprint,
+          ecoAmenities: match.ecoAmenities,
+          hasEVCharging: match.hasEVCharging,
+          chargingType: match.chargingType,
+          ecoPledged: match.ecoPledged
+        };
+      }
+      return p;
+    });
+
+    if (modified) {
+      fs.writeFileSync(DB_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+    }
+
+    return data;
   } catch (error) {
     console.error("Failed to read database file, returning initial mock state.", error);
     return getInitialDB();

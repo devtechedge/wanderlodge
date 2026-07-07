@@ -57,6 +57,31 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    // Filter by EV Charging availability
+    const evCharging = searchParams.get("evCharging");
+    if (evCharging === "true") {
+      properties = properties.filter((p) => p.hasEVCharging === true);
+    }
+
+    // Filter by Minimum Eco-Score
+    const minEcoScoreStr = searchParams.get("minEcoScore");
+    if (minEcoScoreStr) {
+      const minScore = parseInt(minEcoScoreStr, 10);
+      if (!isNaN(minScore)) {
+        properties = properties.filter((p) => (p.ecoScore || 0) >= minScore);
+      }
+    }
+
+    // Filter by Eco-Amenities
+    const ecoAmenitiesStr = searchParams.get("ecoAmenities");
+    if (ecoAmenitiesStr && ecoAmenitiesStr.trim() !== "") {
+      const requestedEco = ecoAmenitiesStr.split(",").map((a) => a.trim().toLowerCase());
+      properties = properties.filter((p) => {
+        const pEcoLower = (p.ecoAmenities || []).map((a) => a.toLowerCase());
+        return requestedEco.every((reqA) => pEcoLower.includes(reqA));
+      });
+    }
+
     return NextResponse.json({ properties });
   } catch (error) {
     console.error("Properties GET error", error);
@@ -72,7 +97,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, description, price, location, amenities, maxGuests, images } = body;
+    const { title, description, price, location, amenities, maxGuests, images, ecoScore, carbonFootprint, ecoAmenities, hasEVCharging, chargingType } = body;
 
     if (!title || !description || !price || !location || !maxGuests) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -98,6 +123,12 @@ export async function POST(req: NextRequest) {
       maxGuests: parseInt(maxGuests, 10),
       providerId: user.id,
       createdAt: new Date().toISOString(),
+      ecoScore: ecoScore ? parseInt(ecoScore, 10) : 80,
+      carbonFootprint: carbonFootprint ? parseFloat(carbonFootprint) : 5.0,
+      ecoAmenities: ecoAmenities || ["LED Energy Star bulbs"],
+      hasEVCharging: !!hasEVCharging,
+      chargingType: chargingType || "",
+      ecoPledged: false,
     };
 
     db.properties.push(newProperty);

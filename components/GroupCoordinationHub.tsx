@@ -214,72 +214,76 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
   useEffect(() => {
     if (!resId) return;
 
-    const getStored = (key: string, defaults: any) => {
-      const stored = localStorage.getItem(`group_${resId}_${key}`);
-      return stored ? JSON.parse(stored) : defaults;
+    const loadState = () => {
+      const getStored = (key: string, defaults: any) => {
+        const stored = localStorage.getItem(`group_${resId}_${key}`);
+        return stored ? JSON.parse(stored) : defaults;
+      };
+
+      // 1. Voting Boards
+      setVotes(getStored("votes", [
+        { id: "v1", title: "Sunset Kayak Expedition", category: "activity", votes: [currentUser.name] },
+        { id: "v2", title: "Subalpine Ridge Guided Hike", category: "activity", votes: [] },
+        { id: "v3", title: "Woodfired Cedar Hot Tub Night", category: "activity", votes: allTravelers.map(t => t.name) },
+      ]));
+
+      // 2. Shared Checklists
+      setChecklist(getStored("checklist", [
+        { id: "cl1", task: "Bear Spray & Wilderness Flares", assignedTo: currentUser.name, completed: true, category: "gear" },
+        { id: "cl2", task: "High-Resolution Binoculars", assignedTo: allTravelers[1]?.name || currentUser.name, completed: false, category: "gear" },
+        { id: "cl3", task: "Comprehensive Mountain First-Aid Kit", assignedTo: currentUser.name, completed: false, category: "gear" },
+      ]));
+
+      // 3. Arrivals
+      setArrivals(getStored("arrivals", [
+        { id: "a1", name: currentUser.name, from: "Seattle Metro", mode: "car", status: "Driving subalpine passes", eta: "45 mins", color: "#10b981", lat: 35, lng: 42 },
+        { id: "a2", name: allTravelers[1]?.name || "Uncle Jim", from: "Portland Int Airport", mode: "car", status: "Renting AWD vehicle", eta: "2.5 hours", color: "#6366f1", lat: 75, lng: 60 },
+        { id: "a3", name: allTravelers[2]?.name || "Sarah", from: "Vancouver SkyTrain", mode: "plane", status: "Transit connection", eta: "4 hours", color: "#f59e0b", lat: 15, lng: 20 },
+      ]));
+
+      // 4. Message Pinboard
+      setPins(getStored("pins", [
+        { id: "p1", title: "📡 Wi-Fi Password", content: `Network: "Wilderness_Retreat_${resId.slice(0,4)}"\nPass: "breathesubalpine2026"`, color: "yellow", pinnedBy: "System", date: "Jul 7" },
+        { id: "p2", title: "🔑 Keyless Lockbox", content: `Door Code: *1984#\n(Active starting 3:00 PM)`, color: "green", pinnedBy: "System", date: "Jul 7" },
+        { id: "p3", title: "🌲 Leave No Trace Code", content: "All graywater systems are organic. Please use provided plant-based sanitation liquids strictly.", color: "blue", pinnedBy: "System", date: "Jul 7" },
+      ]));
+
+      // 5. Itineraries
+      setItineraries(getStored("itineraries", [
+        { id: "it1", day: 1, time: "3:00 PM", title: "Arrival & Keyless Cabin Unlock", owner: "Group" },
+        { id: "it2", day: 1, time: "6:00 PM", title: "Sunset Salmon BBQ & Fire Pit Lighting", owner: "Group", description: "First group meal in the wilderness." },
+        { id: "it3", day: 2, time: "6:30 AM", title: "Nocturnal Wildlife Watch / Stargazing Deck", owner: currentUser.name, description: "Taking zoom lenses to watch morning elk herds." },
+        { id: "it4", day: 2, time: "10:00 AM", title: "Canoeing & Waterfront Access", owner: allTravelers[1]?.name || "All" },
+      ]));
+
+      // 6. Photo Journal
+      setPhotos(getStored("photos", [
+        { id: "ph1", url: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80", caption: "Our home under the stars. Perfect bortle conditions!", uploadedBy: currentUser.name, date: "Jul 7" },
+        { id: "ph2", url: "https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?auto=format&fit=crop&w=600&q=80", caption: "Deep subalpine ridge air.", uploadedBy: allTravelers[1]?.name || "Alex", date: "Jul 8" },
+      ]));
+
+      // 7. Groceries
+      setGroceries(getStored("groceries", [
+        { id: "g1", item: "Ground Roast Coffee Beans (Organic)", quantity: "2 lbs", assignedTo: currentUser.name, packed: true },
+        { id: "g2", item: "S'mores Kit (Graham Crackers, Dark Choc, Mallows)", quantity: "3 boxes", assignedTo: allTravelers[1]?.name || currentUser.name, packed: false },
+        { id: "g3", item: "Almond & Oat Milk cartons", quantity: "4 ct", assignedTo: allTravelers[2]?.name || currentUser.name, packed: false },
+      ]));
+
+      // 8. Chores
+      setChores(getStored("chores", [
+        { id: "ch1", title: "Bundle Bed Linens & Towels", description: "Strip sheets from all beds and pack them into the entryway laundry bins.", assignedTo: allTravelers[1]?.name || currentUser.name, completed: false },
+        { id: "ch2", title: "Clean Firewood Ash", description: "Use metal scoop to put firewood ash into the external safety bucket.", assignedTo: currentUser.name, completed: false },
+        { id: "ch3", title: "Lock Crawlspace Windows", description: "Ensure all lower level sliding frames are sealed tight to prevent raccoon entry.", assignedTo: currentUser.name, completed: true },
+      ]));
+
+      // 9. Payment states
+      setPayments(getStored("payments", {
+        [currentUser.name]: true, // organizer usually paid reservation
+      }));
     };
 
-    // 1. Voting Boards
-    setVotes(getStored("votes", [
-      { id: "v1", title: "Sunset Kayak Expedition", category: "activity", votes: [currentUser.name] },
-      { id: "v2", title: "Subalpine Ridge Guided Hike", category: "activity", votes: [] },
-      { id: "v3", title: "Woodfired Cedar Hot Tub Night", category: "activity", votes: allTravelers.map(t => t.name) },
-    ]));
-
-    // 2. Shared Checklists
-    setChecklist(getStored("checklist", [
-      { id: "cl1", task: "Bear Spray & Wilderness Flares", assignedTo: currentUser.name, completed: true, category: "gear" },
-      { id: "cl2", task: "High-Resolution Binoculars", assignedTo: allTravelers[1]?.name || currentUser.name, completed: false, category: "gear" },
-      { id: "cl3", task: "Comprehensive Mountain First-Aid Kit", assignedTo: currentUser.name, completed: false, category: "gear" },
-    ]));
-
-    // 3. Arrivals
-    setArrivals(getStored("arrivals", [
-      { id: "a1", name: currentUser.name, from: "Seattle Metro", mode: "car", status: "Driving subalpine passes", eta: "45 mins", color: "#10b981", lat: 35, lng: 42 },
-      { id: "a2", name: allTravelers[1]?.name || "Uncle Jim", from: "Portland Int Airport", mode: "car", status: "Renting AWD vehicle", eta: "2.5 hours", color: "#6366f1", lat: 75, lng: 60 },
-      { id: "a3", name: allTravelers[2]?.name || "Sarah", from: "Vancouver SkyTrain", mode: "plane", status: "Transit connection", eta: "4 hours", color: "#f59e0b", lat: 15, lng: 20 },
-    ]));
-
-    // 4. Message Pinboard
-    setPins(getStored("pins", [
-      { id: "p1", title: "📡 Wi-Fi Password", content: `Network: "Wilderness_Retreat_${resId.slice(0,4)}"\nPass: "breathesubalpine2026"`, color: "yellow", pinnedBy: "System", date: "Jul 7" },
-      { id: "p2", title: "🔑 Keyless Lockbox", content: `Door Code: *1984#\n(Active starting 3:00 PM)`, color: "green", pinnedBy: "System", date: "Jul 7" },
-      { id: "p3", title: "🌲 Leave No Trace Code", content: "All graywater systems are organic. Please use provided plant-based sanitation liquids strictly.", color: "blue", pinnedBy: "System", date: "Jul 7" },
-    ]));
-
-    // 5. Itineraries
-    setItineraries(getStored("itineraries", [
-      { id: "it1", day: 1, time: "3:00 PM", title: "Arrival & Keyless Cabin Unlock", owner: "Group" },
-      { id: "it2", day: 1, time: "6:00 PM", title: "Sunset Salmon BBQ & Fire Pit Lighting", owner: "Group", description: "First group meal in the wilderness." },
-      { id: "it3", day: 2, time: "6:30 AM", title: "Nocturnal Wildlife Watch / Stargazing Deck", owner: currentUser.name, description: "Taking zoom lenses to watch morning elk herds." },
-      { id: "it4", day: 2, time: "10:00 AM", title: "Canoeing & Waterfront Access", owner: allTravelers[1]?.name || "All" },
-    ]));
-
-    // 6. Photo Journal
-    setPhotos(getStored("photos", [
-      { id: "ph1", url: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80", caption: "Our home under the stars. Perfect bortle conditions!", uploadedBy: currentUser.name, date: "Jul 7" },
-      { id: "ph2", url: "https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?auto=format&fit=crop&w=600&q=80", caption: "Deep subalpine ridge air.", uploadedBy: allTravelers[1]?.name || "Alex", date: "Jul 8" },
-    ]));
-
-    // 7. Groceries
-    setGroceries(getStored("groceries", [
-      { id: "g1", item: "Ground Roast Coffee Beans (Organic)", quantity: "2 lbs", assignedTo: currentUser.name, packed: true },
-      { id: "g2", item: "S'mores Kit (Graham Crackers, Dark Choc, Mallows)", quantity: "3 boxes", assignedTo: allTravelers[1]?.name || currentUser.name, packed: false },
-      { id: "g3", item: "Almond & Oat Milk cartons", quantity: "4 ct", assignedTo: allTravelers[2]?.name || currentUser.name, packed: false },
-    ]));
-
-    // 8. Chores
-    setChores(getStored("chores", [
-      { id: "ch1", title: "Bundle Bed Linens & Towels", description: "Strip sheets from all beds and pack them into the entryway laundry bins.", assignedTo: allTravelers[1]?.name || currentUser.name, completed: false },
-      { id: "ch2", title: "Clean Firewood Ash", description: "Use metal scoop to put firewood ash into the external safety bucket.", assignedTo: currentUser.name, completed: false },
-      { id: "ch3", title: "Lock Crawlspace Windows", description: "Ensure all lower level sliding frames are sealed tight to prevent raccoon entry.", assignedTo: currentUser.name, completed: true },
-    ]));
-
-    // 9. Payment states
-    setPayments(getStored("payments", {
-      [currentUser.name]: true, // organizer usually paid reservation
-    }));
-
+    const timer = setTimeout(loadState, 0);
+    return () => clearTimeout(timer);
   }, [resId]);
 
   // Sync state helpers

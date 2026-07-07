@@ -8,6 +8,7 @@ import { useStore } from "@/lib/store";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GroupCoordinationHub from "@/components/GroupCoordinationHub";
+import SmartInStayControls from "@/components/SmartInStayControls";
 
 interface CoTraveler {
   name: string;
@@ -60,7 +61,7 @@ export default function TripsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeResId, setActiveResId] = useState<string | null>(null);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning" | "group">("chat");
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning" | "group" | "stay">("chat");
 
   // Co-traveler form state
   const [newCoName, setNewCoName] = useState("");
@@ -456,11 +457,11 @@ export default function TripsPage() {
               </div>
 
               {/* Workspace Navigation Tabs */}
-              <div className="bg-white border-b border-slate-200 px-6 flex dark:bg-slate-900 dark:border-slate-800 shrink-0">
+              <div className="bg-white border-b border-slate-200 px-6 flex dark:bg-slate-900 dark:border-slate-800 shrink-0 overflow-x-auto scrollbar-none">
                 <button
                   type="button"
                   onClick={() => setActiveWorkspaceTab("chat")}
-                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative mr-6 ${
+                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative mr-6 shrink-0 ${
                     activeWorkspaceTab === "chat"
                       ? "text-emerald-600 dark:text-emerald-400 font-extrabold"
                       : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
@@ -474,7 +475,7 @@ export default function TripsPage() {
                 <button
                   type="button"
                   onClick={() => setActiveWorkspaceTab("planning")}
-                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative ${
+                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative mr-6 shrink-0 ${
                     activeWorkspaceTab === "planning"
                       ? "text-emerald-600 dark:text-emerald-400 font-extrabold"
                       : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
@@ -488,7 +489,7 @@ export default function TripsPage() {
                 <button
                   type="button"
                   onClick={() => setActiveWorkspaceTab("group")}
-                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative shrink-0 ${
+                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative mr-6 shrink-0 ${
                     activeWorkspaceTab === "group"
                       ? "text-emerald-600 dark:text-emerald-400 font-extrabold"
                       : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
@@ -496,6 +497,20 @@ export default function TripsPage() {
                 >
                   ✨ Group Coordination Hub
                   {activeWorkspaceTab === "group" && (
+                    <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkspaceTab("stay")}
+                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative shrink-0 ${
+                    activeWorkspaceTab === "stay"
+                      ? "text-emerald-600 dark:text-emerald-400 font-extrabold"
+                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  }`}
+                >
+                  📟 Smart In-Stay Controls
+                  {activeWorkspaceTab === "stay" && (
                     <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
                   )}
                 </button>
@@ -898,6 +913,10 @@ export default function TripsPage() {
 
               {activeWorkspaceTab === "group" && (
                 <GroupCoordinationHub reservation={selectedRes} currentUser={currentUser} />
+              )}
+
+              {activeWorkspaceTab === "stay" && (
+                <SmartInStayControls reservation={selectedRes} currentUser={currentUser} />
               )}
             </div>
           ) : (

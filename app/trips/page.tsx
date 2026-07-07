@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GroupCoordinationHub from "@/components/GroupCoordinationHub";
 import SmartInStayControls from "@/components/SmartInStayControls";
+import WildernessExplorationHub from "@/components/WildernessExplorationHub";
 
 interface CoTraveler {
   name: string;
@@ -80,7 +81,7 @@ export default function TripsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeResId, setActiveResId] = useState<string | null>(null);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning" | "group" | "stay" | "flexibility">("chat");
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning" | "group" | "stay" | "flexibility" | "wilderness">("chat");
 
   // Rain-Check & Flexibility states
   const [rainCheckStart, setRainCheckStart] = useState("");
@@ -660,6 +661,20 @@ export default function TripsPage() {
                 >
                   🛡️ Booking Flexibility
                   {activeWorkspaceTab === "flexibility" && (
+                    <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkspaceTab("wilderness")}
+                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative shrink-0 ml-6 ${
+                    activeWorkspaceTab === "wilderness"
+                      ? "text-emerald-600 dark:text-emerald-400 font-extrabold"
+                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  }`}
+                >
+                  🌲 Nature Exploration
+                  {activeWorkspaceTab === "wilderness" && (
                     <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
                   )}
                 </button>
@@ -1446,6 +1461,12 @@ export default function TripsPage() {
                     </div>
 
                   </div>
+                </div>
+              )}
+
+              {activeWorkspaceTab === "wilderness" && (
+                <div className="flex-grow flex flex-col overflow-y-auto">
+                  <WildernessExplorationHub />
                 </div>
               )}
             </div>

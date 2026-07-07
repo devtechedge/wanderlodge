@@ -21,7 +21,7 @@ export default function WishlistPage() {
         refreshWishlists();
       });
     }
-  }, [currentUser]);
+  }, [currentUser, refreshWishlists]);
 
   // Set the first wishlist as active by default if none is selected
   useEffect(() => {

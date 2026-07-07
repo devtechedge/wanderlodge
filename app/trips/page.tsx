@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Compass, Calendar, MapPin, Send, HelpCircle, MessageSquare, ShieldCheck, Clock, CreditCard, ChevronRight, Layout, RefreshCw } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -64,7 +64,7 @@ export default function TripsPage() {
     }
   };
 
-  const fetchChatMessages = async (showSpinner = false) => {
+  const fetchChatMessages = useCallback(async (showSpinner = false) => {
     if (!activeResId) return;
     if (showSpinner) setLoadingChat(true);
 
@@ -79,7 +79,7 @@ export default function TripsPage() {
     } finally {
       if (showSpinner) setLoadingChat(false);
     }
-  };
+  }, [activeResId]);
 
   // Load reservations
   useEffect(() => {
@@ -122,7 +122,7 @@ export default function TripsPage() {
         clearInterval(pollingIntervalRef.current);
       }
     };
-  }, [activeResId]);
+  }, [activeResId, fetchChatMessages]);
 
   // Scroll to bottom on new messages
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { MapPin, SlidersHorizontal, Star, Heart, Map, List, Compass, ChevronLeft, Check, Users } from "lucide-react";
@@ -41,7 +41,7 @@ function SearchContent() {
   const [guestCount, setGuestCount] = useState(parseInt(queryGuests, 10));
   const [dates, setDates] = useState({ start: queryStart, end: queryEnd });
 
-  const fetchFilteredProperties = async () => {
+  const fetchFilteredProperties = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams(searchParams.toString());
@@ -55,14 +55,14 @@ function SearchContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams]);
 
   // Load Filter Constraints
   useEffect(() => {
     Promise.resolve().then(() => {
       fetchFilteredProperties();
     });
-  }, [searchParams]);
+  }, [fetchFilteredProperties]);
 
   const handleUpdateSearch = () => {
     const params = new URLSearchParams();

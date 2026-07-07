@@ -71,14 +71,14 @@ export default function Navbar() {
 
   return (
     <header id="main-header" className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md transition-colors dark:border-slate-800 dark:bg-slate-900/95">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8 gap-x-2">
         {/* Logo */}
-        <Link id="nav-logo-link" href="/" className="flex items-center gap-2 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-600/10 transition-transform group-hover:scale-105 dark:bg-emerald-500">
+        <Link id="nav-logo-link" href="/" className="flex items-center gap-1.5 sm:gap-2 group shrink-0">
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-600/10 transition-transform group-hover:scale-105 dark:bg-emerald-500">
             <Compass className="h-5 w-5 animate-spin-slow" />
           </div>
-          <div>
-            <span className="font-sans text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <div className="shrink-0">
+            <span className="font-sans text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white block whitespace-nowrap">
               Wander<span className="text-emerald-600 dark:text-emerald-400">Lodge</span>
             </span>
             <div className="hidden text-[10px] font-mono tracking-wider text-slate-400 dark:text-slate-500 sm:block uppercase">
@@ -123,33 +123,33 @@ export default function Navbar() {
         </nav>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
           {/* Theme Toggle */}
           <button
             id="theme-toggle-btn"
             onClick={toggleTheme}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
-            aria-label="Toggle theme"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            aria-label="Toggle Theme Mode"
           >
             {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
           </button>
 
           {/* Session Actions */}
           {loadingUser ? (
-            <div className="h-10 w-24 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800" />
+            <div className="h-10 w-24 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800 shrink-0" />
           ) : currentUser ? (
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 id="user-profile-menu-btn"
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-2 rounded-full border border-slate-200 p-1 pr-3 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
+                className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-slate-200 p-1 pr-2 sm:pr-3 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800 shrink-0"
               >
                 <img
                   src={currentUser.image}
                   alt={currentUser.name}
-                  className="h-8 w-8 rounded-full object-cover"
+                  className="h-8 w-8 rounded-full object-cover shrink-0"
                 />
-                <span className="hidden text-sm font-medium text-slate-700 dark:text-slate-300 sm:inline">
+                <span className="hidden text-sm font-medium text-slate-700 dark:text-slate-300 sm:inline truncate max-w-[80px]">
                   {currentUser.name.split(" ")[0]}
                 </span>
               </button>
@@ -235,10 +235,10 @@ export default function Navbar() {
                 setAuthMode("login");
                 setIsOpenAuthModal(true);
               }}
-              className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-600/10 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+              className="h-10 px-3 sm:px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm shrink-0 focus:outline-none focus:ring-2 focus:ring-emerald-500 active:scale-95 dark:bg-emerald-500 dark:hover:bg-emerald-600"
             >
-              <LogIn className="h-4 w-4" />
-              <span>Sign In</span>
+              <LogIn className="h-4 w-4 shrink-0" />
+              <span className="whitespace-nowrap text-xs sm:text-sm font-semibold tracking-wide">Sign In</span>
             </button>
           )}
         </div>

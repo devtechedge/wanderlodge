@@ -54,10 +54,21 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const applyTheme = (t: "light" | "dark") => {
     if (typeof window === "undefined") return;
     const root = window.document.documentElement;
+    const body = window.document.body;
     if (t === "dark") {
+      root.classList.remove("light");
       root.classList.add("dark");
+      if (body) {
+        body.classList.remove("light");
+        body.classList.add("dark");
+      }
     } else {
       root.classList.remove("dark");
+      root.classList.add("light");
+      if (body) {
+        body.classList.remove("dark");
+        body.classList.add("light");
+      }
     }
   };
 
@@ -90,19 +101,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // Initialize Theme
   useEffect(() => {
     const savedTheme = localStorage.getItem("wanderlodge_theme") as "light" | "dark" | null;
-    if (savedTheme) {
-      Promise.resolve().then(() => {
-        setTheme(savedTheme);
-        applyTheme(savedTheme);
-      });
-    } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initialTheme = prefersDark ? "dark" : "light";
-      Promise.resolve().then(() => {
-        setTheme(initialTheme);
-        applyTheme(initialTheme);
-      });
-    }
+    // Base application layer boots directly into Light Mode by default (enableSystem=false)
+    const initialTheme = savedTheme || "light";
+    Promise.resolve().then(() => {
+      setTheme(initialTheme);
+      applyTheme(initialTheme);
+    });
   }, []);
 
   // Initialize User Session

@@ -11,18 +11,26 @@ interface InteractiveMapProps {
   onVisiblePropertiesChange?: (visibleIds: string[]) => void;
 }
 
+// Coordinate boundaries of our "Wander Valley" canvas map
+const MIN_LAT = 45.05;
+const MAX_LAT = 45.27;
+const MIN_LNG = -121.75;
+const MAX_LNG = -121.45;
+
+// Map resizing helper to maintain coordinate bounds
+const getCoordinatesPct = (lat: number, lng: number) => {
+  // Math to convert geographical coords to percentage of our visual coordinate space
+  const xPct = ((lng - MIN_LNG) / (MAX_LNG - MIN_LNG)) * 100;
+  const yPct = (1 - (lat - MIN_LAT) / (MAX_LAT - MIN_LAT)) * 100; // inverted Y
+  return { x: xPct, y: yPct };
+};
+
 export default function InteractiveMap({
   properties,
   selectedPropertyId,
   onSelectProperty,
   onVisiblePropertiesChange,
 }: InteractiveMapProps) {
-  // Coordinate boundaries of our "Wander Valley" canvas map
-  const MIN_LAT = 45.05;
-  const MAX_LAT = 45.27;
-  const MIN_LNG = -121.75;
-  const MAX_LNG = -121.45;
-
   const mapRef = useRef<HTMLDivElement>(null);
 
   // Pan Offset and Zoom Level States
@@ -30,14 +38,6 @@ export default function InteractiveMap({
   const [panOffset, setPanOffset] = useState({ x: -20, y: -20 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-
-  // Map resizing helper to maintain coordinate bounds
-  const getCoordinatesPct = (lat: number, lng: number) => {
-    // Math to convert geographical coords to percentage of our visual coordinate space
-    const xPct = ((lng - MIN_LNG) / (MAX_LNG - MIN_LNG)) * 100;
-    const yPct = (1 - (lat - MIN_LAT) / (MAX_LAT - MIN_LAT)) * 100; // inverted Y
-    return { x: xPct, y: yPct };
-  };
 
   // Drag-to-pan Handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -110,7 +110,7 @@ export default function InteractiveMap({
     if (onVisiblePropertiesChange) {
       onVisiblePropertiesChange(visibleProperties.map((p) => p.id));
     }
-  }, [panOffset, zoom, properties]);
+  }, [panOffset, zoom, properties, onVisiblePropertiesChange]);
 
   // Handle auto-panning to selected lodge
   useEffect(() => {
@@ -127,7 +127,7 @@ export default function InteractiveMap({
         });
       }
     }
-  }, [selectedPropertyId]);
+  }, [selectedPropertyId, properties, zoom]);
 
   return (
     <div

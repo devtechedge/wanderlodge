@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, Star, Heart, Share, ShieldCheck, HelpCircle, Utensils, Wifi, Sparkles, MapPin, Calendar, Users, Send, Check, AlertCircle, RefreshCw } from "lucide-react";
@@ -62,7 +62,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState("");
 
-  const fetchPropertyDetails = async () => {
+  const fetchPropertyDetails = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/properties/${id}`);
@@ -80,13 +80,13 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, router]);
 
   useEffect(() => {
     Promise.resolve().then(() => {
       fetchPropertyDetails();
     });
-  }, [id]);
+  }, [fetchPropertyDetails]);
 
   // Pricing math helper
   const getNightsCount = () => {

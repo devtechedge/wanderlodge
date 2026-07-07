@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, SlidersHorizontal, MapPin, Users, Heart, Star, Compass, Shield, Flame, Map, Check, X } from "lucide-react";
@@ -42,7 +42,7 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState(600);
   const [filterAmenities, setFilterAmenities] = useState<string[]>([]);
 
-  const fetchProperties = async () => {
+  const fetchProperties = useCallback(async () => {
     setLoading(true);
     try {
       let url = "/api/properties";
@@ -76,14 +76,14 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
   // Fetch properties
   useEffect(() => {
     Promise.resolve().then(() => {
       fetchProperties();
     });
-  }, [selectedCategory]);
+  }, [fetchProperties]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -291,9 +291,11 @@ export default function Home() {
         </section>
 
         {/* Discovery Filter Header Category Section */}
-        <section id="categories-section" className="border-b border-slate-200 bg-white transition-colors dark:border-slate-800 dark:bg-slate-900/40">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between gap-4 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-2 sm:gap-3">
+        <section id="categories-section" className="border-b border-slate-200 bg-white transition-colors dark:border-slate-800 dark:bg-slate-900/40 relative">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 flex items-center relative overflow-hidden">
+            
+            {/* Scrollable Categories List Tracker Container */}
+            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pr-32 w-full scroll-smooth snap-x">
               {[
                 { name: "All Stays", desc: "Every lodge" },
                 { name: "Mountain Cabins", desc: "High altitude" },
@@ -307,7 +309,7 @@ export default function Home() {
                   <button
                     key={cat.name}
                     onClick={() => setSelectedCategory(cat.name)}
-                    className={`rounded-2xl px-4 py-2.5 text-left border transition-all shrink-0 ${
+                    className={`rounded-2xl px-4 py-2.5 text-left border transition-all shrink-0 snap-start focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                       isActive
                         ? "border-emerald-600 bg-emerald-50 text-emerald-800 dark:border-emerald-500 dark:bg-emerald-950/20 dark:text-emerald-400"
                         : "border-slate-200 hover:border-slate-350 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400"
@@ -320,13 +322,17 @@ export default function Home() {
               })}
             </div>
 
-            <button
-              onClick={() => setShowFilterModal(true)}
-              className="flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 shrink-0"
-            >
-              <SlidersHorizontal className="h-4 w-4 text-emerald-500" />
-              <span>Advanced Filters</span>
-            </button>
+            {/* Masked Sticky Filter Anchor Component Wrapper */}
+            <div className="absolute right-0 top-0 bottom-0 w-36 bg-gradient-to-l from-white via-white/95 dark:from-slate-900 dark:via-slate-900/95 to-transparent flex items-center justify-end pr-4 sm:pr-6 lg:pr-8 pointer-events-none">
+              <button
+                onClick={() => setShowFilterModal(true)}
+                className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-slate-200 bg-white dark:bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <SlidersHorizontal className="h-4 w-4 text-emerald-500" />
+                <span className="whitespace-nowrap">Advanced Filters</span>
+              </button>
+            </div>
+
           </div>
         </section>
 

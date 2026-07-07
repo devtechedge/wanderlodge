@@ -1,0 +1,110 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  TRAVELER
+  PROVIDER
+}
+
+model User {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String        @unique
+  password     String
+  image        String?
+  role         Role          @default(TRAVELER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  properties   Property[]    @relation("ProviderProperties")
+  reservations Reservation[] @relation("TravelerReservations")
+  reviews      Review[]      @relation("UserReviews")
+  wishlists    Wishlist[]
+}
+
+model Property {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  description  String
+  price        Float
+  location     String
+  lat          Float
+  lng          Float
+  images       String[]
+  amenities    String[]
+  maxGuests    Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  providerId   String        @db.ObjectId
+  provider     User          @relation("ProviderProperties", fields: [providerId], references: [id], onDelete: Cascade)
+  
+  reservations Reservation[]
+  reviews      Review[]
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Reservation {
+  id         String            @id @default(auto()) @map("_id") @db.ObjectId
+  startDate  DateTime
+  endDate    DateTime
+  totalPrice Float
+  status     ReservationStatus @default(CONFIRMED)
+  createdAt  DateTime          @default(now())
+  
+  propertyId String            @db.ObjectId
+  property   Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  travelerId String            @db.ObjectId
+  traveler   User              @relation("TravelerReservations", fields: [travelerId], references: [id], onDelete: Cascade)
+  
+  messages   Message[]
+}
+
+model Review {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  comment       String
+  ratingClean   Float
+  ratingComm    Float
+  ratingLoc     Float
+  ratingValue   Float
+  ratingAverage Float
+  createdAt     DateTime @default(now())
+  
+  propertyId    String   @db.ObjectId
+  property      Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  authorId      String   @db.ObjectId
+  author        User     @relation("UserReviews", fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  content       String
+  timestamp     DateTime @default(now())
+  
+  senderId      String   @db.ObjectId
+  receiverId    String   @db.ObjectId
+  
+  reservationId String   @db.ObjectId
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+model Wishlist {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  propertyIds String[] @db.ObjectId
+  
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

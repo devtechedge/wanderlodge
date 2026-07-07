@@ -1,0 +1,6 @@
+{
+  "name": "WanderLodge",
+  "description": "A premium global peer-to-peer lodging and accommodation marketplace featuring curated cabins, luxury lodges, and local adventures.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

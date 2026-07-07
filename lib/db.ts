@@ -37,6 +37,20 @@ export interface Property {
   createdAt: string;
 }
 
+export interface CoTraveler {
+  name: string;
+  email: string;
+  image?: string;
+  role: "Adult" | "Child" | "Guest";
+}
+
+export interface GroupExpense {
+  id: string;
+  description: string;
+  amount: number;
+  paidByName: string;
+}
+
 export interface Reservation {
   id: string;
   propertyId: string;
@@ -53,6 +67,8 @@ export interface Reservation {
     largePrintGames: boolean;
     walkerRamp: boolean;
   };
+  coTravelers?: CoTraveler[];
+  groupExpenses?: GroupExpense[];
 }
 
 export interface Review {
@@ -84,6 +100,25 @@ export interface Wishlist {
   propertyIds: string[];
 }
 
+export interface QAAnswer {
+  id: string;
+  authorName: string;
+  authorImage: string;
+  role: Role | "AI_CONCIERGE";
+  content: string;
+  createdAt: string;
+}
+
+export interface QA {
+  id: string;
+  propertyId: string;
+  question: string;
+  authorName: string;
+  authorImage: string;
+  answers: QAAnswer[];
+  createdAt: string;
+}
+
 interface DBStructure {
   users: User[];
   properties: Property[];
@@ -91,6 +126,7 @@ interface DBStructure {
   reviews: Review[];
   messages: Message[];
   wishlists: Wishlist[];
+  qas: QA[];
 }
 
 const DB_FILE_PATH = "/tmp/wanderlodge_db.json";
@@ -256,6 +292,14 @@ function getInitialDB(): DBStructure {
       totalPrice: 1200,
       status: ReservationStatus.CONFIRMED,
       createdAt: new Date("2026-06-10").toISOString(),
+      coTravelers: [
+        { name: "Sarah Connor", email: "sarah@example.com", image: "https://picsum.photos/seed/sarah/150/150", role: "Adult" },
+        { name: "John Connor", email: "john@example.com", image: "https://picsum.photos/seed/john/150/150", role: "Child" }
+      ],
+      groupExpenses: [
+        { id: "exp-1", description: "Organic Wood & S'mores Kits", amount: 60, paidByName: "Marcus Traveler" },
+        { id: "exp-2", description: "Pinecrest National Forest Trail Passes", amount: 45, paidByName: "Sarah Connor" }
+      ]
     }
   ];
 
@@ -287,7 +331,46 @@ function getInitialDB(): DBStructure {
     }
   ];
 
-  return { users, properties, reservations, reviews, messages, wishlists };
+  const qas: QA[] = [
+    {
+      id: "qa-1",
+      propertyId: "prop-1",
+      question: "Is there solid mobile cellular reception here? I have to join a Zoom meeting on Wednesday.",
+      authorName: "Marcus Traveler",
+      authorImage: "https://picsum.photos/seed/marcus/150/150",
+      createdAt: new Date("2026-05-15").toISOString(),
+      answers: [
+        {
+          id: "qaa-1",
+          authorName: "Evelyn Lodge",
+          authorImage: "https://picsum.photos/seed/evelyn/150/150",
+          role: Role.PROVIDER,
+          content: "Yes! While we are tucked in the pines, we have high-speed Starlink satellite internet installed. You will easily get 150+ Mbps with extremely low latency, making Zoom video calls perfectly seamless.",
+          createdAt: new Date("2026-05-15T10:12:00Z").toISOString()
+        }
+      ]
+    },
+    {
+      id: "qa-2",
+      propertyId: "prop-1",
+      question: "Is the outdoor cedar hot tub pre-heated before arrival, or do we light it ourselves?",
+      authorName: "Sarah Connor",
+      authorImage: "https://picsum.photos/seed/sarah/150/150",
+      createdAt: new Date("2026-05-20").toISOString(),
+      answers: [
+        {
+          id: "qaa-2",
+          authorName: "Evelyn Lodge",
+          authorImage: "https://picsum.photos/seed/evelyn/150/150",
+          role: Role.PROVIDER,
+          content: "We clean and fill it with fresh spring water before every arrival. If you let us know your estimated check-in time, we are happy to pre-light and fuel the wood-fire stove so it is a perfect 104 degrees when you step through the door!",
+          createdAt: new Date("2026-05-20T14:45:00Z").toISOString()
+        }
+      ]
+    }
+  ];
+
+  return { users, properties, reservations, reviews, messages, wishlists, qas };
 }
 
 export function readDB(): DBStructure {

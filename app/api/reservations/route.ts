@@ -158,3 +158,96 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function PUT(req: NextRequest) {
+  try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { reservationId, action, coTraveler, expense, expenseId } = body;
+
+    if (!reservationId) {
+      return NextResponse.json({ error: "Missing reservationId" }, { status: 400 });
+    }
+
+    const db = readDB();
+    const resIndex = db.reservations.findIndex((r) => r.id === reservationId);
+    if (resIndex === -1) {
+      return NextResponse.json({ error: "Reservation not found" }, { status: 404 });
+    }
+
+    const reservation = db.reservations[resIndex];
+    
+    // Ensure the user belongs to this reservation (is either traveler or provider)
+    const property = db.properties.find((p) => p.id === reservation.propertyId);
+    if (reservation.travelerId !== user.id && property?.providerId !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (!reservation.coTravelers) {
+      reservation.coTravelers = [];
+    }
+    if (!reservation.groupExpenses) {
+      reservation.groupExpenses = [];
+    }
+
+    // 1. Add Co-Traveler
+    if (action === "add-co-traveler") {
+      if (!coTraveler || !coTraveler.email || !coTraveler.name) {
+        return NextResponse.json({ error: "Missing co-traveler details" }, { status: 400 });
+      }
+      
+      // Check if email already added
+      if (reservation.coTravelers.some(c => c.email.toLowerCase() === coTraveler.email.toLowerCase())) {
+        return NextResponse.json({ error: "Co-traveler already invited." }, { status: 400 });
+      }
+
+      const randomSeed = Math.floor(Math.random() * 1000);
+      reservation.coTravelers.push({
+        name: coTraveler.name,
+        email: coTraveler.email,
+        role: coTraveler.role || "Adult",
+        image: `https://picsum.photos/seed/${randomSeed}/150/150`
+      });
+
+      writeDB(db);
+      return NextResponse.json({ reservation });
+    }
+
+    // 2. Add Expense
+    if (action === "add-expense") {
+      if (!expense || !expense.description || isNaN(parseFloat(expense.amount))) {
+        return NextResponse.json({ error: "Invalid expense details" }, { status: 400 });
+      }
+
+      reservation.groupExpenses.push({
+        id: `exp-${Date.now()}`,
+        description: expense.description,
+        amount: parseFloat(expense.amount),
+        paidByName: expense.paidByName || user.name
+      });
+
+      writeDB(db);
+      return NextResponse.json({ reservation });
+    }
+
+    // 3. Remove Expense
+    if (action === "remove-expense") {
+      if (!expenseId) {
+        return NextResponse.json({ error: "Missing expenseId" }, { status: 400 });
+      }
+
+      reservation.groupExpenses = reservation.groupExpenses.filter((e) => e.id !== expenseId);
+      writeDB(db);
+      return NextResponse.json({ reservation });
+    }
+
+    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  } catch (error) {
+    console.error("Reservations PUT error", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

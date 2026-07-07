@@ -3,7 +3,7 @@
 import { useState, useEffect, use, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronLeft, Star, Heart, Share, ShieldCheck, HelpCircle, Utensils, Wifi, Sparkles, MapPin, Calendar, Users, Send, Check, AlertCircle, RefreshCw, Eye, Baby, Compass, Activity, Volume2 } from "lucide-react";
+import { ChevronLeft, Star, Heart, Share, ShieldCheck, HelpCircle, Utensils, Wifi, Sparkles, MapPin, Calendar, Users, Send, Check, X, AlertCircle, RefreshCw, Eye, Baby, Compass, Activity, Volume2 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -84,6 +84,24 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [adventuresSource, setAdventuresSource] = useState("");
   const [verifiedSources, setVerifiedSources] = useState<Array<{ title: string; uri: string }>>([]);
 
+  // Verified Host States
+  const [showHostModal, setShowHostModal] = useState(false);
+  const [hostMessageContent, setHostMessageContent] = useState("");
+  const [hostMessageSending, setHostMessageSending] = useState(false);
+  const [hostMessageSuccess, setHostMessageSuccess] = useState(false);
+
+  // Community Q&A Board States
+  const [feedbackTab, setFeedbackTab] = useState<"reviews" | "qa">("reviews");
+  const [qas, setQAs] = useState<any[]>([]);
+  const [loadingQAs, setLoadingQAs] = useState(false);
+  const [newQuestionText, setNewQuestionText] = useState("");
+  const [submittingQuestion, setSubmittingQuestion] = useState(false);
+  const [questionError, setQuestionError] = useState("");
+  const [activeAnswerId, setActiveAnswerId] = useState<string | null>(null);
+  const [newAnswerText, setNewAnswerText] = useState("");
+  const [submittingAnswer, setSubmittingAnswer] = useState(false);
+  const [aiAnsweringId, setAiAnsweringId] = useState<string | null>(null);
+
   const fetchLocalAdventures = useCallback(async () => {
     setLoadingAdventures(true);
     try {
@@ -99,6 +117,21 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
       console.error("Failed to fetch local adventures:", e);
     } finally {
       setLoadingAdventures(false);
+    }
+  }, [id]);
+
+  const fetchQAs = useCallback(async () => {
+    setLoadingQAs(true);
+    try {
+      const res = await fetch(`/api/qa?propertyId=${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setQAs(data.qas || []);
+      }
+    } catch (e) {
+      console.error("Failed to load QAs:", e);
+    } finally {
+      setLoadingQAs(false);
     }
   }, [id]);
 
@@ -126,8 +159,9 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     Promise.resolve().then(() => {
       fetchPropertyDetails();
       fetchLocalAdventures();
+      fetchQAs();
     });
-  }, [fetchPropertyDetails, fetchLocalAdventures]);
+  }, [fetchPropertyDetails, fetchLocalAdventures, fetchQAs]);
 
   // Pricing math helper
   const getNightsCount = () => {
@@ -231,6 +265,96 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
       setReviewError("Connection error. Try again.");
     } finally {
       setSubmittingReview(false);
+    }
+  };
+
+  const handleAskQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newQuestionText.trim()) return;
+    setSubmittingQuestion(true);
+    setQuestionError("");
+
+    try {
+      const res = await fetch("/api/qa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          propertyId: id,
+          action: "ask",
+          question: newQuestionText,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setQAs([data.qa, ...qas]);
+        setNewQuestionText("");
+      } else {
+        setQuestionError(data.error || "Failed to submit question");
+      }
+    } catch (err) {
+      setQuestionError("Network error. Please try again.");
+    } finally {
+      setSubmittingQuestion(false);
+    }
+  };
+
+  const handleAddAnswer = async (e: React.FormEvent, questionId: string) => {
+    e.preventDefault();
+    if (!newAnswerText.trim()) return;
+    setSubmittingAnswer(true);
+
+    try {
+      const res = await fetch("/api/qa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          propertyId: id,
+          action: "answer",
+          questionId,
+          text: newAnswerText,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setQAs(qas.map((q) => (q.id === questionId ? data.qa : q)));
+        setNewAnswerText("");
+        setActiveAnswerId(null);
+      } else {
+        alert(data.error || "Failed to post answer");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingAnswer(false);
+    }
+  };
+
+  const handleAskAIConcierge = async (questionId: string) => {
+    setAiAnsweringId(questionId);
+
+    try {
+      const res = await fetch("/api/qa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          propertyId: id,
+          action: "ask-ai",
+          questionId,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setQAs(qas.map((q) => (q.id === questionId ? data.qa : q)));
+      } else {
+        alert(data.error || "AI assist failed");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAiAnsweringId(null);
     }
   };
 
@@ -742,19 +866,30 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
             {/* Provider Section */}
             {provider && (
-              <div className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 rounded-3xl p-6 bg-white dark:bg-slate-900/40 border border-slate-150">
+              <div
+                onClick={() => setShowHostModal(true)}
+                className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 rounded-3xl p-6 bg-white dark:bg-slate-900/40 border border-slate-150 cursor-pointer hover:border-emerald-500/30 hover:shadow-sm transition-all group"
+              >
                 <div className="flex items-center gap-4">
-                  <img
-                    src={provider.image}
-                    alt={provider.name}
-                    className="h-14 w-14 rounded-full object-cover"
-                  />
+                  <div className="relative">
+                    <img
+                      src={provider.image}
+                      alt={provider.name}
+                      className="h-14 w-14 rounded-full object-cover border-2 border-emerald-500/20 group-hover:border-emerald-500 transition-colors"
+                    />
+                    <div className="absolute -bottom-1 -right-1 bg-emerald-600 text-white p-0.5 rounded-full border border-white dark:border-slate-900">
+                      <ShieldCheck className="h-3 w-3" />
+                    </div>
+                  </div>
                   <div>
-                    <span className="rounded bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
-                      ELITE PROVIDER
-                    </span>
-                    <h4 className="font-sans text-base font-bold text-slate-900 dark:text-white mt-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="rounded bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 uppercase tracking-wide">
+                        Verified Elite Host
+                      </span>
+                    </div>
+                    <h4 className="font-sans text-base font-bold text-slate-900 dark:text-white mt-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors flex items-center gap-1">
                       Hosted by {provider.name}
+                      <span className="text-[10px] text-slate-400 font-normal underline">(View Profile)</span>
                     </h4>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono uppercase mt-0.5">
                       Compliant with 10-point inspection criteria
@@ -768,151 +903,404 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
             )}
 
             {/* Reviews list matrix and Submission Form */}
-            <div className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 space-y-8">
-              <div>
-                <h3 className="font-sans text-lg font-bold text-slate-900 dark:text-white">
-                  Guest Feedback & Ratings
-                </h3>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                  Verified reviews collected from actual stays in the WanderLodge Network
-                </p>
-              </div>
-
-              {/* Review metrics split */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white dark:bg-slate-900/40 rounded-2xl p-4 border border-slate-150">
-                {[
-                  { name: "Cleanliness", score: 4.9 },
-                  { name: "Communication", score: 4.8 },
-                  { name: "Location", score: 5.0 },
-                  { name: "Value", score: 4.8 }
-                ].map((score) => (
-                  <div key={score.name} className="text-center md:text-left py-1">
-                    <span className="block text-[10px] font-bold text-slate-400 uppercase">{score.name}</span>
-                    <div className="flex items-center justify-center md:justify-start gap-1.5 mt-0.5">
-                      <span className="text-lg font-extrabold text-slate-800 dark:text-slate-200">{score.score}</span>
-                      <div className="flex text-amber-500">
-                        <Star className="h-3 w-3 fill-amber-500" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add review form (for authenticated travelers) */}
-              {currentUser && currentUser.role === "TRAVELER" && (
-                <div className="rounded-3xl border border-slate-150 bg-white p-5 dark:border-slate-800 dark:bg-slate-900/60">
-                  <h4 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-emerald-500 text-emerald-500" />
-                    <span>Leave your feedback</span>
-                  </h4>
-
-                  {reviewError && (
-                    <div className="mb-4 rounded-xl bg-red-50 p-3 text-xs font-semibold text-red-600 dark:bg-red-950/30">
-                      {reviewError}
-                    </div>
+            <div className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 space-y-6">
+              
+              {/* Tab Selector Buttons */}
+              <div className="flex border-b border-slate-250 dark:border-slate-800 gap-6">
+                <button
+                  type="button"
+                  onClick={() => setFeedbackTab("reviews")}
+                  className={`pb-3 text-sm font-bold transition-all relative ${
+                    feedbackTab === "reviews"
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  }`}
+                >
+                  Verified Guest Reviews ({reviews.length})
+                  {feedbackTab === "reviews" && (
+                    <motion.div layoutId="feedbackUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
                   )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFeedbackTab("qa")}
+                  className={`pb-3 text-sm font-bold transition-all relative ${
+                    feedbackTab === "qa"
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  }`}
+                >
+                  Community Q&A Board ({qas.length})
+                  {feedbackTab === "qa" && (
+                    <motion.div layoutId="feedbackUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
+                  )}
+                </button>
+              </div>
 
-                  <form onSubmit={handleAddReview} className="space-y-4">
-                    {/* Rating dials */}
-                    <div className="grid grid-cols-2 gap-4">
-                      {["Cleanliness", "Communication", "Location", "Value"].map((label) => {
-                        const val = label === "Cleanliness" ? cleanRating : label === "Communication" ? commRating : label === "Location" ? locRating : valRating;
-                        const setter = label === "Cleanliness" ? setCleanRating : label === "Communication" ? setCommRating : label === "Location" ? setLocRating : setValRating;
+              {feedbackTab === "reviews" ? (
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="font-sans text-base font-bold text-slate-900 dark:text-white">
+                      Guest Feedback & Ratings
+                    </h3>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                      Verified reviews collected from actual stays in the WanderLodge Network
+                    </p>
+                  </div>
 
-                        return (
-                          <div key={label}>
-                            <label className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase mb-1">
-                              <span>{label}</span>
-                              <span className="text-emerald-600 font-bold">{val} / 5</span>
-                            </label>
-                            <input
-                              type="range"
-                              min="1"
-                              max="5"
-                              step="0.5"
-                              value={val}
-                              onChange={(e) => setter(parseFloat(e.target.value))}
-                              className="w-full accent-emerald-600 dark:accent-emerald-500 cursor-pointer"
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
-                        Review Comment
-                      </label>
-                      <textarea
-                        required
-                        rows={3}
-                        value={reviewComment}
-                        onChange={(e) => setReviewComment(e.target.value)}
-                        placeholder="Detail your stay... cedar hot tub speed, check-in instructions, local vistas"
-                        className="w-full rounded-xl border border-slate-250 bg-slate-50 px-4 py-2.5 text-xs outline-none transition-colors focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500"
-                      />
-                    </div>
-
-                    <div className="flex justify-end">
-                      <button
-                        type="submit"
-                        disabled={submittingReview}
-                        className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500"
-                      >
-                        {submittingReview ? "Posting review..." : "Post Verified Review"}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              {/* Review listing */}
-              <div className="space-y-4">
-                {reviews.length === 0 ? (
-                  <p className="text-center text-xs text-slate-400 py-6 border-t border-slate-100 dark:border-slate-800">
-                    No reviews yet. Be the first to leave verified feedback!
-                  </p>
-                ) : (
-                  reviews.map((r) => (
-                    <div
-                      key={r.id}
-                      className="border-t border-slate-100 pt-5 dark:border-slate-800/80 flex flex-col md:flex-row gap-4"
-                    >
-                      {/* Left: Author card */}
-                      <div className="md:w-44 shrink-0 flex items-center md:items-start gap-3">
-                        <img
-                          src={r.authorImage}
-                          alt={r.authorName}
-                          className="h-10 w-10 rounded-full object-cover shrink-0"
-                        />
-                        <div>
-                          <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                            {r.authorName}
-                          </h5>
-                          <span className="text-[10px] text-slate-400">
-                            {new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Right: Feedback comment */}
-                      <div className="flex-grow space-y-1">
-                        <div className="flex items-center gap-1">
+                  {/* Review metrics split */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-white dark:bg-slate-900/40 rounded-2xl p-4 border border-slate-150">
+                    {[
+                      { name: "Cleanliness", score: 4.9 },
+                      { name: "Communication", score: 4.8 },
+                      { name: "Location", score: 5.0 },
+                      { name: "Value", score: 4.8 }
+                    ].map((score) => (
+                      <div key={score.name} className="text-center md:text-left py-1">
+                        <span className="block text-[10px] font-bold text-slate-400 uppercase">{score.name}</span>
+                        <div className="flex items-center justify-center md:justify-start gap-1.5 mt-0.5">
+                          <span className="text-lg font-extrabold text-slate-800 dark:text-slate-200">{score.score}</span>
                           <div className="flex text-amber-500">
                             <Star className="h-3 w-3 fill-amber-500" />
                           </div>
-                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                            {r.ratingAverage} / 5
-                          </span>
                         </div>
-                        <p className="text-xs text-slate-600 dark:text-slate-350 leading-relaxed">
-                          {r.comment}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Add review form (for authenticated travelers) */}
+                  {currentUser && currentUser.role === "TRAVELER" && (
+                    <div className="rounded-3xl border border-slate-150 bg-white p-5 dark:border-slate-800 dark:bg-slate-900/60">
+                      <h4 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-1">
+                        <Star className="h-4 w-4 fill-emerald-500 text-emerald-500" />
+                        <span>Leave your feedback</span>
+                      </h4>
+
+                      {reviewError && (
+                        <div className="mb-4 rounded-xl bg-red-50 p-3 text-xs font-semibold text-red-600 dark:bg-red-950/30">
+                          {reviewError}
+                        </div>
+                      )}
+
+                      <form onSubmit={handleAddReview} className="space-y-4">
+                        {/* Rating dials */}
+                        <div className="grid grid-cols-2 gap-4">
+                          {["Cleanliness", "Communication", "Location", "Value"].map((label) => {
+                            const val = label === "Cleanliness" ? cleanRating : label === "Communication" ? commRating : label === "Location" ? locRating : valRating;
+                            const setter = label === "Cleanliness" ? setCleanRating : label === "Communication" ? setCommRating : label === "Location" ? setLocRating : setValRating;
+
+                            return (
+                              <div key={label}>
+                                <label className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase mb-1">
+                                  <span>{label}</span>
+                                  <span className="text-emerald-600 font-bold">{val} / 5</span>
+                                </label>
+                                <input
+                                  type="range"
+                                  min="1"
+                                  max="5"
+                                  step="0.5"
+                                  value={val}
+                                  onChange={(e) => setter(parseFloat(e.target.value))}
+                                  className="w-full accent-emerald-600 dark:accent-emerald-500 cursor-pointer"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
+                            Review Comment
+                          </label>
+                          <textarea
+                            required
+                            rows={3}
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                            placeholder="Detail your stay... cedar hot tub speed, check-in instructions, local vistas"
+                            className="w-full rounded-xl border border-slate-250 bg-slate-50 px-4 py-2.5 text-xs outline-none transition-colors focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500"
+                          />
+                        </div>
+
+                        <div className="flex justify-end">
+                          <button
+                            type="submit"
+                            disabled={submittingReview}
+                            className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500"
+                          >
+                            {submittingReview ? "Posting review..." : "Post Verified Review"}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+
+                  {/* Review listing */}
+                  <div className="space-y-4">
+                    {reviews.length === 0 ? (
+                      <p className="text-center text-xs text-slate-400 py-6 border-t border-slate-100 dark:border-slate-800">
+                        No reviews yet. Be the first to leave verified feedback!
+                      </p>
+                    ) : (
+                      reviews.map((r) => (
+                        <div
+                          key={r.id}
+                          className="border-t border-slate-100 pt-5 dark:border-slate-800/80 flex flex-col md:flex-row gap-4"
+                        >
+                          {/* Left: Author card */}
+                          <div className="md:w-44 shrink-0 flex items-center md:items-start gap-3">
+                            <img
+                              src={r.authorImage}
+                              alt={r.authorName}
+                              className="h-10 w-10 rounded-full object-cover shrink-0"
+                            />
+                            <div>
+                              <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                {r.authorName}
+                              </h5>
+                              <span className="text-[10px] text-slate-400">
+                                {new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Right: Feedback comment */}
+                          <div className="flex-grow space-y-1">
+                            <div className="flex items-center gap-1">
+                              <div className="flex text-amber-500">
+                                <Star className="h-3 w-3 fill-amber-500" />
+                              </div>
+                              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                {r.ratingAverage} / 5
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-600 dark:text-slate-350 leading-relaxed">
+                              {r.comment}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-sans text-base font-bold text-slate-900 dark:text-white">
+                      Community Questions & Advice
+                    </h3>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                      Grounded local coordination board featuring verified guest answers and instant AI Concierge assistance.
+                    </p>
+                  </div>
+
+                  {/* Add Question input */}
+                  {currentUser ? (
+                    <div className="rounded-3xl border border-slate-150 bg-white p-5 dark:border-slate-800 dark:bg-slate-900/60">
+                      <h4 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-2">
+                        Ask the Community Board
+                      </h4>
+                      {questionError && (
+                        <div className="mb-3 rounded-xl bg-red-50 p-2.5 text-xs text-red-600 dark:bg-red-950/20">
+                          {questionError}
+                        </div>
+                      )}
+                      <form onSubmit={handleAskQuestion} className="flex gap-2">
+                        <input
+                          type="text"
+                          required
+                          value={newQuestionText}
+                          onChange={(e) => setNewQuestionText(e.target.value)}
+                          placeholder="e.g., Is there cell signal? Is firewood provided for the hot tub?"
+                          className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                        />
+                        <button
+                          type="submit"
+                          disabled={submittingQuestion}
+                          className="rounded-xl bg-emerald-600 px-5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500 shrink-0"
+                        >
+                          {submittingQuestion ? "Posting..." : "Ask Question"}
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-center dark:border-slate-800 bg-slate-50/50">
+                      <p className="text-xs text-slate-500">
+                        Please <span className="font-bold underline cursor-pointer hover:text-emerald-600" onClick={() => document.getElementById("open-auth-modal-btn")?.click()}>log in</span> to ask questions or answer fellow travelers on the board.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Q&A List */}
+                  <div className="space-y-5">
+                    {loadingQAs ? (
+                      <div className="flex items-center justify-center py-8">
+                        <RefreshCw className="h-5 w-5 text-emerald-600 animate-spin" />
+                        <span className="text-xs text-slate-400 ml-2">Loading discussion board...</span>
+                      </div>
+                    ) : qas.length === 0 ? (
+                      <div className="text-center py-8 border border-dashed border-slate-150 rounded-2xl">
+                        <p className="text-xs text-slate-400">
+                          No questions have been posted yet. Be the first to start the discussion!
                         </p>
                       </div>
-                    </div>
-                  ))
-                )}
-              </div>
+                    ) : (
+                      qas.map((qa) => {
+                        const isAnsweringThis = activeAnswerId === qa.id;
+                        const isAiAnsweringThis = aiAnsweringId === qa.id;
+                        const hasAIAnswer = qa.answers.some((ans: any) => ans.role === "AI_CONCIERGE");
+
+                        return (
+                          <div
+                            key={qa.id}
+                            className="border-b border-slate-100 pb-5 dark:border-slate-800/80 space-y-3"
+                          >
+                            {/* Question Header */}
+                            <div className="flex items-start gap-3">
+                              <img
+                                src={qa.authorImage}
+                                alt={qa.authorName}
+                                className="h-8 w-8 rounded-full object-cover shrink-0 mt-0.5"
+                              />
+                              <div className="flex-grow space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                    {qa.authorName}
+                                  </span>
+                                  <span className="text-[10px] text-slate-400">
+                                    {new Date(qa.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                  </span>
+                                </div>
+                                <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-relaxed">
+                                  Q: {qa.question}
+                                </h4>
+                              </div>
+                            </div>
+
+                            {/* Question Actions */}
+                            <div className="flex items-center gap-3 pl-11 text-[10px] font-bold text-slate-400 uppercase">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (currentUser) {
+                                    setActiveAnswerId(isAnsweringThis ? null : qa.id);
+                                  } else {
+                                    document.getElementById("open-auth-modal-btn")?.click();
+                                  }
+                                }}
+                                className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors"
+                              >
+                                Answer Question
+                              </button>
+                              
+                              <button
+                                type="button"
+                                disabled={isAiAnsweringThis || hasAIAnswer}
+                                onClick={() => handleAskAIConcierge(qa.id)}
+                                className={`flex items-center gap-1 transition-colors ${
+                                  hasAIAnswer 
+                                    ? "text-emerald-600/50 cursor-not-allowed dark:text-emerald-400/40" 
+                                    : "text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
+                                }`}
+                              >
+                                {isAiAnsweringThis ? (
+                                  <>
+                                    <RefreshCw className="h-3 w-3 animate-spin" />
+                                    AI Thinking...
+                                  </>
+                                ) : hasAIAnswer ? (
+                                  "AI Responded"
+                                ) : (
+                                  <>
+                                    <Sparkles className="h-3 w-3" />
+                                    Ask AI Concierge
+                                  </>
+                                )}
+                              </button>
+                            </div>
+
+                            {/* Inline Answer Submission */}
+                            {isAnsweringThis && (
+                              <form
+                                onSubmit={(e) => handleAddAnswer(e, qa.id)}
+                                className="pl-11 mt-2 flex gap-2"
+                              >
+                                <input
+                                  type="text"
+                                  required
+                                  value={newAnswerText}
+                                  onChange={(e) => setNewAnswerText(e.target.value)}
+                                  placeholder="Type your answer here..."
+                                  className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                                />
+                                <button
+                                  type="submit"
+                                  disabled={submittingAnswer}
+                                  className="rounded-xl bg-emerald-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500"
+                                >
+                                  {submittingAnswer ? "Posting..." : "Post"}
+                                </button>
+                              </form>
+                            )}
+
+                            {/* Threaded Answers */}
+                            {qa.answers && qa.answers.length > 0 && (
+                              <div className="pl-11 space-y-3 mt-2">
+                                {qa.answers.map((ans: any) => {
+                                  const isAI = ans.role === "AI_CONCIERGE";
+                                  const isHost = ans.role === "PROVIDER";
+
+                                  return (
+                                    <div
+                                      key={ans.id}
+                                      className={`rounded-2xl p-3.5 border text-xs leading-relaxed ${
+                                        isAI
+                                          ? "bg-purple-50/40 border-purple-150/60 dark:bg-purple-950/10 dark:border-purple-900/40"
+                                          : isHost
+                                          ? "bg-emerald-50/40 border-emerald-150/60 dark:bg-emerald-950/10 dark:border-emerald-900/40"
+                                          : "bg-slate-50/45 border-slate-150/40 dark:bg-slate-900/20 dark:border-slate-800/40"
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-2 mb-1.5">
+                                        <img
+                                          src={ans.authorImage}
+                                          alt={ans.authorName}
+                                          className="h-5 w-5 rounded-full object-cover"
+                                        />
+                                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                                          {ans.authorName}
+                                        </span>
+                                        {isAI && (
+                                          <span className="flex items-center gap-0.5 rounded bg-purple-100 px-1.5 py-0.5 text-[8px] font-black text-purple-700 uppercase tracking-wider dark:bg-purple-950/80 dark:text-purple-300">
+                                            <Sparkles className="h-2 w-2" />
+                                            AI Concierge Assist
+                                          </span>
+                                        )}
+                                        {isHost && (
+                                          <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[8px] font-black text-emerald-700 uppercase tracking-wider dark:bg-emerald-950/80 dark:text-emerald-300">
+                                            Lodge Host
+                                          </span>
+                                        )}
+                                        <span className="text-[9px] text-slate-400 ml-auto">
+                                          {new Date(ans.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                        </span>
+                                      </div>
+                                      <p className="text-slate-600 dark:text-slate-350 leading-relaxed font-sans pl-1">
+                                        {ans.content}
+                                      </p>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1232,6 +1620,161 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
           </div>
         </div>
       </main>
+
+      {/* Verified Host Profile Modal Overlay */}
+      <AnimatePresence>
+        {showHostModal && provider && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.15 }}
+              className="relative w-full max-w-lg rounded-3xl border border-slate-150 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 overflow-hidden"
+            >
+              {/* Close button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setShowHostModal(false);
+                  setHostMessageSuccess(false);
+                  setHostMessageContent("");
+                }}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              {/* Host Profile Header */}
+              <div className="flex items-start gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                <div className="relative">
+                  <img
+                    src={provider.image}
+                    alt={provider.name}
+                    className="h-16 w-16 rounded-full object-cover border-4 border-emerald-500/10"
+                  />
+                  <div className="absolute -bottom-1 -right-1 bg-emerald-600 text-white p-0.5 rounded-full border border-white dark:border-slate-900">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 text-[8px] font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
+                      Verified Identity Active
+                    </span>
+                    <span className="rounded bg-purple-100 dark:bg-purple-950/80 px-2 py-0.5 text-[8px] font-bold text-purple-800 dark:text-purple-300 uppercase tracking-wider">
+                      Elite Provider
+                    </span>
+                  </div>
+                  <h3 className="font-sans text-lg font-bold text-slate-900 dark:text-white">
+                    {provider.name}
+                  </h3>
+                  <p className="text-[10px] text-slate-400 font-mono uppercase">
+                    Member since January 2026
+                  </p>
+                </div>
+              </div>
+
+              {/* Metrics Row */}
+              <div className="grid grid-cols-4 gap-2 text-center py-4 border-b border-slate-100 dark:border-slate-800">
+                <div className="space-y-0.5">
+                  <span className="block text-[18px] font-extrabold text-slate-900 dark:text-white">4.9</span>
+                  <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Rating ★</span>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="block text-[18px] font-extrabold text-slate-900 dark:text-white">24</span>
+                  <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Stays Hosted</span>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="block text-[18px] font-extrabold text-slate-900 dark:text-white">100%</span>
+                  <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Response Rate</span>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="block text-[18px] font-extrabold text-slate-900 dark:text-white">&lt; 1hr</span>
+                  <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Response Time</span>
+                </div>
+              </div>
+
+              {/* Bio & Badges */}
+              <div className="py-4 space-y-4 max-h-[220px] overflow-y-auto pr-1">
+                <div className="space-y-1">
+                  <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">
+                    Host Biography
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Hi! I&apos;m {provider.name}. I design and build bespoke wooden cabins, hot tubs, and secluded retreats.
+                    I focus heavily on safety checklists, accessibility layouts, and seamless trail planning. My team and
+                    I inspect every corner to ensure a perfect 10/10 stay. Feel free to contact me directly with any custom requests!
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">
+                    Elite 10-Point Inspection Achievements
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-600 dark:text-slate-350">
+                    <div className="flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                      <span>Carbon Neutral Heating</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                      <span>CVR Clean Ratio &gt; 98%</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                      <span>Accessible Lighting Map</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                      <span>Emergency Kit Audit Pass</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message Host form inside profile */}
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-4 mt-2 space-y-3">
+                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">
+                  Have a question? Message {provider.name}
+                </h4>
+                {hostMessageSuccess ? (
+                  <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/30 p-3 text-center text-xs text-emerald-700 dark:text-emerald-400 font-bold">
+                    ✓ Your message has been sent successfully! Evelyn will reply shortly.
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      required
+                      placeholder={`Ask ${provider.name} about local trails, early check-in, or equipment...`}
+                      value={hostMessageContent}
+                      onChange={(e) => setHostMessageContent(e.target.value)}
+                      className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!hostMessageContent.trim()) return;
+                        setHostMessageSending(true);
+                        // Mock sending message
+                        await new Promise((resolve) => setTimeout(resolve, 800));
+                        setHostMessageSending(false);
+                        setHostMessageSuccess(true);
+                        setHostMessageContent("");
+                      }}
+                      disabled={hostMessageSending || !hostMessageContent.trim()}
+                      className="rounded-xl bg-slate-900 hover:bg-slate-800 px-4 py-2 text-xs font-bold text-white disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 shrink-0"
+                    >
+                      {hostMessageSending ? "Sending..." : "Send"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

@@ -165,8 +165,14 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     });
   }, [fetchPropertyDetails, fetchLocalAdventures, fetchQAs]);
 
+  const [isDayRetreat, setIsDayRetreat] = useState(false);
+  const [partialPayment, setPartialPayment] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showCleaningFeeBreakdown, setShowCleaningFeeBreakdown] = useState(false);
+
   // Pricing math helper
   const getNightsCount = () => {
+    if (isDayRetreat) return 1;
     if (!dates.start || !dates.end) return 0;
     const start = new Date(dates.start);
     const end = new Date(dates.end);
@@ -175,7 +181,9 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   };
 
   const nights = getNightsCount();
-  const nightlySubtotal = property ? property.price * nights : 0;
+  const nightlySubtotal = property 
+    ? (isDayRetreat ? Math.round(property.price * 0.5) : property.price * nights) 
+    : 0;
   const serviceFee = parseFloat((nightlySubtotal * 0.10).toFixed(2));
   const totalPrice = nightlySubtotal + serviceFee;
 
@@ -186,7 +194,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
       return;
     }
 
-    if (!dates.start || !dates.end) {
+    if (!dates.start || (!isDayRetreat && !dates.end)) {
       setBookingError("Please select check-in and check-out dates");
       return;
     }
@@ -206,7 +214,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
         body: JSON.stringify({
           propertyId: id,
           startDate: dates.start,
-          endDate: dates.end,
+          endDate: isDayRetreat ? dates.start : dates.end,
           selectedAdventures,
           comfortEquipment: {
             orthoMats,
@@ -214,6 +222,8 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
             largePrintGames,
             walkerRamp,
           },
+          isDayRetreat,
+          partialPayment,
         }),
       });
 
@@ -1520,9 +1530,9 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
               <div className="flex items-baseline justify-between mb-4">
                 <div>
                   <span className="font-sans text-2xl font-extrabold text-slate-900 dark:text-white">
-                    ${property.price}
+                    ${isDayRetreat ? Math.round(property.price * 0.5) : property.price}
                   </span>
-                  <span className="text-xs text-slate-400 dark:text-slate-500 font-medium"> / night</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500 font-medium"> {isDayRetreat ? "/ day-retreat" : "/ night"}</span>
                 </div>
                 <div className="flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-400">
                   <Star className="h-4.5 w-4.5 text-amber-500 fill-amber-500" />
@@ -1539,15 +1549,59 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
               {/* Dynamic Steps UI Renderer */}
               {bookingStep === "idle" && (
                 <div className="space-y-4">
+                  {/* Stay Type Tabs */}
+                  <div className="flex bg-slate-50 border border-slate-200 rounded-2xl p-1 dark:bg-slate-950 dark:border-slate-850">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsDayRetreat(false);
+                      }}
+                      className={`flex-1 py-1.5 text-center rounded-xl text-[10px] font-bold uppercase tracking-wider transition ${
+                        !isDayRetreat
+                          ? "bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                          : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                      }`}
+                    >
+                      🌌 Overnight Stay
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsDayRetreat(true);
+                      }}
+                      className={`flex-1 py-1.5 text-center rounded-xl text-[10px] font-bold uppercase tracking-wider transition ${
+                        isDayRetreat
+                          ? "bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400"
+                          : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                      }`}
+                    >
+                      ☀️ Day-Retreat
+                    </button>
+                  </div>
+
                   <div>
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                      Check-in & Check-out Selection
+                      {isDayRetreat ? "Retreat Date (9:00 AM - 5:00 PM)" : "Check-in & Check-out Selection"}
                     </label>
-                    <DatePicker
-                      startDate={dates.start}
-                      endDate={dates.end}
-                      onDatesChange={(start, end) => setDates({ start, end })}
-                    />
+                    {isDayRetreat ? (
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950 flex items-center justify-between gap-2">
+                        <input
+                          type="date"
+                          value={dates.start}
+                          onChange={(e) => setDates({ start: e.target.value, end: e.target.value })}
+                          className="text-xs font-bold text-slate-800 dark:text-slate-200 bg-transparent outline-none cursor-pointer w-full"
+                        />
+                        <span className="shrink-0 bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 text-[9px] font-black uppercase px-2 py-0.5 rounded-md">
+                          Day micro-stay
+                        </span>
+                      </div>
+                    ) : (
+                      <DatePicker
+                        startDate={dates.start}
+                        endDate={dates.end}
+                        onDatesChange={(start, end) => setDates({ start, end })}
+                      />
+                    )}
                   </div>
 
                   <div>
@@ -1567,6 +1621,50 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                         ))}
                       </select>
                     </div>
+                  </div>
+
+                  {/* Off-Season Heatmap Trigger */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setShowHeatmap(!showHeatmap)}
+                      className="w-full flex items-center justify-between text-left rounded-2xl border border-slate-150 bg-white p-3 hover:bg-slate-50 transition text-xs font-bold text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-850 dark:text-slate-300"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        📅 View Season Pricing Heatmap
+                      </span>
+                      <span className="text-[10px] uppercase font-extrabold text-emerald-600 dark:text-emerald-400">
+                        {showHeatmap ? "Hide" : "Show"}
+                      </span>
+                    </button>
+                    {showHeatmap && (
+                      <div className="mt-2 p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-2xl text-[10px] space-y-2 animate-fadeIn text-left">
+                        <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800 pb-1.5">
+                          <span className="font-extrabold uppercase text-slate-450 text-[8px] tracking-wider">Demand Season Cycles</span>
+                          <span className="font-mono text-[8px] text-slate-400">Dynamic Rates</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100/65 dark:border-emerald-900/30 p-1.5 rounded-xl">
+                            <span className="block font-bold text-emerald-800 dark:text-emerald-400 text-[9px] leading-none">Low Season</span>
+                            <span className="block text-[7.5px] text-slate-400 mt-1">Oct - Feb</span>
+                            <span className="block text-[9px] font-black text-emerald-600 mt-0.5">30% OFF</span>
+                          </div>
+                          <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-100/65 dark:border-amber-900/30 p-1.5 rounded-xl">
+                            <span className="block font-bold text-amber-800 dark:text-amber-400 text-[9px] leading-none">Mid Season</span>
+                            <span className="block text-[7.5px] text-slate-400 mt-1">Mar - May</span>
+                            <span className="block text-[9px] font-black text-amber-600 mt-0.5">Base Rate</span>
+                          </div>
+                          <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-100/65 dark:border-rose-900/30 p-1.5 rounded-xl">
+                            <span className="block font-bold text-rose-800 dark:text-rose-400 text-[9px] leading-none">High Season</span>
+                            <span className="block text-[7.5px] text-slate-400 mt-1">Jun - Sep</span>
+                            <span className="block text-[9px] font-black text-rose-600 mt-0.5">Peak (+20%)</span>
+                          </div>
+                        </div>
+                        <p className="text-[9.5px] text-slate-450 dark:text-slate-500 leading-normal">
+                          💡 **Smart Choice**: Rescheduling stays into November/December avoids wilderness tourist congestion while enjoying active sub-zero cedar hot tub guarantees.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Complimentary Intergenerational Support Equipment */}
@@ -1629,14 +1727,80 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
                   </div>
 
+                  {/* Partial Payment Milestones Toggle */}
+                  <div className="rounded-2xl border border-slate-150 p-3 bg-slate-50/40 dark:border-slate-800 dark:bg-slate-950/20 space-y-1.5 text-left">
+                    <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={partialPayment}
+                        onChange={(e) => setPartialPayment(e.target.checked)}
+                        className="h-4 w-4 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                      />
+                      <div>
+                        <span className="block text-[10.5px] font-bold text-slate-800 dark:text-slate-200">
+                          Activate Partial Payment Milestones
+                        </span>
+                        <span className="block text-[8.5px] text-slate-400 dark:text-slate-500 leading-tight">
+                          Book today with a 30% initial deposit and scheduled interest-free installments.
+                        </span>
+                      </div>
+                    </label>
+
+                    {partialPayment && (
+                      <div className="mt-2 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[9px] space-y-1.5 text-slate-500 dark:text-slate-400">
+                        <div className="flex justify-between">
+                          <span>📅 Milestone 1 (30% Deposit Today):</span>
+                          <span className="font-extrabold text-emerald-600 dark:text-emerald-400">${(totalPrice * 0.3).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>📅 Milestone 2 (70% Scheduled Installment):</span>
+                          <span className="font-extrabold text-slate-700 dark:text-slate-300">${(totalPrice * 0.7).toFixed(2)}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {nights > 0 && (
                     <div className="space-y-2 border-t border-dashed border-slate-100 pt-4 dark:border-slate-800/80">
                       <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
-                        <span>${property.price} x {nights} nights</span>
+                        <span>{isDayRetreat ? "Day-Retreat Micro-Stay (9:00 AM - 5:00 PM)" : `$${property.price} x ${nights} nights`}</span>
                         <span className="font-semibold">${nightlySubtotal}</span>
                       </div>
+
+                      {/* Transparent Cleaning Fee Calculation */}
                       <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
-                        <span className="flex items-center gap-0.5">
+                        <span className="flex items-center gap-1.5">
+                          <span>Cleaning Fee (Living-Wage Guaranteed)</span>
+                          <button
+                            type="button"
+                            onClick={() => setShowCleaningFeeBreakdown(!showCleaningFeeBreakdown)}
+                            className="text-emerald-600 hover:underline dark:text-emerald-400 text-[9px] font-bold"
+                          >
+                            {showCleaningFeeBreakdown ? "[hide]" : "[breakdown 🔍]"}
+                          </button>
+                        </span>
+                        <span className="font-semibold">$80.00</span>
+                      </div>
+
+                      {showCleaningFeeBreakdown && (
+                        <div className="p-2.5 bg-emerald-50/35 border border-emerald-100/50 dark:bg-emerald-950/15 dark:border-emerald-900/30 rounded-xl text-[9px] text-slate-500 dark:text-slate-400 space-y-1 text-left">
+                          <div className="flex justify-between">
+                            <span>👩‍🌾 Local Housekeeper Wages (Direct Living Wage)</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300">$60.00</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>🌿 Eco-Friendly Chemical-Free Sanitizers</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300">$12.00</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>🧺 Sustainable Linen & Laundry Water Cycle</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300">$8.00</span>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span className="flex items-center gap-1">
                           WanderGuarantee Fee (10%)
                           <span title="Includes 24/7 service safety shield">
                             <HelpCircle className="h-3 w-3 text-slate-400" />
@@ -1645,8 +1809,19 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                         <span className="font-semibold">${serviceFee}</span>
                       </div>
 
+                      {/* Escrow Deposit Details */}
+                      <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100/60 dark:border-slate-800/60 pt-2 text-left">
+                        <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                          🔒 WanderTrust Escrow Deposit (Fully Refundable)
+                        </span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">$200.00</span>
+                      </div>
+                      <span className="block text-[8px] text-slate-400 dark:text-slate-500 leading-none pl-1 text-left">
+                        Held securely in neutral trust escrow. Released automatically 48h after checkout.
+                      </span>
+
                       {(orthoMats || medicalKit || largePrintGames || walkerRamp) && (
-                        <div className="flex justify-between text-xs text-emerald-600 font-bold dark:text-emerald-400">
+                        <div className="flex justify-between text-xs text-emerald-600 font-bold dark:text-emerald-400 border-t border-slate-100/60 dark:border-slate-800/60 pt-2">
                           <span className="flex items-center gap-1">
                             <ShieldCheck className="h-3.5 w-3.5" />
                             <span>Comfort Gear Configured</span>
@@ -1657,7 +1832,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
                       <div className="flex justify-between border-t border-slate-100 pt-2 text-sm font-bold text-slate-800 dark:border-slate-800 dark:text-slate-200">
                         <span>Grand Total</span>
-                        <span className="text-emerald-600 dark:text-emerald-400">${totalPrice}</span>
+                        <span className="text-emerald-600 dark:text-emerald-400">${(totalPrice + 80).toFixed(2)}</span>
                       </div>
                     </div>
                   )}

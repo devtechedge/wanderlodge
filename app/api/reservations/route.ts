@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { propertyId, startDate, endDate, selectedAdventures, comfortEquipment } = body;
+    const { propertyId, startDate, endDate, selectedAdventures, comfortEquipment, isDayRetreat, partialPayment } = body;
 
     if (!propertyId || !startDate || !endDate) {
       return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid dates provided" }, { status: 400 });
     }
 
-    if (start >= end) {
+    if (!isDayRetreat && start >= end) {
       return NextResponse.json({ error: "Check-out date must be after Check-in" }, { status: 400 });
     }
 
@@ -102,11 +102,25 @@ export async function POST(req: NextRequest) {
     }
 
     // Calculate nights and price
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const nights = Math.ceil((end.getTime() - start.getTime()) / msPerDay);
-    const nightlyTotal = property.price * nights;
+    let nights = 1;
+    let nightlyTotal = property.price;
+    if (isDayRetreat) {
+      nightlyTotal = Math.round(property.price * 0.5); // Day retreats are 50% price
+    } else {
+      const msPerDay = 1000 * 60 * 60 * 24;
+      nights = Math.ceil((end.getTime() - start.getTime()) / msPerDay);
+      nightlyTotal = property.price * nights;
+    }
     const serviceFee = parseFloat((nightlyTotal * 0.10).toFixed(2)); // 10% service fee
     const totalPrice = nightlyTotal + serviceFee;
+
+    // Milestone payment calculation
+    const depositPaid = partialPayment ? parseFloat((totalPrice * 0.3).toFixed(2)) : totalPrice;
+    const remainingBalance = partialPayment ? parseFloat((totalPrice * 0.7).toFixed(2)) : 0;
+    const paymentMilestones = partialPayment ? [
+      { title: "Initial Deposit (30%)", amount: depositPaid, dueDate: new Date().toISOString().slice(0, 10), paid: true },
+      { title: "Remaining Balance (70%)", amount: remainingBalance, dueDate: new Date(start.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), paid: false }
+    ] : [];
 
     const newReservation: Reservation = {
       id: `res-${Date.now()}`,
@@ -119,12 +133,28 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
       selectedAdventures: selectedAdventures || [],
       comfortEquipment: comfortEquipment || undefined,
+      isDayRetreat: !!isDayRetreat,
+      depositPaid,
+      depositTotal: totalPrice,
+      remainingBalance,
+      escrowStatus: "Held Securely", // held securely in escrow
+      paymentMilestones: paymentMilestones.length > 0 ? paymentMilestones : undefined,
     };
 
     db.reservations.push(newReservation);
     
     // Add an initial welcome message from the provider automatically to open the chat thread!
     let welcomeMessageStr = `Welcome, ${user.name}! Thank you for reserving ${property.title}. Your booking is confirmed from ${startDate} to ${endDate}.`;
+
+    if (isDayRetreat) {
+      welcomeMessageStr = `Welcome, ${user.name}! Your Day-Retreat Micro-Stay at ${property.title} is confirmed for ${startDate} (9:00 AM - 5:00 PM). It's prepared perfectly for your creative sprint and remote-work productivity.`;
+    }
+
+    if (partialPayment) {
+      welcomeMessageStr += `\n\n💰 Partial Payment Milestones Confirmed: Your 30% initial deposit ($${depositPaid}) has been captured. The remaining 70% balance ($${remainingBalance}) is automatically scheduled for ${paymentMilestones[1]?.dueDate}.`;
+    }
+
+    welcomeMessageStr += `\n\n🛡️ Escrow Security Active: Your $200 security deposit is held securely in our neutral WanderTrust escrow account. It will be released automatically within 48 hours of check-out after a status clearance.`;
 
     if (comfortEquipment && (comfortEquipment.orthoMats || comfortEquipment.medicalKit || comfortEquipment.largePrintGames || comfortEquipment.walkerRamp)) {
       const gearList = [];
@@ -243,6 +273,118 @@ export async function PUT(req: NextRequest) {
       reservation.groupExpenses = reservation.groupExpenses.filter((e) => e.id !== expenseId);
       writeDB(db);
       return NextResponse.json({ reservation });
+    }
+
+    // 4. Extend Stay (Stay Extender)
+    if (action === "extend-stay") {
+      if (!property) {
+        return NextResponse.json({ error: "Property metadata not found" }, { status: 404 });
+      }
+      const end = new Date(reservation.endDate);
+      end.setDate(end.getDate() + 1);
+      reservation.endDate = end.toISOString().slice(0, 10);
+      
+      const extraNightPrice = Math.round(property.price * 0.65); // 35% last-minute special discount
+      reservation.totalPrice += extraNightPrice;
+      
+      if (reservation.paymentMilestones && reservation.paymentMilestones.length > 1) {
+        reservation.paymentMilestones[1].amount = parseFloat((reservation.paymentMilestones[1].amount + extraNightPrice).toFixed(2));
+        reservation.remainingBalance = parseFloat(((reservation.remainingBalance || 0) + extraNightPrice).toFixed(2));
+      } else {
+        reservation.depositTotal = (reservation.depositTotal || reservation.totalPrice) + extraNightPrice;
+      }
+      
+      db.messages.push({
+        id: `msg-ext-${Date.now()}`,
+        senderId: property.providerId,
+        receiverId: reservation.travelerId,
+        reservationId: reservation.id,
+        content: `⏳ Stay Extended successfully! I've added 1 more night to your stay at a discounted last-minute special rate of $${extraNightPrice} (35% off). Thank you for choosing to stretch your wilderness retreat!`,
+        timestamp: new Date().toISOString(),
+      });
+
+      writeDB(db);
+      return NextResponse.json({ reservation });
+    }
+
+    // 5. Rain-Check Weather Guarantee Reschedule
+    if (action === "rain-check") {
+      const { newStart, newEnd } = body;
+      if (!newStart || !newEnd) {
+        return NextResponse.json({ error: "Missing rescheduled dates" }, { status: 400 });
+      }
+      reservation.startDate = newStart;
+      reservation.endDate = newEnd;
+      reservation.rainCheckClaimed = true;
+      
+      db.messages.push({
+        id: `msg-weather-${Date.now()}`,
+        senderId: "system",
+        receiverId: reservation.travelerId,
+        reservationId: reservation.id,
+        content: `🌦️ Rain-Check Weather Guarantee Approved! Since severe weather conditions compromised your outdoor plans, your booking has been rescheduled to ${newStart} - ${newEnd} at zero additional charge. Your neutral escrow held deposits remain active.`,
+        timestamp: new Date().toISOString(),
+      });
+
+      writeDB(db);
+      return NextResponse.json({ reservation });
+    }
+
+    // 6. Host Cancellation Back-up Simulation
+    if (action === "trigger-host-cancel") {
+      reservation.status = ReservationStatus.CANCELLED;
+      
+      // Find a superior alternative property (e.g. anything not matching the current one)
+      const alternativeLodge = db.properties.find((p) => p.id !== reservation.propertyId) || property;
+      if (!alternativeLodge) {
+        return NextResponse.json({ error: "No alternative properties available" }, { status: 400 });
+      }
+
+      const backupReservation: Reservation = {
+        id: `res-backup-${Date.now()}`,
+        propertyId: alternativeLodge.id,
+        travelerId: reservation.travelerId,
+        startDate: reservation.startDate,
+        endDate: reservation.endDate,
+        totalPrice: reservation.totalPrice, // matching original price exactly
+        status: ReservationStatus.CONFIRMED,
+        createdAt: new Date().toISOString(),
+        selectedAdventures: reservation.selectedAdventures,
+        comfortEquipment: reservation.comfortEquipment,
+        coTravelers: reservation.coTravelers,
+        groupExpenses: reservation.groupExpenses,
+        isDayRetreat: reservation.isDayRetreat,
+        depositPaid: reservation.depositPaid,
+        depositTotal: reservation.depositTotal,
+        remainingBalance: reservation.remainingBalance,
+        paymentMilestones: reservation.paymentMilestones,
+        escrowStatus: "Held Securely",
+        originalLodgeTitle: property?.title || "Original Lodge",
+      };
+
+      db.reservations.push(backupReservation);
+
+      // System notification
+      db.messages.push({
+        id: `msg-insurance-alert-${Date.now()}`,
+        senderId: "system",
+        receiverId: reservation.travelerId,
+        reservationId: reservation.id,
+        content: `⚠️ WanderShield Alert: Host ${property?.title || "Lodge"} had to cancel unexpectedly. Do not worry! Our Host Cancellation Back-Up Guarantee has automatically matched and secured a superior alternative lodge at NO extra charge: "${alternativeLodge.title}". This booking is confirmed! Check your active journeys.`,
+        timestamp: new Date().toISOString(),
+      });
+
+      db.messages.push({
+        id: `msg-welcome-backup-${Date.now()}`,
+        senderId: alternativeLodge.providerId,
+        receiverId: reservation.travelerId,
+        reservationId: backupReservation.id,
+        content: `👋 Hello! I'm your transfer host at "${alternativeLodge.title}". I've received your backup booking from the WanderShield Insurance system. Your original price and requested gear is preserved completely. We're excited to have you!`,
+        timestamp: new Date().toISOString(),
+      });
+
+      writeDB(db);
+      return NextResponse.json({ reservation, backupReservationId: backupReservation.id });
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });

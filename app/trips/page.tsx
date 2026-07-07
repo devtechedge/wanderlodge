@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { Compass, Calendar, MapPin, Send, HelpCircle, MessageSquare, ShieldCheck, Clock, CreditCard, ChevronRight, Layout, RefreshCw, Users, Plus, Trash2 } from "lucide-react";
+import { Compass, Calendar, MapPin, Send, HelpCircle, MessageSquare, ShieldCheck, Clock, CreditCard, ChevronRight, Layout, RefreshCw, Users, Plus, Trash2, Lock, CloudRain, AlertTriangle, CheckCircle } from "lucide-react";
 import { useStore } from "@/lib/store";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -43,6 +43,19 @@ interface Reservation {
   };
   coTravelers?: CoTraveler[];
   groupExpenses?: GroupExpense[];
+  isDayRetreat?: boolean;
+  depositPaid?: number;
+  depositTotal?: number;
+  remainingBalance?: number;
+  escrowStatus?: string;
+  originalLodgeTitle?: string;
+  rainCheckClaimed?: boolean;
+  paymentMilestones?: {
+    title: string;
+    amount: number;
+    dueDate: string;
+    paid: boolean;
+  }[];
 }
 
 interface Message {
@@ -61,7 +74,15 @@ export default function TripsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeResId, setActiveResId] = useState<string | null>(null);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning" | "group" | "stay">("chat");
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning" | "group" | "stay" | "flexibility">("chat");
+
+  // Rain-Check & Flexibility states
+  const [rainCheckStart, setRainCheckStart] = useState("");
+  const [rainCheckEnd, setRainCheckEnd] = useState("");
+  const [rescheduling, setRescheduling] = useState(false);
+  const [extendingStay, setExtendingStay] = useState(false);
+  const [cancellingHost, setCancellingHost] = useState(false);
+  const [isMilestonePaying, setIsMilestonePaying] = useState(false);
 
   // Co-traveler form state
   const [newCoName, setNewCoName] = useState("");
@@ -102,6 +123,111 @@ export default function TripsPage() {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExtendStay = async () => {
+    if (!activeResId) return;
+    setExtendingStay(true);
+    try {
+      const res = await fetch("/api/reservations", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reservationId: activeResId,
+          action: "extend-stay"
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Refresh reservations list
+        const updated = reservations.map(r => r.id === activeResId ? { ...r, ...data.reservation } : r);
+        setReservations(updated);
+        alert("Stay successfully extended by 1 night! Your provider welcome messages have been updated.");
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setExtendingStay(false);
+    }
+  };
+
+  const handleRainCheck = async () => {
+    if (!activeResId || !rainCheckStart || !rainCheckEnd) {
+      alert("Please select rescheduled check-in and check-out dates");
+      return;
+    }
+    setRescheduling(true);
+    try {
+      const res = await fetch("/api/reservations", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reservationId: activeResId,
+          action: "rain-check",
+          newStart: rainCheckStart,
+          newEnd: rainCheckEnd
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const updated = reservations.map(r => r.id === activeResId ? { ...r, ...data.reservation } : r);
+        setReservations(updated);
+        alert("Rain-Check reschedule approved! Your dates are updated at 0 extra cost.");
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRescheduling(false);
+    }
+  };
+
+  const handleTriggerHostCancel = async () => {
+    if (!activeResId) return;
+    setCancellingHost(true);
+    try {
+      const res = await fetch("/api/reservations", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reservationId: activeResId,
+          action: "trigger-host-cancel"
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Reload all reservations to see the cancelled original and the new BACKUP reservation!
+        await fetchReservations();
+        alert("WanderShield Activated! Your host reservation was cancelled, and a superior alternative lodge has been matched and booked for you at 0 extra cost.");
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setCancellingHost(false);
+    }
+  };
+
+  const handlePayInstallment = async () => {
+    if (!activeResId) return;
+    setIsMilestonePaying(true);
+    try {
+      const targetRes = reservations.find(r => r.id === activeResId);
+      if (targetRes && targetRes.paymentMilestones) {
+        const updatedMilestones = targetRes.paymentMilestones.map(m => ({ ...m, paid: true }));
+        const updatedRes = {
+          ...targetRes,
+          depositPaid: targetRes.totalPrice,
+          remainingBalance: 0,
+          paymentMilestones: updatedMilestones
+        };
+        const updated = reservations.map(r => r.id === activeResId ? updatedRes : r);
+        setReservations(updated);
+        alert("Simulated transaction successful! Your remaining scheduled installment has been fully processed and paid.");
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsMilestonePaying(false);
     }
   };
 
@@ -514,6 +640,20 @@ export default function TripsPage() {
                     <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
                   )}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkspaceTab("flexibility")}
+                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative shrink-0 ${
+                    activeWorkspaceTab === "flexibility"
+                      ? "text-emerald-600 dark:text-emerald-400 font-extrabold"
+                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  }`}
+                >
+                  🛡️ Booking Flexibility
+                  {activeWorkspaceTab === "flexibility" && (
+                    <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
+                  )}
+                </button>
               </div>
 
               {activeWorkspaceTab === "chat" && (
@@ -917,6 +1057,183 @@ export default function TripsPage() {
 
               {activeWorkspaceTab === "stay" && (
                 <SmartInStayControls reservation={selectedRes} currentUser={currentUser} />
+              )}
+
+              {activeWorkspaceTab === "flexibility" && (
+                <div className="flex-grow overflow-y-auto px-6 py-6 space-y-6 bg-slate-50/50 dark:bg-slate-950/20">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Stay Extender Card */}
+                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                      <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                        <Clock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                        <span>Stretch Your Serenity: Stay Extender</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-450 mb-4 leading-relaxed">
+                        Lodge is unbooked tomorrow! Add an extra night to your wilderness stay with our last-minute special rate (save 35% on standard rates).
+                      </p>
+                      <div className="bg-emerald-50/40 dark:bg-emerald-950/15 border border-emerald-100 dark:border-emerald-900/30 p-3.5 rounded-xl mb-4">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-slate-500">Last-Minute Extender Price:</span>
+                          <span className="font-extrabold text-emerald-700 dark:text-emerald-400">35% OFF Applied</span>
+                        </div>
+                        <div className="flex justify-between text-sm font-black">
+                          <span className="text-slate-850 dark:text-white">Additional Night Total:</span>
+                          <span className="text-emerald-600 dark:text-emerald-400">${(selectedRes.totalPrice * 0.45).toFixed(0)}</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleExtendStay}
+                        disabled={extendingStay || selectedRes.status === "CANCELLED"}
+                        className="w-full rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 dark:bg-emerald-500 transition disabled:opacity-50"
+                      >
+                        {extendingStay ? "Extending Stay..." : "Confirm 1-Night Extension"}
+                      </button>
+                    </div>
+
+                    {/* Rain-Check Weather Guarantee Card */}
+                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                      <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                        <CloudRain className="h-4 w-4 text-sky-500" />
+                        <span>Rain-Check Weather Guarantee</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-450 mb-4 leading-relaxed">
+                        Compromised outdoor plans due to severe persistent weather? Reschedule your stay to any future timeframe at 0 additional cost.
+                      </p>
+                      {selectedRes.rainCheckClaimed ? (
+                        <div className="bg-emerald-50 border border-emerald-150 text-emerald-800 dark:bg-emerald-950/20 dark:border-emerald-900/35 dark:text-emerald-300 p-3 rounded-xl text-xs font-bold flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />
+                          <span>Weather guarantee successfully claimed and rescheduled!</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="bg-amber-50 border border-amber-150 dark:bg-amber-950/20 dark:border-amber-900/35 p-3 rounded-xl text-[10.5px] text-amber-850 dark:text-amber-300 font-medium">
+                            ⚠️ Severe Storm Watch detected in region during stay period. Eligible for free reschedule.
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">New Start Date</label>
+                              <input
+                                type="date"
+                                value={rainCheckStart}
+                                onChange={(e) => setRainCheckStart(e.target.value)}
+                                className="w-full rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none text-slate-800 dark:text-white dark:border-slate-800 dark:bg-slate-950"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">New End Date</label>
+                              <input
+                                type="date"
+                                value={rainCheckEnd}
+                                onChange={(e) => setRainCheckEnd(e.target.value)}
+                                className="w-full rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none text-slate-800 dark:text-white dark:border-slate-800 dark:bg-slate-950"
+                              />
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleRainCheck}
+                            disabled={rescheduling || selectedRes.status === "CANCELLED"}
+                            className="w-full rounded-xl bg-slate-800 py-2.5 text-xs font-bold text-white hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-650 transition disabled:opacity-50"
+                          >
+                            {rescheduling ? "Rescheduling Dates..." : "Process Rain-Check Reschedule"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Escrow and Payment Milestones Card */}
+                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                      <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-3 flex items-center gap-1.5">
+                        <CreditCard className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                        <span>Security Deposit & Payment Milestones</span>
+                      </h4>
+                      <div className="space-y-4">
+                        {/* Escrow Status */}
+                        <div className="flex items-start justify-between p-3 bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-850 rounded-xl">
+                          <div>
+                            <span className="block text-[10px] font-bold text-slate-850 dark:text-slate-200">🔒 WanderTrust Damage Deposit Escrow</span>
+                            <span className="block text-[8px] text-slate-450 mt-0.5">Held in neutral holding account. Cleared 48 hrs after stay.</span>
+                          </div>
+                          <span className="rounded bg-emerald-50 px-2 py-0.5 text-[8px] font-bold text-emerald-700 uppercase dark:bg-emerald-950/40 dark:text-emerald-400 shrink-0">
+                            Active in Escrow
+                          </span>
+                        </div>
+
+                        {/* Payment Milestones Tracker */}
+                        <div>
+                          <span className="block text-[9px] font-bold text-slate-450 uppercase tracking-wider mb-2">Installment Milestones Timeline</span>
+                          {selectedRes.paymentMilestones ? (
+                            <div className="space-y-2">
+                              {selectedRes.paymentMilestones.map((m: any, idx: number) => (
+                                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900/35">
+                                  <div>
+                                    <span className="block text-xs font-bold text-slate-800 dark:text-slate-200">{m.title}</span>
+                                    <span className="block text-[8px] text-slate-450">Due Date: {m.dueDate}</span>
+                                  </div>
+                                  <div className="text-right flex items-center gap-2">
+                                    <span className="text-xs font-extrabold text-slate-850 dark:text-white">${m.amount.toFixed(2)}</span>
+                                    {m.paid ? (
+                                      <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[8px] font-black text-emerald-700 uppercase dark:bg-emerald-950/50 dark:text-emerald-400">PAID</span>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={handlePayInstallment}
+                                        disabled={isMilestonePaying}
+                                        className="rounded bg-sky-50 text-sky-700 hover:bg-sky-100 font-extrabold text-[8px] px-2 py-0.5 uppercase dark:bg-sky-950/40 dark:text-sky-400 transition"
+                                      >
+                                        {isMilestonePaying ? "Paying..." : "Pay Now"}
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="p-3 bg-slate-50 rounded-xl dark:bg-slate-950 text-[9.5px] text-slate-500 text-center">
+                              💳 Stay fully paid upfront. No remaining milestone balance scheduled.
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* WanderShield Guarantee Sandbox (Host Cancellation) */}
+                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                      <h4 className="font-sans text-xs font-extrabold text-red-600 uppercase tracking-wider dark:text-red-400 mb-2 flex items-center gap-1.5">
+                        <AlertTriangle className="h-4 w-4" />
+                        <span>WanderShield Host Cancellation Sandbox</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-450 mb-4 leading-relaxed">
+                        What happens if a host cancels unexpectedly? Click the button below to simulate an unexpected host cancellation and watch WanderShield automatically secure and book a superior alternative lodge for you.
+                      </p>
+                      {selectedRes.status === "CANCELLED" ? (
+                        <div className="bg-red-50 border border-red-150 text-red-800 dark:bg-red-950/20 dark:border-red-900/35 dark:text-red-300 p-3.5 rounded-xl space-y-1 text-xs">
+                          <span className="font-bold block">⚠️ ORIGINAL RESERVATION CANCELLED</span>
+                          <p className="text-[10px] text-slate-500 leading-normal">
+                            Host of {selectedRes.propertyTitle} cancelled. Automatic rebooking successfully transferred your deposit, dates, and gear configurations to your new active backup lodge!
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-3 rounded-xl text-[9px] text-slate-500 leading-normal">
+                            🔍 **How to test**: Tap the button below. The system will mark this lodge booking as cancelled and instantly establish a brand new alternative booking under the same dates, matching your price, and transferring all co-travelers and custom safety setup items.
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleTriggerHostCancel}
+                            disabled={cancellingHost}
+                            className="w-full rounded-xl bg-red-600 py-2.5 text-xs font-bold text-white hover:bg-red-700 dark:bg-red-500 transition disabled:opacity-50"
+                          >
+                            {cancellingHost ? "Activating WanderShield Back-Up..." : "Simulate Host Cancellation"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           ) : (

@@ -126,6 +126,19 @@ export interface Reservation {
   };
   coTravelers?: CoTraveler[];
   groupExpenses?: GroupExpense[];
+  isDayRetreat?: boolean;
+  depositPaid?: number;
+  depositTotal?: number;
+  remainingBalance?: number;
+  escrowStatus?: "Held Securely" | "Refunded" | "Released";
+  originalLodgeTitle?: string;
+  rainCheckClaimed?: boolean;
+  paymentMilestones?: Array<{
+    title: string;
+    amount: number;
+    dueDate: string;
+    paid: boolean;
+  }>;
 }
 
 export interface Review {

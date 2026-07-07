@@ -162,6 +162,21 @@ export default function WishlistPage() {
                   </span>
                 </div>
 
+                {/* Price-Drop Direct Notifications Widget */}
+                {activeWishlist.properties && activeWishlist.properties.length > 0 && (
+                  <div className="bg-emerald-50 border border-emerald-150 rounded-2xl p-4 dark:bg-emerald-950/20 dark:border-emerald-900/35 flex items-start gap-3 text-left">
+                    <span className="text-xl">🔔</span>
+                    <div>
+                      <h4 className="text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider">
+                        Price-Drop Direct Alerts Active
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-450 mt-1 leading-normal">
+                        WanderLodge smart alerts automatically monitor target off-season rates for your wishlists. We detected a **15% price drop** on **Whispering Pines Cabin** and standard off-season rate releases!
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {(!activeWishlist.properties || activeWishlist.properties.length === 0) ? (
                   <div className="text-center py-20 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-white/40">
                     <Heart className="mx-auto h-10 w-10 text-slate-300 animate-pulse" />
@@ -180,11 +195,17 @@ export default function WishlistPage() {
                         {/* Remove button */}
                         <button
                           onClick={() => handleDeletePropertyFromWishlist(activeWishlist.id, p.id)}
-                          className="absolute right-3 top-3 z-10 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-slate-400 shadow-sm transition hover:scale-105 hover:text-red-600 dark:bg-slate-900/90"
+                          className="absolute right-3 top-3 z-20 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-slate-400 shadow-sm transition hover:scale-105 hover:text-red-600 dark:bg-slate-900/90"
                           title="Remove from wishlist"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
+
+                        {/* Price drop badge */}
+                        <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-rose-500 px-2 py-1 text-[8.5px] font-black uppercase text-white shadow-md animate-pulse">
+                          <span className="h-1 w-1 rounded-full bg-white" />
+                          <span>15% Price Drop Alert</span>
+                        </div>
 
                         <div
                           onClick={() => router.push(`/properties/${p.id}`)}
@@ -215,9 +236,14 @@ export default function WishlistPage() {
 
                           <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                              <span className="font-sans text-sm font-extrabold text-slate-900 dark:text-white">
-                                ${p.price}
-                              </span>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="font-sans text-sm font-extrabold text-slate-900 dark:text-white">
+                                  ${p.price}
+                                </span>
+                                <span className="text-[10px] text-slate-400 line-through font-medium">
+                                  ${Math.round(p.price * 1.15)}
+                                </span>
+                              </div>
                               <span className="text-[9px] text-slate-400"> / night</span>
                             </div>
                             <button

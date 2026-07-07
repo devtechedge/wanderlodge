@@ -41,6 +41,12 @@ interface Reservation {
     largePrintGames: boolean;
     walkerRamp: boolean;
   };
+  gastronomyUpgrades?: {
+    pantryOrganicEggs: boolean;
+    pantryOrganicMilk: boolean;
+    pantryFreshProduce: boolean;
+    smoresKit: boolean;
+  };
   coTravelers?: CoTraveler[];
   groupExpenses?: GroupExpense[];
   isDayRetreat?: boolean;
@@ -83,6 +89,9 @@ export default function TripsPage() {
   const [extendingStay, setExtendingStay] = useState(false);
   const [cancellingHost, setCancellingHost] = useState(false);
   const [isMilestonePaying, setIsMilestonePaying] = useState(false);
+  const [priceDropNotify, setPriceDropNotify] = useState(true);
+  const [activeHeatmapMonth, setActiveHeatmapMonth] = useState<"Sept" | "Oct" | "Nov">("Sept");
+  const [selectedHeatmapDay, setSelectedHeatmapDay] = useState<number | null>(null);
 
   // Co-traveler form state
   const [newCoName, setNewCoName] = useState("");
@@ -1232,6 +1241,210 @@ export default function TripsPage() {
                         </div>
                       )}
                     </div>
+                  </div>
+
+                  {/* BATCH 8: PRICING HEATMAPS, PRICE-DROPS, CLEANING FEES & MICRO-STAYS */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    {/* 1. Off-Season Pricing Heatmap & Day-Retreat Micro-Stays */}
+                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
+                          <span>🗓️ Off-Season Rate Heatmap</span>
+                        </h4>
+                        
+                        <div className="flex gap-1">
+                          {["Sept", "Oct", "Nov"].map((m) => (
+                            <button
+                              key={m}
+                              onClick={() => {
+                                setActiveHeatmapMonth(m as any);
+                                setSelectedHeatmapDay(null);
+                              }}
+                              className={`px-1.5 py-0.5 text-[8px] font-black uppercase rounded ${
+                                activeHeatmapMonth === m
+                                  ? "bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-950"
+                                  : "bg-slate-100 text-slate-450 dark:bg-slate-950"
+                              }`}
+                            >
+                              {m}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <p className="text-[10px] text-slate-500 leading-normal mb-3">
+                        Select off-season dates below to take advantage of low-season discounts or lock in a <strong>Day-Retreat Micro-Stay</strong> (creative sprints).
+                      </p>
+
+                      {/* 4x4 mock calendar grid for the month */}
+                      <div className="grid grid-cols-5 gap-1.5 mb-3 text-center text-[10px]">
+                        {[
+                          { day: 2, price: 110, tier: "low" },
+                          { day: 5, price: 125, tier: "low" },
+                          { day: 8, price: 180, tier: "mid" },
+                          { day: 12, price: 290, tier: "high" },
+                          { day: 15, price: 130, tier: "low" },
+                          { day: 18, price: 190, tier: "mid" },
+                          { day: 20, price: 310, tier: "high" },
+                          { day: 22, price: 120, tier: "low" },
+                          { day: 26, price: 115, tier: "low" },
+                          { day: 30, price: 175, tier: "mid" }
+                        ].map((d) => {
+                          const isSelected = selectedHeatmapDay === d.day;
+                          const bg = d.tier === "low" 
+                            ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900/30" 
+                            : d.tier === "mid"
+                            ? "bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 border-amber-100 dark:border-amber-900/30"
+                            : "bg-rose-50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 border-rose-100 dark:border-rose-900/30";
+
+                          return (
+                            <button
+                              key={d.day}
+                              onClick={() => setSelectedHeatmapDay(d.day)}
+                              className={`p-1.5 border rounded-lg text-[10px] flex flex-col items-center justify-between transition ${
+                                isSelected 
+                                  ? "bg-slate-900 text-white border-slate-950 dark:bg-white dark:text-slate-950" 
+                                  : bg
+                              }`}
+                            >
+                              <span className="font-mono text-[8px] font-bold leading-none">{activeHeatmapMonth} {d.day}</span>
+                              <span className="font-black text-[9px] mt-1">${d.price}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {selectedHeatmapDay ? (
+                        <div className="bg-slate-50 dark:bg-slate-950/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 text-[10px] leading-normal space-y-2">
+                          <div className="flex items-center justify-between text-slate-850 dark:text-white">
+                            <strong>Day-Retreat Option:</strong>
+                            <span className="font-mono bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[8px] font-bold">AVAILABLE</span>
+                          </div>
+                          <p className="text-slate-500 leading-normal">
+                            Book {activeHeatmapMonth} {selectedHeatmapDay} as a 12-hour <strong>Creative Sprint / Remote-work Retreat</strong> (8 AM - 8 PM) for only <strong>$75 flat rate</strong>, with full access to subalpine hot tub & high-speed Wi-Fi.
+                          </p>
+                          <button
+                            onClick={() => alert(`Day-Retreat inquiry for ${activeHeatmapMonth} ${selectedHeatmapDay} sent to provider! They will verify workspace setup within 2 hours.`)}
+                            className="w-full bg-slate-800 hover:bg-slate-900 text-white font-mono text-[9px] font-bold uppercase py-1.5 rounded-lg text-center"
+                          >
+                            Inquire Day Micro-Stay
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="p-2 text-center text-[9px] text-slate-450 border border-dashed border-slate-200 dark:border-slate-850 rounded-xl bg-slate-50/50">
+                          💡 Click a heatmap date above to check creative sprint / day-retreat micro-stay options.
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 2. Price-Drop Notifications & Wishlist Alerts */}
+                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-1 flex flex-col justify-between">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
+                            <span>🔔 Direct Price-Drop Alerts</span>
+                          </h4>
+                          
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={priceDropNotify}
+                              onChange={() => {
+                                setPriceDropNotify(!priceDropNotify);
+                              }}
+                              className="sr-only peer"
+                            />
+                            <div className="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-650 peer-checked:bg-emerald-600"></div>
+                          </label>
+                        </div>
+
+                        <p className="text-[10px] text-slate-500 leading-normal">
+                          Enable automated notifications to monitor rates for your favorited subalpine lodges during matching calendar frames.
+                        </p>
+
+                        <div className="space-y-2 border-t border-slate-100 dark:border-slate-850 pt-2.5">
+                          <span className="block text-[8px] font-mono font-bold text-slate-400 uppercase tracking-widest">
+                            Active Price-Drop Alerts:
+                          </span>
+
+                          <div className="bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 flex items-center justify-between text-[10px]">
+                            <div>
+                              <strong className="block text-slate-850 dark:text-white leading-none">MeadowView Lodge</strong>
+                              <span className="text-[8px] text-slate-450 mt-1 block">Selected Dates: Oct 12 - 14</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-rose-600 font-bold block">-$45 / Night</span>
+                              <span className="text-[8px] bg-emerald-500/10 text-emerald-400 px-1 py-0.2 rounded font-mono font-extrabold uppercase mt-0.5">LOWER RATE</span>
+                            </div>
+                          </div>
+
+                          <div className="bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 flex items-center justify-between text-[10px]">
+                            <div>
+                              <strong className="block text-slate-850 dark:text-white leading-none">Subalpine Creekside Cabin</strong>
+                              <span className="text-[8px] text-slate-450 mt-1 block">Selected Dates: Nov 5 - 8</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-rose-600 font-bold block">-$30 / Night</span>
+                              <span className="text-[8px] bg-emerald-500/10 text-emerald-400 px-1 py-0.2 rounded font-mono font-extrabold uppercase mt-0.5">LOWER RATE</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <span className="block text-[8px] font-mono text-slate-400 text-center mt-3 pt-2 border-t border-slate-100 dark:border-slate-850">
+                        {priceDropNotify ? "🟢 Alerts actively pushed to staying guests" : "🔴 Alerts currently muted"}
+                      </span>
+                    </div>
+
+                    {/* 3. Transparent Cleaning Fee Breakdown */}
+                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-1 flex flex-col justify-between">
+                      <div>
+                        <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5 mb-2">
+                          <span>📊 Transparent Cleaning Fees</span>
+                        </h4>
+                        
+                        <p className="text-[10px] text-slate-500 leading-normal mb-3">
+                          We believe in absolute fair pricing. 100% of your stay cleaning fees are routed directly to local professionals and regional eco-conservation.
+                        </p>
+
+                        <div className="space-y-2 border-t border-slate-100 dark:border-slate-850 pt-2.5 text-[10px]">
+                          <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-2 rounded-lg">
+                            <div>
+                              <span className="font-bold text-slate-850 dark:text-white block leading-none">Local Living Wages</span>
+                              <span className="text-[8px] text-slate-450 mt-0.5 block">Fair compensation for housekeepers</span>
+                            </div>
+                            <span className="font-mono font-black text-slate-900 dark:text-white">$65.00 (65%)</span>
+                          </div>
+
+                          <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-2 rounded-lg">
+                            <div>
+                              <span className="font-bold text-slate-850 dark:text-white block leading-none">Organic Cleaning materials</span>
+                              <span className="text-[8px] text-slate-450 mt-0.5 block">Biodegradable, allergen-safe supplies</span>
+                            </div>
+                            <span className="font-mono font-black text-slate-900 dark:text-white">$20.00 (20%)</span>
+                          </div>
+
+                          <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-2 rounded-lg">
+                            <div>
+                              <span className="font-bold text-slate-850 dark:text-white block leading-none">Subalpine Waste Compliance</span>
+                              <span className="text-[8px] text-slate-450 mt-0.5 block">Bear-safe disposal & organic compost</span>
+                            </div>
+                            <span className="font-mono font-black text-slate-900 dark:text-white">$15.00 (15%)</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg text-center mt-4">
+                        <span className="font-mono text-[8px] font-extrabold text-emerald-400 block uppercase">
+                          Clean Integrity Guarantee
+                        </span>
+                        <span className="text-[8px] text-slate-400 block mt-0.5 font-sans">
+                          No administrative markups or hidden booking penalties.
+                        </span>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               )}

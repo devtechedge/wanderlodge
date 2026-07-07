@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { propertyId, startDate, endDate, selectedAdventures, comfortEquipment, isDayRetreat, partialPayment } = body;
+    const { propertyId, startDate, endDate, selectedAdventures, comfortEquipment, gastronomyUpgrades, isDayRetreat, partialPayment } = body;
 
     if (!propertyId || !startDate || !endDate) {
       return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
@@ -112,7 +112,14 @@ export async function POST(req: NextRequest) {
       nightlyTotal = property.price * nights;
     }
     const serviceFee = parseFloat((nightlyTotal * 0.10).toFixed(2)); // 10% service fee
-    const totalPrice = nightlyTotal + serviceFee;
+    let upgradesCost = 0;
+    if (gastronomyUpgrades) {
+      if (gastronomyUpgrades.pantryOrganicEggs) upgradesCost += 12;
+      if (gastronomyUpgrades.pantryOrganicMilk) upgradesCost += 8;
+      if (gastronomyUpgrades.pantryFreshProduce) upgradesCost += 25;
+      if (gastronomyUpgrades.smoresKit) upgradesCost += 18;
+    }
+    const totalPrice = nightlyTotal + serviceFee + upgradesCost;
 
     // Milestone payment calculation
     const depositPaid = partialPayment ? parseFloat((totalPrice * 0.3).toFixed(2)) : totalPrice;
@@ -133,6 +140,7 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
       selectedAdventures: selectedAdventures || [],
       comfortEquipment: comfortEquipment || undefined,
+      gastronomyUpgrades: gastronomyUpgrades || undefined,
       isDayRetreat: !!isDayRetreat,
       depositPaid,
       depositTotal: totalPrice,
@@ -163,6 +171,15 @@ export async function POST(req: NextRequest) {
       if (comfortEquipment.largePrintGames) gearList.push("Large-Print Games & Puzzles");
       if (comfortEquipment.walkerRamp) gearList.push("Portable Walkway Threshold Ramp");
       welcomeMessageStr += `\n\nI have queued your requested comfort equipment for dispatch: ${gearList.join(", ")}. It will be prepared and styled in the lodge prior to your arrival!`;
+    }
+
+    if (gastronomyUpgrades && (gastronomyUpgrades.pantryOrganicEggs || gastronomyUpgrades.pantryOrganicMilk || gastronomyUpgrades.pantryFreshProduce || gastronomyUpgrades.smoresKit)) {
+      const gastroList = [];
+      if (gastronomyUpgrades.pantryOrganicEggs) gastroList.push("Local Organic Eggs ($12)");
+      if (gastronomyUpgrades.pantryOrganicMilk) gastroList.push("Fresh Farm Milk ($8)");
+      if (gastronomyUpgrades.pantryFreshProduce) gastroList.push("Organic Fresh Produce ($25)");
+      if (gastronomyUpgrades.smoresKit) gastroList.push("Artisanal S'mores Kit ($18)");
+      welcomeMessageStr += `\n\n🍽️ Farm-to-Lodge Pantry Stocking & S'mores Kit Confirmed: I have ordered these local culinary upgrades: ${gastroList.join(", ")}. They will be beautifully stocked in the fridge/cabin pantry prior to your arrival!`;
     }
 
     if (selectedAdventures && selectedAdventures.length > 0) {

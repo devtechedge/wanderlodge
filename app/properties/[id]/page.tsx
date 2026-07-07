@@ -71,6 +71,12 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [largePrintGames, setLargePrintGames] = useState(false);
   const [walkerRamp, setWalkerRamp] = useState(false);
 
+  // Local Gastronomy & Wilderness Cooking states
+  const [pantryOrganicEggs, setPantryOrganicEggs] = useState(false);
+  const [pantryOrganicMilk, setPantryOrganicMilk] = useState(false);
+  const [pantryFreshProduce, setPantryFreshProduce] = useState(false);
+  const [smoresKit, setSmoresKit] = useState(false);
+
   // Local Adventures state
   const [adventures, setAdventures] = useState<Array<{
     title: string;
@@ -185,7 +191,11 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     ? (isDayRetreat ? Math.round(property.price * 0.5) : property.price * nights) 
     : 0;
   const serviceFee = parseFloat((nightlySubtotal * 0.10).toFixed(2));
-  const totalPrice = nightlySubtotal + serviceFee;
+  const gastronomyTotal = (pantryOrganicEggs ? 12 : 0) + 
+                          (pantryOrganicMilk ? 8 : 0) + 
+                          (pantryFreshProduce ? 25 : 0) + 
+                          (smoresKit ? 18 : 0);
+  const totalPrice = nightlySubtotal + serviceFee + gastronomyTotal;
 
   const handleCreateReservation = async () => {
     if (!currentUser) {
@@ -221,6 +231,12 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
             medicalKit,
             largePrintGames,
             walkerRamp,
+          },
+          gastronomyUpgrades: {
+            pantryOrganicEggs,
+            pantryOrganicMilk,
+            pantryFreshProduce,
+            smoresKit,
           },
           isDayRetreat,
           partialPayment,
@@ -1727,6 +1743,87 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
                   </div>
 
+                  {/* Local Gastronomy & Wilderness Cooking Upgrades */}
+                  <div className="rounded-2xl border border-slate-150 p-3.5 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-950/40 space-y-2">
+                    <span className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      🍽️ Local Gastronomy & Pantry Upgrades
+                    </span>
+                    <p className="text-[9px] text-slate-400 dark:text-slate-500 leading-tight">
+                      Order fresh ingredients from organic partner farms to be waiting in your fridge, plus artisanal campfire kits:
+                    </p>
+                    <div className="space-y-2 pt-1">
+                      <label className="flex items-start gap-2.5 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={pantryOrganicEggs}
+                          onChange={(e) => setPantryOrganicEggs(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                            Dozen Farm-Fresh Eggs <span className="text-emerald-600 dark:text-emerald-400 font-extrabold font-mono text-[9px]">+$12</span>
+                          </span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">
+                            Gathered at morning light from MeadowView Organic Poultry Co.
+                          </span>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-2.5 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={pantryOrganicMilk}
+                          onChange={(e) => setPantryOrganicMilk(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                            Guernsey Farm Milk <span className="text-emerald-600 dark:text-emerald-400 font-extrabold font-mono text-[9px]">+$8</span>
+                          </span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">
+                            Half-gallon organic non-homogenized rich milk waiting in your fridge.
+                          </span>
+                        </div>
+                      </label>
+
+                      <label className="flex items-start gap-2.5 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={pantryFreshProduce}
+                          onChange={(e) => setPantryFreshProduce(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                            Seasonal Produce Box <span className="text-emerald-600 dark:text-emerald-400 font-extrabold font-mono text-[9px]">+$25</span>
+                          </span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">
+                            Curated seasonal wildgreens, organic root vegetables & mountain berries.
+                          </span>
+                        </div>
+                      </label>
+
+                      <div className="border-t border-slate-150/60 dark:border-slate-800/60 my-2 pt-2" />
+
+                      <label className="flex items-start gap-2.5 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={smoresKit}
+                          onChange={(e) => setSmoresKit(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                            Artisanal Campfire S&apos;mores Kit <span className="text-emerald-600 dark:text-emerald-400 font-extrabold font-mono text-[9px]">+$18</span>
+                          </span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">
+                            Handcrafted wildberry marshmallows, organic graham squares & 72% dark cedar cocoa bars.
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
                   {/* Partial Payment Milestones Toggle */}
                   <div className="rounded-2xl border border-slate-150 p-3 bg-slate-50/40 dark:border-slate-800 dark:bg-slate-950/20 space-y-1.5 text-left">
                     <label className="flex items-start gap-2.5 cursor-pointer select-none">
@@ -1827,6 +1924,39 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                             <span>Comfort Gear Configured</span>
                           </span>
                           <span>FREE</span>
+                        </div>
+                      )}
+
+                      {/* Gastronomy Upgrades */}
+                      {(pantryOrganicEggs || pantryOrganicMilk || pantryFreshProduce || smoresKit) && (
+                        <div className="space-y-1.5 border-t border-slate-100/60 dark:border-slate-800/60 pt-2 text-left">
+                          <span className="block text-[9px] font-extrabold text-slate-400 uppercase tracking-widest font-mono">
+                            Organic Gastronomy Selections
+                          </span>
+                          {pantryOrganicEggs && (
+                            <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 pl-1">
+                              <span>• MeadowView Eggs (1 Dozen)</span>
+                              <span className="font-semibold">$12.00</span>
+                            </div>
+                          )}
+                          {pantryOrganicMilk && (
+                            <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 pl-1">
+                              <span>• Organic Guernsey Milk (0.5 Gal)</span>
+                              <span className="font-semibold">$8.00</span>
+                            </div>
+                          )}
+                          {pantryFreshProduce && (
+                            <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 pl-1">
+                              <span>• Farm Organic Seasonal Produce Box</span>
+                              <span className="font-semibold">$25.00</span>
+                            </div>
+                          )}
+                          {smoresKit && (
+                            <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 pl-1">
+                              <span>• Artisanal Campfire S&apos;mores Kit</span>
+                              <span className="font-semibold">$18.00</span>
+                            </div>
+                          )}
                         </div>
                       )}
 

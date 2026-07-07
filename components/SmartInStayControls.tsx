@@ -47,6 +47,18 @@ interface Reservation {
   propertyImage: string;
   propertyLocation: string;
   selectedAdventures?: string[];
+  comfortEquipment?: {
+    orthoMats: boolean;
+    medicalKit: boolean;
+    largePrintGames: boolean;
+    walkerRamp: boolean;
+  };
+  gastronomyUpgrades?: {
+    pantryOrganicEggs: boolean;
+    pantryOrganicMilk: boolean;
+    pantryFreshProduce: boolean;
+    smoresKit: boolean;
+  };
   coTravelers?: CoTraveler[];
 }
 
@@ -187,6 +199,16 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
   // Trash notification reminder state
   const [dismissedTrashReminder, setDismissedTrashReminder] = useState(false);
 
+  // Gastronomy & Wilderness Cooking Hub states
+  const [activeGastroTab, setActiveGastroTab] = useState<"recipes" | "herb-id" | "chef" | "water" | "market" | "inventory">("recipes");
+  const [selectedHerb, setSelectedHerb] = useState("Wild Mint");
+  const [identifiedHerbResult, setIdentifiedHerbResult] = useState<any>(null);
+  const [identifyingHerb, setIdentifyingHerb] = useState(false);
+  const [campfireTimerActive, setCampfireTimerActive] = useState(false);
+  const [campfireSeconds, setCampfireSeconds] = useState(45);
+  const [gastroRating, setGastroRating] = useState<{ [key: string]: number }>({});
+  const [activeRecipeIndex, setActiveRecipeIndex] = useState(0);
+
   // Countdown timer for 15s Thermostat silent instruction loop simulation
   useEffect(() => {
     if (!thermostatVideoPlaying) return;
@@ -198,6 +220,23 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
     }, 1000);
     return () => clearInterval(interval);
   }, [thermostatVideoPlaying]);
+
+  // Campfire baking countdown timer
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (campfireTimerActive && campfireSeconds > 0) {
+      timer = setTimeout(() => {
+        setCampfireSeconds((s) => {
+          if (s <= 1) {
+            setCampfireTimerActive(false);
+            return 0;
+          }
+          return s - 1;
+        });
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [campfireTimerActive, campfireSeconds]);
 
   // Load state from localStorage on init
   useEffect(() => {
@@ -1143,6 +1182,741 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
           </div>
 
         </div>
+
+        {/* ======================================================== */}
+        {/* BATCH 9: WILDERNESS COOKING & LOCAL GASTRONOMY HUB */}
+        {/* ======================================================== */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl text-left relative overflow-hidden mt-6">
+          <div className="absolute top-0 right-0 h-40 w-40 bg-radial-gradient from-emerald-500/10 to-transparent pointer-events-none" />
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800 mb-6">
+            <div>
+              <span className="font-mono text-[9px] font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1">
+                🏕️ Wild Cabin Epicurean Experience
+              </span>
+              <h3 className="font-sans text-sm font-extrabold text-white uppercase tracking-wider mt-1 flex items-center gap-2">
+                <span>Wilderness Cooking & Gastronomy Hub</span>
+                <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[8px] px-2 py-0.5 rounded-full font-mono normal-case tracking-normal">
+                  Local Sourced
+                </span>
+              </h3>
+              <p className="text-[10px] text-slate-400 max-w-xl">
+                Experience mountain gastronomy. Check organic pantry stocking, verify water chemistry, query local chef registries, or identify herbs via satellite link.
+              </p>
+            </div>
+
+            {/* Hub tabs selector */}
+            <div className="flex flex-wrap gap-1.5 bg-slate-950 p-1 rounded-2xl border border-slate-800 self-start md:self-center">
+              {[
+                { id: "recipes", label: "🔥 Fire Recipes" },
+                { id: "herb-id", label: "🌿 Herb Scan" },
+                { id: "chef", label: "👨‍🍳 Private Chefs" },
+                { id: "water", label: "🚰 Pure Water" },
+                { id: "market", label: "🗓️ Farm Markets" },
+                { id: "inventory", label: "🍳 Gear List" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveGastroTab(tab.id as any)}
+                  className={`px-3 py-2 text-[9px] font-black uppercase tracking-wider rounded-xl transition ${
+                    activeGastroTab === tab.id
+                      ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/15"
+                      : "text-slate-450 hover:text-slate-200"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* GUEST'S IN-STAY PANTRY STOCKING UPGRADES DASHBOARD */}
+          <div className="bg-slate-950/40 rounded-2xl border border-slate-800/80 p-4 mb-6 grid grid-cols-1 md:grid-cols-4 gap-4 text-left">
+            <div className="md:col-span-1 border-r border-slate-800/60 pr-2">
+              <span className="text-[8px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block">
+                Stay Pantry Status
+              </span>
+              <h4 className="font-sans text-xs font-bold text-white mt-0.5">
+                Arrival Sourced Box
+              </h4>
+              <p className="text-[9px] text-slate-450 leading-relaxed mt-1">
+                Organic items ordered during checkout are harvested and pre-stocked by the host before keyless check-in.
+              </p>
+            </div>
+
+            <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                {
+                  id: "eggs",
+                  label: "🥚 Fresh Eggs",
+                  ordered: !!reservation.gastronomyUpgrades?.pantryOrganicEggs,
+                  desc: "MeadowView Organic Dozen",
+                  status: "Delivered & Chilled"
+                },
+                {
+                  id: "milk",
+                  label: "🥛 Guernsey Milk",
+                  ordered: !!reservation.gastronomyUpgrades?.pantryOrganicMilk,
+                  desc: "0.5 Gal Non-Homogenized",
+                  status: "Delivered & Chilled"
+                },
+                {
+                  id: "produce",
+                  label: "🥬 Produce Basket",
+                  ordered: !!reservation.gastronomyUpgrades?.pantryFreshProduce,
+                  desc: "Local Mountain Greens",
+                  status: "In Root Drawer"
+                },
+                {
+                  id: "smores",
+                  label: "🍫 S'mores Kit",
+                  ordered: !!reservation.gastronomyUpgrades?.smoresKit,
+                  desc: "Wildberry Cedarmarsh Kit",
+                  status: "Stored in Pantry"
+                }
+              ].map((item) => (
+                <div
+                  key={item.id}
+                  className={`p-3 rounded-xl border flex flex-col justify-between text-left transition ${
+                    item.ordered
+                      ? "bg-emerald-950/20 border-emerald-500/30 text-emerald-300"
+                      : "bg-slate-900/30 border-slate-850/60 text-slate-450 opacity-60"
+                  }`}
+                >
+                  <div>
+                    <span className="font-bold text-[11px] block text-white">{item.label}</span>
+                    <span className="text-[8px] block text-slate-400 leading-none mt-1">{item.desc}</span>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="font-mono text-[8px] uppercase tracking-wider font-extrabold">
+                      {item.ordered ? "Active" : "Not Ordered"}
+                    </span>
+                    <span className="text-[8px] font-semibold bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-mono">
+                      {item.ordered ? item.status : "Add in Booking"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* TAB CONTENTS CONTAINER */}
+          <div className="min-h-[280px]">
+            {activeGastroTab === "recipes" && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 text-left">
+                {/* Recipes Navigation column */}
+                <div className="lg:col-span-4 space-y-2.5">
+                  <span className="text-[8px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block mb-1">
+                    Select Fire-Pit Recipe Card
+                  </span>
+                  {[
+                    {
+                      title: "Cedar-Planked Wild Sockeye",
+                      time: "25 min",
+                      difficulty: "Medium",
+                      tempDesc: "Glowing Alder Embers"
+                    },
+                    {
+                      title: "Dutch Oven Bannock Bread",
+                      time: "15 min bake",
+                      difficulty: "Easy",
+                      tempDesc: "Indirect Charcoal Heat"
+                    },
+                    {
+                      title: "Wildberry S'mores Flambé",
+                      time: "5 min",
+                      difficulty: "Very Easy",
+                      tempDesc: "Open Cedar Flame"
+                    }
+                  ].map((rec, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveRecipeIndex(i)}
+                      className={`w-full p-3 rounded-xl text-left border transition text-xs block ${
+                        activeRecipeIndex === i
+                          ? "bg-emerald-950/35 border-emerald-500/50 text-white"
+                          : "bg-slate-950/40 border-slate-850 hover:bg-slate-900 text-slate-400"
+                      }`}
+                    >
+                      <div className="font-bold flex items-center justify-between">
+                        <span>{rec.title}</span>
+                        <span className="text-[8px] bg-slate-900 border border-slate-800 text-emerald-400 px-1.5 py-0.5 rounded font-mono uppercase">
+                          {rec.difficulty}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[9px] text-slate-450 mt-1 font-mono">
+                        <span>⏱️ {rec.time}</span>
+                        <span>🔥 {rec.tempDesc}</span>
+                      </div>
+                    </button>
+                  ))}
+
+                  {/* Active Campfire Cooking Timer */}
+                  <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4.5 mt-4 text-center">
+                    <span className="block text-[8px] font-mono text-slate-450 uppercase tracking-widest mb-1.5">
+                      ⏱️ Campfire Baking Timer
+                    </span>
+                    <div className="font-mono text-xl font-black text-white flex items-center justify-center gap-1">
+                      <span>00:</span>
+                      <span className={campfireTimerActive ? "text-amber-400 animate-pulse" : "text-white"}>
+                        {campfireSeconds < 10 ? `0${campfireSeconds}` : campfireSeconds}
+                      </span>
+                    </div>
+                    <p className="text-[8px] text-slate-500 mt-1">
+                      Set for sourdough bannock flipping or s&apos;mores roasting cycles.
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-2 mt-3">
+                      <button
+                        onClick={() => {
+                          setCampfireTimerActive(!campfireTimerActive);
+                        }}
+                        className={`px-3 py-1 text-[9px] font-black uppercase rounded-lg border font-mono transition ${
+                          campfireTimerActive
+                            ? "bg-amber-950 text-amber-400 border-amber-900/50"
+                            : "bg-slate-900 text-slate-350 border-slate-800 hover:bg-slate-850"
+                        }`}
+                      >
+                        {campfireTimerActive ? "Pause" : "Start"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCampfireTimerActive(false);
+                          setCampfireSeconds(45);
+                        }}
+                        className="px-3 py-1 text-[9px] font-black uppercase rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-850 font-mono"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Active Recipe Details Column */}
+                <div className="lg:col-span-8 bg-slate-950/30 border border-slate-850/80 p-5 rounded-2xl">
+                  {activeRecipeIndex === 0 && (
+                    <div className="space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <h4 className="text-sm font-extrabold text-white">
+                            Planked Wild Sockeye Searing
+                          </h4>
+                          <span className="text-[9px] text-slate-400 block mt-0.5">
+                            Traditional open coals salmon baking utilizing seasoned red-cedar planks.
+                          </span>
+                        </div>
+                        <div className="bg-emerald-500/15 border border-emerald-500/20 px-2 py-1 rounded text-right shrink-0">
+                          <span className="block text-[8px] font-bold text-slate-400 uppercase font-mono">Outdoor Kit</span>
+                          <span className="font-mono text-[9px] font-black text-emerald-400">Plank & Iron Stake included</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        {[
+                          { title: "Plank Soak", desc: "Soak the cedar wood board in pure subalpine water for 60m before flame expose." },
+                          { title: "Prep salmon", desc: "Squeeze wildberries, mountain honey, coarse salt, and chopped wild mint over meat." },
+                          { title: "Anchor & tilt", desc: "Stake plank 70° adjacent to open logs; cook with indirect radiant heat." }
+                        ].map((s, idx) => (
+                          <div key={idx} className="bg-slate-950/40 border border-slate-850 p-3 rounded-xl">
+                            <span className="font-mono text-[9px] font-extrabold text-emerald-400 uppercase block">
+                              Step {idx + 1}
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-200 block mt-1 leading-snug">{s.title}</span>
+                            <p className="text-[9px] text-slate-450 mt-1 leading-normal">{s.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="bg-amber-500/5 border border-amber-500/10 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-sm shrink-0">🔥</span>
+                        <div className="text-[10px] text-slate-400 leading-normal">
+                          <strong className="text-amber-400 block font-sans">Wild Fireplace Embers Guidance:</strong>
+                          Never place cedar planks over active burning yellow flames. Always wait for the subalpine cedar firewood to burn down to red-hot glowing charcoal beds to avoid scorching.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeRecipeIndex === 1 && (
+                    <div className="space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <h4 className="text-sm font-extrabold text-white">
+                            Dutch Oven Bannock Bread
+                          </h4>
+                          <span className="text-[9px] text-slate-400 block mt-0.5">
+                            Cast-iron baking over smoldering embers. Crispy, golden, and packed with wild mountain blueberry infusions.
+                          </span>
+                        </div>
+                        <div className="bg-amber-500/15 border border-amber-500/20 px-2 py-1 rounded text-right shrink-0">
+                          <span className="block text-[8px] font-bold text-slate-400 uppercase font-mono">Flame Heat</span>
+                          <span className="font-mono text-[9px] font-black text-amber-400">400°F Charcoal Embers equivalent</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        {[
+                          { title: "Grease Cast-iron", desc: "Smear local dairy butter or lard heavily inside the 6-Qt Lodge Dutch Oven." },
+                          { title: "Mix Bannock", desc: "Stir flour, mountain spring water, salt, wild mountain blue-berries, and honey." },
+                          { title: "Ash Bake", desc: "Seal lid. Set directly onto a thin bed of coals; place 5-6 coals on top of lid." }
+                        ].map((s, idx) => (
+                          <div key={idx} className="bg-slate-950/40 border border-slate-850 p-3 rounded-xl">
+                            <span className="font-mono text-[9px] font-extrabold text-amber-400 uppercase block">
+                              Step {idx + 1}
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-200 block mt-1 leading-snug">{s.title}</span>
+                            <p className="text-[9px] text-slate-450 mt-1 leading-normal">{s.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="bg-emerald-500/5 border border-emerald-500/10 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-sm shrink-0">🥖</span>
+                        <div className="text-[10px] text-slate-400 leading-normal">
+                          <strong className="text-emerald-400 block font-sans">Epicurean Serving suggestion:</strong>
+                          Serve piping hot directly from the cast iron. Smear with the custom subalpine cedar-infused farm butter (recipe detailed in your kitchen cookbook).
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeRecipeIndex === 2 && (
+                    <div className="space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <h4 className="text-sm font-extrabold text-white">
+                            Wildberry S&apos;mores Flambé
+                          </h4>
+                          <span className="text-[9px] text-slate-400 block mt-0.5">
+                            Campfire luxury. Wood-fired marshmallows paired with hand-crafted dark cedar-infused chocolate slabs and organic Graham crackers.
+                          </span>
+                        </div>
+                        <div className="bg-indigo-500/15 border border-indigo-500/20 px-2 py-1 rounded text-right shrink-0">
+                          <span className="block text-[8px] font-bold text-slate-400 uppercase font-mono">Kit Status</span>
+                          <span className="font-mono text-[9px] font-black text-indigo-400">
+                            {reservation.gastronomyUpgrades?.smoresKit ? "Pre-ordered & waiting in cabin" : "Add-on option during stay"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        {[
+                          { title: "Prep the Skewer", desc: "Select a clean green cedar stick. Never use spruce; cedar avoids off-flavors." },
+                          { title: "Slow Roast", desc: "Hold marshmallow 6 inches above coals. Rotate until outer layers caramelize." },
+                          { title: "Press & Assemble", desc: "Squish hot mallow between 72% dark cedar chocolate slabs and organic graham crackers." }
+                        ].map((s, idx) => (
+                          <div key={idx} className="bg-slate-950/40 border border-slate-850 p-3 rounded-xl">
+                            <span className="font-mono text-[9px] font-extrabold text-indigo-400 uppercase block">
+                              Step {idx + 1}
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-200 block mt-1 leading-snug">{s.title}</span>
+                            <p className="text-[9px] text-slate-450 mt-1 leading-normal">{s.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="bg-indigo-500/5 border border-indigo-500/10 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-sm shrink-0">🍫</span>
+                        <div className="text-[10px] text-slate-400 leading-normal">
+                          <strong className="text-indigo-400 block font-sans">Artisanal Flavor Profile:</strong>
+                          Our chocolate utilizes direct-trade cocoa roasted locally with cedar wood fires, introducing rich smokiness paired perfectly with mountain berries.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeGastroTab === "herb-id" && (
+              <div className="space-y-4 text-left font-sans">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-800">
+                  <div>
+                    <h4 className="text-sm font-extrabold text-white">
+                      🌿 Foraged Herb Identifier (Satellite Gemini Link)
+                    </h4>
+                    <p className="text-[10px] text-slate-400">
+                      Verify if wild subalpine herbs growing on the lodge garden property are safe for campfire dressings.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 font-sans">
+                    <span className="text-[10px] text-slate-400 font-mono">Select Herb to Scan:</span>
+                    <select
+                      value={selectedHerb}
+                      onChange={(e) => {
+                        setSelectedHerb(e.target.value);
+                        setIdentifiedHerbResult(null);
+                      }}
+                      className="rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs font-mono text-white outline-none"
+                    >
+                      <option value="Wild Forest Mint">Wild Forest Mint (Organic Mint)</option>
+                      <option value="Broadleaf Plantain">Broadleaf Plantain (Safe Salad Green)</option>
+                      <option value="Spotted Bergamot">Spotted Bergamot (Citrus Tea Herb)</option>
+                      <option value="Mountain Dandelion">Mountain Dandelion (Root Seasoning)</option>
+                      <option value="Western Water Hemlock">Western Water Hemlock (DANGEROUS PLANT)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start font-sans">
+                  {/* Photo-Capture Scanner simulation */}
+                  <div className="lg:col-span-5 bg-slate-950/60 border border-slate-850 p-4.5 rounded-2xl flex flex-col justify-between h-[230px]">
+                    <div className="relative border-2 border-dashed border-slate-800 rounded-xl flex-grow flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-950">
+                      {/* Interactive scanner grid lines */}
+                      {identifyingHerb && (
+                        <motion.div
+                          animate={{ y: [-50, 150, -50] }}
+                          transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
+                          className="absolute left-0 right-0 h-0.5 bg-emerald-500 z-10 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+                        />
+                      )}
+
+                      <span className="text-3xl filter saturate-75">
+                        {selectedHerb.includes("Mint") ? "🌿" : selectedHerb.includes("Plantain") ? "🍃" : selectedHerb.includes("Bergamot") ? "🌸" : selectedHerb.includes("Dandelion") ? "🌼" : "💀"}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-300 mt-2">{selectedHerb}</span>
+                      <span className="text-[8px] font-mono text-slate-500 mt-0.5">Satellite Image Mock Captured</span>
+                    </div>
+
+                    <button
+                      onClick={async () => {
+                        setIdentifyingHerb(true);
+                        setIdentifiedHerbResult(null);
+                        try {
+                          const res = await fetch("/api/identify-herb", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ imageName: selectedHerb })
+                          });
+                          const data = await res.json();
+                          setIdentifiedHerbResult(data);
+                        } catch (err) {
+                          console.error("Failed to analyze herb", err);
+                        } finally {
+                          setIdentifyingHerb(false);
+                        }
+                      }}
+                      disabled={identifyingHerb}
+                      className="w-full mt-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 py-2 text-xs font-bold text-white shadow-md disabled:bg-slate-800 disabled:text-slate-500 transition font-mono uppercase tracking-widest flex items-center justify-center gap-1.5"
+                    >
+                      {identifyingHerb ? (
+                        <>
+                          <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                          <span>Satellite Link Analyzing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>📷 Trigger Satellite Herb Scan</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Identification Outcome card */}
+                  <div className="lg:col-span-7 font-sans">
+                    {identifiedHerbResult ? (
+                      <div className="bg-slate-950/35 border border-slate-800 rounded-2xl p-5 space-y-3.5">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="text-[8px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block">
+                              Gemini Satellite Outcome
+                            </span>
+                            <h4 className="font-sans text-sm font-extrabold text-white">
+                              {identifiedHerbResult.commonName}
+                            </h4>
+                            <span className="font-mono text-[9px] text-slate-450 italic mt-0.5 block">
+                              {identifiedHerbResult.botanicalName}
+                            </span>
+                          </div>
+
+                          <span className={`text-[10px] font-black uppercase font-mono px-3 py-1 rounded-full border ${
+                            identifiedHerbResult.safe === "Yes"
+                              ? "bg-emerald-950/60 text-emerald-400 border-emerald-500/30"
+                              : identifiedHerbResult.safe === "Caution"
+                              ? "bg-amber-950/60 text-amber-400 border-amber-500/30"
+                              : "bg-rose-950/60 text-rose-400 border-rose-500/30 animate-pulse"
+                          }`}>
+                            🥗 SAFE: {identifiedHerbResult.safe}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[10px] pt-1">
+                          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-850">
+                            <span className="font-mono text-[8px] font-extrabold text-slate-400 uppercase font-mono">Flavor Profile</span>
+                            <p className="text-slate-350 mt-1 font-medium leading-relaxed">{identifiedHerbResult.flavorProfile}</p>
+                          </div>
+                          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-850">
+                            <span className="font-mono text-[8px] font-extrabold text-slate-400 uppercase font-mono">Culinary Seasoning</span>
+                            <p className="text-slate-350 mt-1 font-medium leading-relaxed">{identifiedHerbResult.culinaryUses}</p>
+                          </div>
+                        </div>
+
+                        <div className="bg-emerald-950/20 border border-emerald-900/30 p-3.5 rounded-xl text-[10px]">
+                          <strong className="text-emerald-400 block font-mono text-[9px] uppercase tracking-wider mb-0.5">
+                            💡 Campfire Seasoning Tip
+                          </strong>
+                          <p className="text-slate-300 leading-normal">{identifiedHerbResult.quickRecipe}</p>
+                        </div>
+
+                        {identifiedHerbResult.safe !== "Yes" && (
+                          <div className="bg-rose-950/40 border border-rose-900/40 p-3 rounded-xl text-[9px] text-rose-400 font-medium">
+                            ⚠️ {identifiedHerbResult.safetyWarning}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="h-[230px] border border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center p-6 text-center text-slate-500 bg-slate-950/10">
+                        <span className="text-2xl mb-2">🔭</span>
+                        <h4 className="text-xs font-bold text-slate-400">Waiting for Satellite Scan Trigger</h4>
+                        <p className="text-[10px] text-slate-500 max-w-xs mt-1">
+                          Select one of our catalogued botanical herbs on the left and click the trigger scan action to communicate with our remote analyzer.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeGastroTab === "chef" && (
+              <div className="space-y-4 text-left font-sans">
+                <div className="pb-2 border-b border-slate-800">
+                  <h4 className="text-sm font-extrabold text-white">
+                    👨‍🍳 Local Private Chef experiences
+                  </h4>
+                  <p className="text-[10px] text-slate-400">
+                    Hire verified subalpine cooks who specialize in wood-fire game cooking and organic foraged vegetation menus.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    {
+                      name: "Chef Austin Vance",
+                      specialty: "Smoked Venison & Cedar Meatballs",
+                      bio: "Over 12 years smoking regional elk and trout over live open coals. Sourced strictly from MeadowView fields.",
+                      price: "$110 / guest",
+                      rating: 4.9,
+                      image: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=150&auto=format&fit=crop&q=60"
+                    },
+                    {
+                      name: "Chef Clara Thorne",
+                      specialty: "Foraged Chanterelle Risotto & Herbs",
+                      bio: "Local organic botanist. Specializes in building subalpine menus centered around fresh-foraged mushrooms and garden greens.",
+                      price: "$95 / guest",
+                      rating: 5.0,
+                      image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=150&auto=format&fit=crop&q=60"
+                    },
+                    {
+                      name: "Chef Liam Cross",
+                      specialty: "Sourdough Fire-baked Breads & Char",
+                      bio: "Baker and fish-roaster. Focuses on artisanal hearth-bread structures paired with direct-caught subalpine river trout.",
+                      price: "$85 / guest",
+                      rating: 4.8,
+                      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=60"
+                    }
+                  ].map((chef, i) => (
+                    <div key={i} className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl flex flex-col justify-between text-left">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={chef.image}
+                            alt={chef.name}
+                            className="h-10 w-10 rounded-full object-cover border border-slate-850 shadow-sm shrink-0"
+                          />
+                          <div>
+                            <span className="text-[11px] font-black text-white block leading-none">{chef.name}</span>
+                            <span className="text-[8px] font-mono text-emerald-400 font-extrabold mt-1 block">★ {chef.rating} • {chef.price}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="block text-[9px] font-bold text-slate-200 leading-tight">🔥 Specialty: {chef.specialty}</span>
+                          <p className="text-[9px] text-slate-455 leading-relaxed font-sans">{chef.bio}</p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          alert(`Request submitted to ${chef.name}! They will reach out inside the stay chat thread within 2 hours to calibrate custom wild game recipes.`);
+                        }}
+                        className="w-full mt-4 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-200 py-1.5 text-[9px] font-bold uppercase tracking-wider font-mono transition"
+                      >
+                        Request Chef Session
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeGastroTab === "water" && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 text-left items-center font-sans">
+                <div className="lg:col-span-5 space-y-4">
+                  <div>
+                    <h4 className="text-sm font-extrabold text-white">
+                      🚰 Safe Drinking Water Certification
+                    </h4>
+                    <span className="text-[9px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block mt-0.5">
+                      Verified Laboratory Analysis Report
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-450 leading-relaxed font-sans">
+                    This cabin is equipped with high-performance subalpine water systems drawing directly from glacier snowmelt aquifers. The water is filtered via dual-phase carbon filters and certified 100% pure drinking water.
+                  </p>
+
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-3 rounded-2xl flex items-center gap-3">
+                    <span className="text-xl">🔬</span>
+                    <div className="text-[10px]">
+                      <strong className="text-white block font-sans">EPA-APPROVED LABORATORY STATUS</strong>
+                      <span className="text-emerald-400 font-mono text-[9px] font-bold uppercase block mt-0.5">
+                        🟢 CERTIFIED CLEAN • RATING: 100% PURE
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lab data certificate */}
+                <div className="lg:col-span-7 bg-slate-950/60 border border-slate-800 p-5 rounded-3xl relative overflow-hidden font-sans">
+                  <div className="absolute top-0 right-0 p-3 bg-emerald-500/10 text-emerald-400 font-mono text-[8px] font-bold border-l border-b border-slate-800 rounded-bl-xl uppercase">
+                    Lab Ref #SL-9843
+                  </div>
+
+                  <span className="text-[9px] font-mono text-slate-450 uppercase tracking-widest block font-extrabold mb-3">
+                    Water Chemistry Breakdown
+                  </span>
+
+                  <div className="grid grid-cols-2 gap-3.5 text-xs">
+                    {[
+                      { label: "pH Acidic Level", val: "7.2 (Perfect Neutral)", spec: "Target: 6.5 - 8.5" },
+                      { label: "Lead / Heavy Metal", val: "ND (Not Detected)", spec: "EPA limit: < 15 ppb" },
+                      { label: "Turbidity (Clarity)", val: "0.01 NTU (Glacial)", spec: "EPA limit: < 1.0 NTU" },
+                      { label: "Mineral Quality", val: "Rich Silica & Magnesium", spec: "Natural aquifer minerals" },
+                      { label: "Pathogen Scan", val: "0.00% Coliform Free", spec: "Target: 0.00%" },
+                      { label: "Water Temperature", val: "42°F at Source Tap", spec: "Chilled aquifer source" }
+                    ].map((metric, i) => (
+                      <div key={i} className="bg-slate-900/60 border border-slate-850 p-2.5 rounded-xl">
+                        <span className="block text-[8px] font-bold text-slate-450 uppercase leading-none">{metric.label}</span>
+                        <span className="font-mono text-[10px] font-extrabold text-white mt-1 block leading-snug">{metric.val}</span>
+                        <span className="text-[7px] text-slate-505 font-mono block mt-0.5 leading-none">{metric.spec}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-[8px] text-slate-500 italic mt-4 text-center font-mono animate-pulse">
+                    Analysis compiled by Subalpine Regional Water Authority • Last verified check: July 2026
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeGastroTab === "market" && (
+              <div className="space-y-4 text-left font-sans">
+                <div className="pb-2 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-extrabold text-white">
+                      🗓️ Regional Farmer&apos;s Market Guide
+                    </h4>
+                    <p className="text-[10px] text-slate-400 font-sans">
+                      Explore subalpine farmer assemblies, fresh game vendors, and local honeycomb collectives near the valley.
+                    </p>
+                  </div>
+                  <span className="bg-emerald-500/10 text-emerald-400 font-mono text-[8px] font-extrabold uppercase px-2.5 py-1 rounded-full border border-emerald-500/20 shrink-0">
+                    Friday Assembly Weekly
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl flex flex-col justify-between text-left">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-white">Friday Subalpine Valley Market</span>
+                        <span className="text-[8px] font-mono bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-bold uppercase">
+                          Active Weekly
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-mono text-slate-450 block mt-1">📍 14.5 km from Lodge • Friday 8:00 AM - 1:00 PM</span>
+                      <p className="text-[9px] text-slate-400 mt-2 leading-relaxed font-sans">
+                        The valley&apos;s main organic agricultural exchange. Highlights fresh honeycombs, wild-foraged cedar needles, and subalpine root vegetables.
+                      </p>
+
+                      <div className="border-t border-slate-850 my-3 pt-2.5">
+                        <span className="text-[8px] font-mono text-slate-450 font-extrabold uppercase block mb-1">Featured Vendors:</span>
+                        <div className="space-y-1.5 text-[9px] text-slate-350 font-sans">
+                          <div>🍯 <strong>MeadowView Apiaries:</strong> Raw wildflower honey combs & whipped propolis.</div>
+                          <div>🥩 <strong>Summit Smokes:</strong> Hand-cured subalpine venison links & smoked bacon.</div>
+                          <div>🧀 <strong>Alder Goats:</strong> Aged rosemary goat cheeses & fresh cultured butter.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl flex flex-col justify-between text-left">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-white">Subalpine Artisan Craft Guild</span>
+                        <span className="text-[8px] font-mono bg-indigo-500/15 text-indigo-400 px-1.5 py-0.5 rounded font-bold uppercase">
+                          Saturdays
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-mono text-slate-450 block mt-1">📍 16.0 km from Lodge • Saturday 9:00 AM - 4:00 PM</span>
+                      <p className="text-[9px] text-slate-400 mt-2 leading-relaxed font-sans">
+                        A gathering of wilderness woodcrafters and local ceramic potters. Great for sourcing handmade subalpine tableware, bowls, and mountain kitchen knives.
+                      </p>
+
+                      <div className="border-t border-slate-850 my-3 pt-2.5 font-sans">
+                        <span className="text-[8px] font-mono text-slate-450 font-extrabold uppercase block mb-1 font-sans">Featured Artisans:</span>
+                        <div className="space-y-1.5 text-[9px] text-slate-355 font-sans">
+                          <div>🥣 <strong>Valley Clay Works:</strong> Hand-thrown subalpine stoneware bowls used in your cabin.</div>
+                          <div>🪓 <strong>Cedar Woodcrafters:</strong> Alder-wood campfire spoons and hand-carved cedar platters.</div>
+                          <div>🔪 <strong>Mountain Steel:</strong> Custom carbon kitchen cutlery crafted from local iron sand.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeGastroTab === "inventory" && (
+              <div className="space-y-4 text-left font-sans">
+                <div className="pb-2 border-b border-slate-800">
+                  <h4 className="text-sm font-extrabold text-white font-sans">
+                    🍳 Outdoor Kitchen Equipment Inventory
+                  </h4>
+                  <p className="text-[10px] text-slate-400 font-sans">
+                    Verify heavy cast iron and fire-grates available at your fire-pit and outdoor cooking spaces.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {[
+                    { name: "Lodge Cast-Iron Skillet (12\")", size: "Heavy Gauge", desc: "Perfect for morning bacon & wood-fired bannock baking.", status: "Verified Clean" },
+                    { name: "Subalpine Dutch Oven (6 Qt)", size: "Lid-Coals compatible", desc: "Allows indirect ash-baking of bread, thick stews & braises.", status: "Verified Clean" },
+                    { name: "Titanium Fire-Pit Grate", size: "High Temp Forged", desc: "Sits firmly over red alder coals; adjustable height levels.", status: "Verified Secure" },
+                    { name: "Wilderness Carving Spoons", size: "Hand-carved Alder", desc: "Tableware spoons crafted by local Valley Clay Works artisans.", status: "Sourced & Waxed" }
+                  ].map((inv, i) => (
+                    <div key={i} className="bg-slate-950/40 border border-slate-850 p-3.5 rounded-xl text-left flex flex-col justify-between">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-extrabold text-slate-450 uppercase font-mono tracking-widest">{inv.size}</span>
+                        <h5 className="text-xs font-bold text-white mt-0.5">{inv.name}</h5>
+                        <p className="text-[9px] text-slate-450 leading-relaxed mt-1 font-sans">{inv.desc}</p>
+                      </div>
+                      <div className="mt-3.5 flex items-center justify-between border-t border-slate-850 pt-2 font-mono text-[8px]">
+                        <span className="text-emerald-400 font-extrabold">🟢 {inv.status}</span>
+                        <span className="text-slate-550">Cabin Gear</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ======================================================== */}
+        {/* END OF BATCH 9 */}
+        {/* ======================================================== */}
 
       </div>
 

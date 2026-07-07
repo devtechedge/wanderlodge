@@ -124,6 +124,12 @@ export interface Reservation {
     largePrintGames: boolean;
     walkerRamp: boolean;
   };
+  gastronomyUpgrades?: {
+    pantryOrganicEggs: boolean;
+    pantryOrganicMilk: boolean;
+    pantryFreshProduce: boolean;
+    smoresKit: boolean;
+  };
   coTravelers?: CoTraveler[];
   groupExpenses?: GroupExpense[];
   isDayRetreat?: boolean;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { StoreProvider } from "@/lib/store";
+import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning className="bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
         <StoreProvider>
           {children}
+          <AccessibilityToolbar />
         </StoreProvider>
       </body>
     </html>

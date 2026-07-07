@@ -3,7 +3,7 @@
 import { useState, useEffect, use, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronLeft, Star, Heart, Share, ShieldCheck, HelpCircle, Utensils, Wifi, Sparkles, MapPin, Calendar, Users, Send, Check, AlertCircle, RefreshCw, Leaf, Zap } from "lucide-react";
+import { ChevronLeft, Star, Heart, Share, ShieldCheck, HelpCircle, Utensils, Wifi, Sparkles, MapPin, Calendar, Users, Send, Check, AlertCircle, RefreshCw, Eye, Baby, Compass, Activity, Volume2 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,12 +20,6 @@ interface PropertyDetails {
   images: string[];
   amenities: string[];
   maxGuests: number;
-  ecoScore?: number;
-  carbonFootprint?: number;
-  ecoAmenities?: string[];
-  hasEVCharging?: boolean;
-  chargingType?: string;
-  ecoPledged?: boolean;
 }
 
 interface Review {
@@ -59,13 +53,6 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [submittingBooking, setSubmittingBooking] = useState(false);
   const [simulatedCardNumber, setSimulatedCardNumber] = useState("");
 
-  // Eco-Conscious Travel States
-  const [optInOffset, setOptInOffset] = useState(false);
-  const [signedPledge, setSignedPledge] = useState(false);
-  const [pledgeInitial, setPledgeInitial] = useState("");
-  const [pledgeListAgreed, setPledgeListAgreed] = useState<string[]>([]);
-  const [ecoTab, setEcoTab] = useState<"transit" | "sourcing" | "code">("transit");
-
   // Review submission states
   const [reviewComment, setReviewComment] = useState("");
   const [cleanRating, setCleanRating] = useState(5);
@@ -74,6 +61,13 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [valRating, setValRating] = useState(5);
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState("");
+
+  // Universal Comfort & Intergenerational states
+  const [activeAccTab, setActiveAccTab] = useState<"physical" | "sensory">("physical");
+  const [orthoMats, setOrthoMats] = useState(false);
+  const [medicalKit, setMedicalKit] = useState(false);
+  const [largePrintGames, setLargePrintGames] = useState(false);
+  const [walkerRamp, setWalkerRamp] = useState(false);
 
   const fetchPropertyDetails = useCallback(async () => {
     setLoading(true);
@@ -113,8 +107,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const nights = getNightsCount();
   const nightlySubtotal = property ? property.price * nights : 0;
   const serviceFee = parseFloat((nightlySubtotal * 0.10).toFixed(2));
-  const ecoOffsetFee = optInOffset ? parseFloat((2.50 * nights).toFixed(2)) : 0;
-  const totalPrice = parseFloat((nightlySubtotal + serviceFee + ecoOffsetFee).toFixed(2));
+  const totalPrice = nightlySubtotal + serviceFee;
 
   const handleCreateReservation = async () => {
     if (!currentUser) {
@@ -362,158 +355,191 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
               </p>
             </div>
 
-            {/* Lodge Eco-Efficiency Profile Card & Local Guide */}
+            {/* Universal Comfort & Accessibility Profile Section */}
             <div className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 space-y-6">
-              <div>
-                <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
-                  ENVIRONMENTAL VERIFICATION
-                </span>
-                <h3 className="font-sans text-base font-bold text-slate-900 dark:text-white mt-1.5">
-                  Eco-Efficiency & Low-Impact Profile
-                </h3>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                  Audited sustainable infrastructure metrics for {property.title}
-                </p>
-              </div>
-
-              {/* Eco metrics layout */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Score & Carbon Box */}
-                <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 flex flex-col justify-between">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="block text-[10px] font-bold text-slate-400 uppercase">Eco-Score Index</span>
-                      <span className="text-3xl font-extrabold text-slate-800 dark:text-white leading-none mt-1.5 block">
-                        {property.ecoScore || 80}/100
-                      </span>
-                    </div>
-                    <div className="h-11 w-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-extrabold text-xs">
-                      {property.ecoScore && property.ecoScore >= 90 ? "A+" : "B"}
-                    </div>
-                  </div>
-
-                  {/* Rating progress bar */}
-                  <div className="mt-4">
-                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-emerald-500 h-full rounded-full transition-all duration-500" 
-                        style={{ width: `${property.ecoScore || 80}%` }}
-                      />
-                    </div>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-1.5">
-                      Top <span className="font-bold text-emerald-600 dark:text-emerald-400">10% of regional properties</span> in water/energy efficiency
-                    </span>
-                  </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-sans text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span>Universal Comfort & Accessibility Profile</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    EliteProvider certified physical and cognitive support specs.
+                  </p>
                 </div>
-
-                {/* Carbon Footprint details */}
-                <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800">
-                  <span className="block text-[10px] font-bold text-slate-400 uppercase">Carbon Footprint Estimate</span>
-                  <div className="flex items-baseline gap-1 mt-1.5">
-                    <span className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                      {property.carbonFootprint || 5.0} kg
-                    </span>
-                    <span className="text-xs text-slate-400">CO2e / night</span>
-                  </div>
-
-                  {/* Benchmark Comparison */}
-                  <div className="mt-4 space-y-1.5">
-                    <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-slate-500">Typical Hotel Room Benchmark</span>
-                      <span className="font-bold text-red-500">21.4 kg / night</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-slate-500">WanderLodge Average</span>
-                      <span className="font-bold text-slate-700 dark:text-slate-300">4.5 kg / night</span>
-                    </div>
-                    <div className="w-full bg-emerald-50 dark:bg-emerald-950/20 p-2 rounded-xl text-[10px] text-emerald-800 dark:text-emerald-400 border border-emerald-100/40 mt-2 font-medium">
-                      🍃 Preserves approx. <span className="font-extrabold">16.9 kg of carbon emissions</span> per night of stay compared to legacy hotel suites.
-                    </div>
-                  </div>
+                <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 self-start">
+                  <button
+                    onClick={() => setActiveAccTab("physical")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                      activeAccTab === "physical"
+                        ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
+                    }`}
+                  >
+                    Physical Access
+                  </button>
+                  <button
+                    onClick={() => setActiveAccTab("sensory")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                      activeAccTab === "sensory"
+                        ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
+                    }`}
+                  >
+                    Sensory & Safety
+                  </button>
                 </div>
               </div>
 
-              {/* Eco Amenities Badges */}
-              <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-150 dark:border-slate-800 rounded-2xl p-4">
-                <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-2.5">
-                  Active Eco-Utilities Installed
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {(property.ecoAmenities || ["LED Energy Star bulbs", "Greywater recycling", "Local recycling depot access"]).map((ecoAmenity) => (
-                    <span
-                      key={ecoAmenity}
-                      className="inline-flex items-center gap-1 bg-emerald-50/80 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm"
-                    >
-                      <Leaf className="h-3 w-3 shrink-0" />
-                      <span>{ecoAmenity}</span>
-                    </span>
-                  ))}
-                  {property.hasEVCharging && (
-                    <span className="inline-flex items-center gap-1 bg-blue-50/80 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 border border-blue-100 dark:border-blue-900/30 px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">
-                      <Zap className="h-3 w-3 shrink-0 text-blue-500" />
-                      <span>EV Charger: {property.chargingType || "Level 2 Charger"}</span>
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Interactive Local Low-Impact Guide Tabs */}
-              <div className="border border-slate-150 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900">
-                
-                {/* Tabs Selector row */}
-                <div className="flex border-b border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/40 p-1">
-                  {(["transit", "sourcing", "code"] as const).map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setEcoTab(tab)}
-                      className={`flex-1 py-2 text-center text-xs font-bold rounded-lg transition ${
-                        ecoTab === tab
-                          ? "bg-white dark:bg-slate-850 text-emerald-800 dark:text-emerald-400 shadow-sm"
-                          : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
-                      }`}
-                    >
-                      {tab === "transit" ? "🚌 Zero-Emission Transit" : tab === "sourcing" ? "🍏 Organic Sourcing" : "🌲 Low-Impact Living"}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Tab Content Panels */}
-                <div className="p-5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
-                  {ecoTab === "transit" && (
-                    <div className="space-y-2">
-                      <p className="font-semibold text-slate-800 dark:text-white text-xs">Getting around without emissions:</p>
-                      <ul className="list-disc pl-4 space-y-1.5 text-slate-500 dark:text-slate-400">
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">WanderShuttle Line C:</span> Stops 0.4 miles from the lodge entrance every hour, connecting straight to main hiking trailheads and the central ranger depot.</li>
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">Mountain Cruiser E-Bikes:</span> Dual electric fat-tire bikes are parked in the gear closet on-site, fully charged and free to use.</li>
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">EV Charging Network:</span> {property.hasEVCharging ? `Listing features an on-site ${property.chargingType || "Level 2"} charger.` : "Closest high-efficiency public DC fast charger is exactly 4.2 miles away at Pinecrest Coop."}</li>
-                      </ul>
+              <AnimatePresence mode="wait">
+                {activeAccTab === "physical" ? (
+                  <motion.div
+                    key="physical"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
+                    {/* Entryway */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          🚪
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Step-Free Entryway & Hallways</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        A continuous, gently sloped ramp connects the primary driveway directly to the main timber deck. Low interior thresholds (under 0.25 inches) ensure safe walker or wheelchair glide.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-slate-400">
+                        Door Width: 36&quot; clear opening
+                      </div>
                     </div>
-                  )}
 
-                  {ecoTab === "sourcing" && (
-                    <div className="space-y-2">
-                      <p className="font-semibold text-slate-800 dark:text-white text-xs">Support the local bio-network:</p>
-                      <ul className="list-disc pl-4 space-y-1.5 text-slate-500 dark:text-slate-400">
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">Pinecrest Farmers Cooperative:</span> Open Wed-Sat, 8am-2pm. Sells 100% pesticide-free, dry-farmed heirloom apples, local honey, and grass-fed dairy products.</li>
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">Wildwood Herb Garden:</span> Located directly behind the provider cabin. Guests are explicitly invited to harvest seasonal organic rosemary, sage, and mint for cooking.</li>
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">No-Single-Use Packaging:</span> Eco toiletries (biodegradable organic bodywash, bar shampoos) are provided on tap in custom glass bottles.</li>
-                      </ul>
+                    {/* Bath */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          🚿
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Comfort Bath Configuration</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Equipped with a 17-inch comfort-height commode. Features a curbless roll-in tile shower with non-slip floor treatment and support handles.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-slate-400">
+                        Optional grab bars available on demand
+                      </div>
                     </div>
-                  )}
 
-                  {ecoTab === "code" && (
-                    <div className="space-y-2">
-                      <p className="font-semibold text-slate-800 dark:text-white text-xs">Low-impact wilderness checklist:</p>
-                      <ul className="list-disc pl-4 space-y-1.5 text-slate-500 dark:text-slate-400">
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">Geothermal/Solar Heating:</span> Thermostat is linked to off-grid solar storage. We kindly request keeping target ranges between 68°F and 72°F to preserve load weights.</li>
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">Composting guidelines:</span> Please place all raw veggie and fruit scraps inside the dual-chamber spinning compost drum on the western deck.</li>
-                        <li><span className="font-bold text-slate-700 dark:text-slate-350">Greywater recycling:</span> Shower runoff feeds local cedar planters. Only use the organic, greywater-safe castile soaps provided.</li>
-                      </ul>
+                    {/* Bed */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          🛏️
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Ground Floor Master Suite</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        The primary bedroom is situated on the ground level, eliminating the need to navigate the cedar stairs. Offers 3.5 feet of wide perimeter space on both sides of the orthocare mattress.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-slate-400">
+                        Bed Clearance: 42 inches wide
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
+
+                    {/* Traction */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          👣
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Textured Traction Flooring</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Features matte-finished wire-brushed oak floorings and textured slate tiling in high-risk zones. Completely avoids loose-threaded carpets or heavy throw rugs to protect against tripping.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-slate-400">
+                        Trip-free design certified
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="sensory"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
+                    {/* Sound proof */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          🔊
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Premium Acoustic Soundproofing</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Insulated with high-density mineral wool sound boards. Minimizes wind roar and exterior noise, providing a calming sensory environment for light sleepers or neurodivergent children.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-slate-400">
+                        10-decibel average noise dampening
+                      </div>
+                    </div>
+
+                    {/* Lighting */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          💡
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Anti-Glare Calibrated Lighting</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Recessed warm white light fixtures with high color rendering (CRI 90+) and fully dimmable controls. Smooth visual adaptation prevents strain for aging eyes and helps regulate circadian rhythms.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-slate-400">
+                        Warm 2700K ambient lumens
+                      </div>
+                    </div>
+
+                    {/* Medical */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          🩺
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Immediate Medical Safeguards</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        For complete peace of mind, our cabin has immediate emergency routes clearly mapped. A standard clinical first-aid kit is mounted under the main kitchen console.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-emerald-600 dark:text-emerald-400">
+                        Sunset Medical Center: 3.2 miles away
+                      </div>
+                    </div>
+
+                    {/* Childproof */}
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                          🧸
+                        </div>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Childproof & Toddler Safe</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        Cabinet doors are equipped with optional toggle latches. Furnishings feature rounded wooden corners, and all high power outlets are sealed with safety inserts.
+                      </p>
+                      <div className="inline-block rounded-md bg-slate-50 border border-slate-100 dark:bg-slate-950 dark:border-slate-850 px-2 py-0.5 text-[9px] font-mono text-slate-400">
+                        Hearth guard & outlet plugs included
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Amenities Section */}
@@ -769,8 +795,68 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
                   </div>
 
+                  {/* Complimentary Intergenerational Support Equipment */}
+                  <div className="rounded-2xl border border-slate-150 p-3 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-950/40 space-y-2">
+                    <span className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      👵 Child & Senior Comfort Setup
+                    </span>
+                    <p className="text-[9px] text-slate-400 dark:text-slate-500 leading-tight">
+                      Inspected by EliteProvider. Toggle complimentary medical or physical safety layouts for your party:
+                    </p>
+                    <div className="space-y-1.5 pt-1">
+                      <label className="flex items-start gap-2 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={orthoMats}
+                          onChange={(e) => setOrthoMats(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">Non-Slip Bath Mats & Shower Chair</span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">Increases bathroom traction for seniors</span>
+                        </div>
+                      </label>
+                      <label className="flex items-start gap-2 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={medicalKit}
+                          onChange={(e) => setMedicalKit(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">Pulse Oximeter & Pediatric Kit</span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">Clinical-grade diagnostic tools in-lodge</span>
+                        </div>
+                      </label>
+                      <label className="flex items-start gap-2 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={largePrintGames}
+                          onChange={(e) => setLargePrintGames(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">Large-Print Card Games & Puzzles</span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">Keeps grandparents & kids connected</span>
+                        </div>
+                      </label>
+                      <label className="flex items-start gap-2 cursor-pointer select-none text-left">
+                        <input
+                          type="checkbox"
+                          checked={walkerRamp}
+                          onChange={(e) => setWalkerRamp(e.target.checked)}
+                          className="h-3.5 w-3.5 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                        />
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">Portable Walkway Threshold Ramp</span>
+                          <span className="block text-[8px] text-slate-450 dark:text-slate-500 leading-none">Eases walker/wheel entry over deck lips</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
                   {nights > 0 && (
-                    <div className="space-y-3 border-t border-dashed border-slate-100 pt-4 dark:border-slate-800/80">
+                    <div className="space-y-2 border-t border-dashed border-slate-100 pt-4 dark:border-slate-800/80">
                       <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
                         <span>${property.price} x {nights} nights</span>
                         <span className="font-semibold">${nightlySubtotal}</span>
@@ -784,48 +870,16 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                         </span>
                         <span className="font-semibold">${serviceFee}</span>
                       </div>
-                      
-                      {/* Dynamic Eco Offset Line Item */}
-                      {optInOffset && (
-                        <div className="flex justify-between text-xs text-emerald-600 dark:text-emerald-400 font-bold">
+
+                      {(orthoMats || medicalKit || largePrintGames || walkerRamp) && (
+                        <div className="flex justify-between text-xs text-emerald-600 font-bold dark:text-emerald-400">
                           <span className="flex items-center gap-1">
-                            🌱 Eco-Carbon Offset ($2.50/nt)
+                            <ShieldCheck className="h-3.5 w-3.5" />
+                            <span>Comfort Gear Configured</span>
                           </span>
-                          <span>+${ecoOffsetFee}</span>
+                          <span>FREE</span>
                         </div>
                       )}
-
-                      {/* Carbon Offset Opt-In toggle box */}
-                      <div className="p-3.5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100/40 space-y-2 mt-2">
-                        <label className="flex items-start gap-2.5 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            id="carbon-neutral-checkbox"
-                            checked={optInOffset}
-                            onChange={(e) => setOptInOffset(e.target.checked)}
-                            className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
-                          />
-                          <div>
-                            <span className="block text-xs font-bold text-slate-800 dark:text-emerald-400">Pledge Carbon-Neutral</span>
-                            <span className="block text-[9px] text-slate-500 leading-tight mt-0.5">
-                              Offset this stay&apos;s carbon weight ({parseFloat(((property.carbonFootprint || 5.0) * nights).toFixed(1))} kg CO2e) via regional forestry seeding.
-                            </span>
-                          </div>
-                        </label>
-                        
-                        {optInOffset && (
-                          <div className="pt-2 border-t border-emerald-100/30">
-                            {/* Mini Certificate preview card */}
-                            <div className="bg-white dark:bg-slate-900 border border-emerald-100 dark:border-emerald-900/40 p-2 rounded-xl flex items-center gap-2">
-                              <Leaf className="h-4 w-4 text-emerald-500 shrink-0 animate-bounce" />
-                              <div className="text-[9px]">
-                                <span className="font-extrabold text-emerald-800 dark:text-emerald-400 block uppercase">Leave No Trace Verified</span>
-                                <span className="text-slate-400 block mt-0.5">Neutralizes {parseFloat(((property.carbonFootprint || 5.0) * nights).toFixed(1))} kg CO2</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
 
                       <div className="flex justify-between border-t border-slate-100 pt-2 text-sm font-bold text-slate-800 dark:border-slate-800 dark:text-slate-200">
                         <span>Grand Total</span>
@@ -858,95 +912,25 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </li>
                   </ul>
 
-                  {/* Interactive Leave No Trace Wilderness Pledge Checklist */}
-                  <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-3">
-                    <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      🌲 Leave No Trace Wilderness Pledge
-                    </span>
-                    <p className="text-[10px] text-slate-500 leading-tight">
-                      WanderLodge complies with local preservation boards. Please check each principle and initial below to proceed:
-                    </p>
-
-                    <div className="space-y-2.5 mt-2">
-                      <label className="flex items-start gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={pledgeListAgreed.includes("lnt1")}
-                          onChange={() => {
-                            setPledgeListAgreed(prev => 
-                              prev.includes("lnt1") ? prev.filter(x => x !== "lnt1") : [...prev, "lnt1"]
-                            );
-                          }}
-                          className="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
-                        />
-                        <span className="text-[10px] text-slate-600 dark:text-slate-400 leading-tight">
-                          I pledge to <span className="font-bold">pack out all refuse</span> and raw plastic packaging, leaving zero trash behind.
-                        </span>
-                      </label>
-
-                      <label className="flex items-start gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={pledgeListAgreed.includes("lnt2")}
-                          onChange={() => {
-                            setPledgeListAgreed(prev => 
-                              prev.includes("lnt2") ? prev.filter(x => x !== "lnt2") : [...prev, "lnt2"]
-                            );
-                          }}
-                          className="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
-                        />
-                        <span className="text-[10px] text-slate-600 dark:text-slate-400 leading-tight">
-                          I pledge to <span className="font-bold">respect the local wildlife and boundaries</span>, staying on designated trails and kayak lanes.
-                        </span>
-                      </label>
-
-                      <label className="flex items-start gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={pledgeListAgreed.includes("lnt3")}
-                          onChange={() => {
-                            setPledgeListAgreed(prev => 
-                              prev.includes("lnt3") ? prev.filter(x => x !== "lnt3") : [...prev, "lnt3"]
-                            );
-                          }}
-                          className="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
-                        />
-                        <span className="text-[10px] text-slate-600 dark:text-slate-400 leading-tight">
-                          I pledge to <span className="font-bold">conserve power</span> by shutting down heating units and water heaters while outdoor-exploring.
-                        </span>
-                      </label>
+                  {(orthoMats || medicalKit || largePrintGames || walkerRamp) && (
+                    <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-3 dark:border-emerald-950/40 dark:bg-emerald-950/20 text-left">
+                      <span className="block text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider mb-1">
+                        Active Comfort Equipment Requests
+                      </span>
+                      <ul className="text-[10px] text-emerald-700 dark:text-emerald-300 space-y-1">
+                        {orthoMats && <li className="flex items-center gap-1">✓ Non-Slip Bath Mats & Shower Chair</li>}
+                        {medicalKit && <li className="flex items-center gap-1">✓ Pulse Oximeter & Pediatric Kit</li>}
+                        {largePrintGames && <li className="flex items-center gap-1">✓ Large-Print Games & Puzzles</li>}
+                        {walkerRamp && <li className="flex items-center gap-1">✓ Portable Walkway Threshold Ramp</li>}
+                      </ul>
                     </div>
-
-                    {/* Initials Input */}
-                    <div className="mt-3">
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase">
-                        Signature Initials (min 2 letters)
-                      </label>
-                      <input
-                        type="text"
-                        maxLength={4}
-                        placeholder="e.g. JB"
-                        value={pledgeInitial}
-                        onChange={(e) => setPledgeInitial(e.target.value.toUpperCase())}
-                        className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500 font-mono uppercase"
-                      />
-                    </div>
-                  </div>
+                  )}
 
                   <button
-                    onClick={() => {
-                      setSignedPledge(true);
-                      setBookingStep("payment");
-                    }}
-                    disabled={
-                      !pledgeListAgreed.includes("lnt1") ||
-                      !pledgeListAgreed.includes("lnt2") ||
-                      !pledgeListAgreed.includes("lnt3") ||
-                      pledgeInitial.trim().length < 2
-                    }
-                    className="w-full rounded-2xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-40 transition"
+                    onClick={() => setBookingStep("payment")}
+                    className="w-full rounded-2xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700"
                   >
-                    Sign Pledge & Continue
+                    Accept & Continue
                   </button>
                   <button
                     onClick={() => setBookingStep("idle")}
@@ -964,6 +948,13 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     <span className="block text-[10px] font-bold text-slate-400 uppercase">Grand Total to Charge</span>
                     <span className="text-lg font-extrabold text-emerald-600">${totalPrice}</span>
                   </div>
+
+                  {(orthoMats || medicalKit || largePrintGames || walkerRamp) && (
+                    <div className="flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 text-[10px] font-bold">
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      <span>Comfort Protection Active</span>
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
@@ -1007,51 +998,20 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     Your itinerary is generated. An automated welcome chat was opened with your EliteProvider. Check details on the Journeys page.
                   </p>
 
-                  {/* Gorgeous climate offset digital certificate */}
-                  {optInOffset && (
-                    <div className="mt-4 border-2 border-emerald-500/20 bg-gradient-to-br from-emerald-50/50 to-white dark:from-emerald-950/20 dark:to-slate-900 p-4 rounded-2xl text-left shadow-sm border-dashed relative overflow-hidden">
-                      {/* Leaf background icon watermark */}
-                      <Leaf className="absolute -right-4 -bottom-4 h-24 w-24 text-emerald-500/5 rotate-12 pointer-events-none" />
-                      
-                      <div className="flex items-center gap-2 mb-2 pb-2 border-b border-emerald-500/10">
-                        <span className="p-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                          <Leaf className="h-4 w-4" />
-                        </span>
-                        <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-widest">
-                          Climate Pioneer Certificate
-                        </span>
-                      </div>
-
-                      <div className="space-y-1.5 text-[10px] font-sans text-slate-600 dark:text-slate-400">
-                        <p>
-                          <span className="text-slate-400">Guardian Name:</span>{" "}
-                          <span className="font-extrabold text-slate-800 dark:text-slate-200">
-                            {currentUser?.name || "Wilderness Traveler"}
-                          </span>
-                        </p>
-                        <p>
-                          <span className="text-slate-400">Lodge Secured:</span>{" "}
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">
-                            {property.title}
-                          </span>
-                        </p>
-                        <p>
-                          <span className="text-slate-400">LNT Witness Initials:</span>{" "}
-                          <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                            {pledgeInitial || "WLV"}
-                          </span>
-                        </p>
-                        <p className="pt-1 flex justify-between items-baseline border-t border-emerald-500/5 mt-2">
-                          <span className="text-slate-400">Net Carbon Offset:</span>
-                          <span className="text-xs font-extrabold text-emerald-700 dark:text-emerald-400">
-                            {parseFloat(((property.carbonFootprint || 5.0) * nights).toFixed(1))} kg CO2e
-                          </span>
-                        </p>
-                      </div>
-
-                      <div className="mt-3 text-[9px] text-slate-400 text-center font-mono">
-                        ID: WLC-847291 • VERIFIED PLANTING
-                      </div>
+                  {(orthoMats || medicalKit || largePrintGames || walkerRamp) && (
+                    <div className="rounded-xl border border-dashed border-emerald-200 bg-emerald-50/30 p-3 dark:border-emerald-950/20 text-left mt-2">
+                      <span className="block text-[10px] font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                        📦 Dispatching Comfort Gear Pack:
+                      </span>
+                      <ul className="text-[10px] text-slate-500 dark:text-slate-400 space-y-1 font-medium">
+                        {orthoMats && <li>• Non-Slip Bath Mats & Shower Chair</li>}
+                        {medicalKit && <li>• Pulse Oximeter & Pediatric Kit</li>}
+                        {largePrintGames && <li>• Large-Print Games & Puzzles</li>}
+                        {walkerRamp && <li>• Portable Walkway Threshold Ramp</li>}
+                      </ul>
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-1.5 leading-tight">
+                        Our EliteProvider is pre-installing this layout before your arrival at the lodge.
+                      </p>
                     </div>
                   )}
 

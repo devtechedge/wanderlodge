@@ -8,6 +8,7 @@ import { useStore } from "@/lib/store";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DatePicker from "@/components/DatePicker";
+import { SensoryProfile } from "@/lib/db";
 
 interface PropertyDetails {
   id: string;
@@ -20,6 +21,7 @@ interface PropertyDetails {
   images: string[];
   amenities: string[];
   maxGuests: number;
+  sensory?: SensoryProfile;
 }
 
 interface Review {
@@ -519,6 +521,214 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                 {property.description}
               </p>
             </div>
+
+            {/* Sensory Atmosphere & Technical Specifications (Batch 5) */}
+            {property.sensory && (
+              <div id="sensory-specs-panel" className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 space-y-6">
+                <div>
+                  <h3 className="font-sans text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-2 uppercase tracking-wider">
+                    <Volume2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                    <span>Sensory Atmosphere & Technical Specifications</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                    Detailed physical soundscapes, chemical-free scent profiles, and pet/workstation structural dimensions.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Decibel & Acoustics */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🔊</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Decibel Atmosphere & Acoustics</span>
+                      </div>
+                      <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-mono">
+                        Acoustics Match
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                      Characterized as <span className="font-semibold text-slate-700 dark:text-slate-300">&ldquo;{property.sensory.decibelAtmosphere}&rdquo;</span>. Natural soundscape features premium subalpine acoustics, minimizing high-frequency disturbances.
+                    </p>
+                  </div>
+
+                  {/* Astrophotography */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">✨</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Astrophotography Conditions</span>
+                      </div>
+                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 font-mono">
+                        Bortle Score: {property.sensory.astrophotographyScore}/10
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
+                      Unmatched dark sky visibility. Highly isolated from regional light pollution, with pristine clean air patterns, perfect for stargazers, photography, or deep nocturnal contemplation.
+                    </p>
+                  </div>
+
+                  {/* Fully Enclosed Yard */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🐕</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Fenced Yard (Pet Safety Specs)</span>
+                      </div>
+                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 font-mono">
+                        {property.sensory.enclosedYard.exists ? "Fully Enclosed" : "Not Enclosed"}
+                      </span>
+                    </div>
+                    {property.sensory.enclosedYard.exists ? (
+                      <div className="space-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                        <p className="leading-relaxed">
+                          Secure containment for active breeds with complete perimeter enforcement.
+                        </p>
+                        <div className="flex flex-wrap gap-2 text-[9px] font-mono">
+                          <span className="bg-slate-100 dark:bg-slate-850 px-1.5 py-0.5 rounded text-slate-500">Fence Height: {property.sensory.enclosedYard.fenceHeight}</span>
+                          <span className="bg-slate-100 dark:bg-slate-850 px-1.5 py-0.5 rounded text-slate-500">Material: {property.sensory.enclosedYard.fenceMaterial}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-slate-400">No enclosed yard. Wild natural elements envelope the surrounding fields.</p>
+                    )}
+                  </div>
+
+                  {/* Ergonomic Workstation */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">💻</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Ergonomic Remote Workstation</span>
+                      </div>
+                      <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[9px] font-bold text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 font-mono">
+                        {property.sensory.ergonomicWorkstation.exists ? "Verified Office" : "Basic WiFi"}
+                      </span>
+                    </div>
+                    {property.sensory.ergonomicWorkstation.exists ? (
+                      <div className="space-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                        <p className="leading-relaxed">
+                          Designed with posture correction and verified low-latency connection speeds.
+                        </p>
+                        <div className="grid grid-cols-2 gap-1 text-[9px] font-mono bg-slate-50 dark:bg-slate-950 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                          <div>⚡ Upload: {property.sensory.ergonomicWorkstation.uploadSpeedMbps} Mbps</div>
+                          <div>📏 Desk: {property.sensory.ergonomicWorkstation.deskHeight}</div>
+                          <div className="col-span-2 mt-0.5 truncate">💺 Chair: {property.sensory.ergonomicWorkstation.chairType}</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-slate-400">No dedicated office station setup, standard table layout provided.</p>
+                    )}
+                  </div>
+
+                  {/* Stove & Firewood Tracker */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🔥</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Stove & Firewood Availability</span>
+                      </div>
+                      <span className="rounded-full bg-orange-50 px-2 py-0.5 text-[9px] font-bold text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 font-mono">
+                        {property.sensory.stoveFirewoodTracker.hasStove ? "Woodstove Warmth" : "Central Heat"}
+                      </span>
+                    </div>
+                    {property.sensory.stoveFirewoodTracker.hasStove ? (
+                      <div className="space-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                        <p className="leading-relaxed font-sans">
+                          A beautiful wood-burning stove is featured. Dried, cured firewood is fully supplied.
+                        </p>
+                        <div className="flex flex-wrap gap-2 text-[9px] font-mono">
+                          <span className="bg-slate-100 dark:bg-slate-850 px-1.5 py-0.5 rounded text-slate-500">Firewood Provided: {property.sensory.stoveFirewoodTracker.firewoodProvided ? "Yes" : "No"}</span>
+                          <span className="bg-slate-100 dark:bg-slate-850 px-1.5 py-0.5 rounded text-slate-500">Ignition: {property.sensory.stoveFirewoodTracker.lightingDifficulty}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-slate-400">Equipped with low-carbon centralized subalpine heat pump.</p>
+                    )}
+                  </div>
+
+                  {/* Solitude Index */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🌲</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Solitude Index</span>
+                      </div>
+                      <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[9px] font-bold text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 font-mono">
+                        Index: {property.sensory.solitudeIndex}/10
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
+                      This lodge is situated {property.sensory.solitudeIndex >= 8 ? "highly isolated, providing deep seclusion and zero shared visual borders with neighbors." : "in a quiet, private area bordered by subalpine pines and clean mountain ridges."}
+                    </p>
+                  </div>
+
+                  {/* Scent Profile */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🌿</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Organic Scent Profile</span>
+                      </div>
+                      <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-mono">
+                        Scent Free
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                      Lodge atmosphere emits <span className="font-semibold text-slate-700 dark:text-slate-300">&ldquo;{property.sensory.naturalScentProfile}&rdquo;</span>. Strictly no volatile organic chemicals, artificial fragrances, or strong chemical residues are used.
+                    </p>
+                  </div>
+
+                  {/* Pool & Hot Tub Mechanics */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">💧</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Water Mechanics & Sanitation</span>
+                      </div>
+                      <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 font-mono">
+                        {property.sensory.poolHotTubMechanics.type}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
+                      Sanitated utilizing organic <span className="font-semibold text-slate-700 dark:text-slate-300">{property.sensory.poolHotTubMechanics.details}</span> mechanics. Ensures zero strong chlorine odors, completely eye-safe and sensitive-skin friendly.
+                    </p>
+                  </div>
+
+                  {/* Waterfront Edge Safety */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🛶</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Waterfront Access Safety</span>
+                      </div>
+                      <span className="rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-bold text-slate-700 dark:bg-slate-900/40 font-mono">
+                        {property.sensory.waterfrontSafety.steepness}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                      Water access point features a <span className="font-semibold text-slate-700 dark:text-slate-300">{property.sensory.waterfrontSafety.steepness}</span> grade. Notice: <span className="italic text-slate-450 font-medium">{property.sensory.waterfrontSafety.safetyRating}</span>.
+                    </p>
+                  </div>
+
+                  {/* Seasonal Access */}
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">❄️</span>
+                        <span className="text-xs font-extrabold text-slate-800 dark:text-white">Seasonal Access (Winter)</span>
+                      </div>
+                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 font-mono">
+                        {property.sensory.seasonalAccess.rating}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                      Road access is designated <span className="font-semibold text-slate-700 dark:text-slate-300">{property.sensory.seasonalAccess.rating}</span>, with <span className="font-semibold text-slate-700 dark:text-slate-300">{property.sensory.seasonalAccess.details}</span> winter snow removal schedules.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Universal Comfort & Accessibility Profile Section */}
             <div className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 space-y-6">

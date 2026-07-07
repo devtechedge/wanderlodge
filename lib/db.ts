@@ -22,6 +22,56 @@ export interface User {
   createdAt: string;
 }
 
+export interface EnclosedYardDetails {
+  dimensions: string;
+  fenceHeight: string;
+  fenceMaterial: string;
+  exists: boolean;
+}
+
+export interface ErgonomicWorkstationDetails {
+  deskHeight: string;
+  chairType: string;
+  uploadSpeedMbps: number;
+  exists: boolean;
+}
+
+export interface StoveFirewoodTrackerDetails {
+  hasStove: boolean;
+  firewoodProvided: boolean;
+  lightingDifficulty: "Easy" | "Medium" | "Hard" | "None";
+}
+
+export interface WaterfrontSafetyDetails {
+  steepness: "Flat" | "Gentle Slope" | "Steep Bank" | "None";
+  safetyRating: string;
+}
+
+export interface SeasonalAccessDetails {
+  rating: "Easy (Paved)" | "Moderate (Dirt)" | "Difficult (4WD/Chains Required)";
+  details: string;
+}
+
+export interface PoolHotTubMechanicsDetails {
+  type: "Saline" | "Chlorine" | "Natural Circulating Stream-Water" | "None";
+  details: string;
+}
+
+export interface SensoryProfile {
+  decibelAtmosphere: "Whispering Pines" | "Active River Noise" | "Silent Meadow";
+  decibelLevelDb: number;
+  astrophotographyScore: number; // out of 10
+  astrophotographyDetails: string;
+  enclosedYard: EnclosedYardDetails;
+  ergonomicWorkstation: ErgonomicWorkstationDetails;
+  stoveFirewoodTracker: StoveFirewoodTrackerDetails;
+  solitudeIndex: number; // out of 10
+  waterfrontSafety: WaterfrontSafetyDetails;
+  seasonalAccess: SeasonalAccessDetails;
+  naturalScentProfile: string;
+  poolHotTubMechanics: PoolHotTubMechanicsDetails;
+}
+
 export interface Property {
   id: string;
   title: string;
@@ -35,6 +85,13 @@ export interface Property {
   maxGuests: number;
   providerId: string;
   createdAt: string;
+  sensory?: SensoryProfile;
+  ecoScore?: number;
+  carbonFootprint?: number;
+  ecoAmenities?: string[];
+  hasEVCharging?: boolean;
+  chargingType?: string;
+  ecoPledged?: boolean;
 }
 
 export interface CoTraveler {
@@ -171,6 +228,43 @@ function getInitialDB(): DBStructure {
       maxGuests: 4,
       providerId: "user-1",
       createdAt: new Date("2026-03-01").toISOString(),
+      sensory: {
+        decibelAtmosphere: "Whispering Pines",
+        decibelLevelDb: 22,
+        astrophotographyScore: 9,
+        astrophotographyDetails: "Bortle Class 2 sky. Extremely low local light pollution, 10% average seasonal cloud coverage, crystal clear peak sightlines over the Cascade foothills.",
+        enclosedYard: {
+          dimensions: "45ft x 80ft",
+          fenceHeight: "6.5ft",
+          fenceMaterial: "Solid Western Red Cedar Wood",
+          exists: true,
+        },
+        ergonomicWorkstation: {
+          deskHeight: "28\" - 48\" Motorized Standing",
+          chairType: "Herman Miller Aeron (Size B) with lumber adjustment",
+          uploadSpeedMbps: 150,
+          exists: true,
+        },
+        stoveFirewoodTracker: {
+          hasStove: true,
+          firewoodProvided: true,
+          lightingDifficulty: "Easy",
+        },
+        solitudeIndex: 8,
+        waterfrontSafety: {
+          steepness: "None",
+          safetyRating: "N/A (No immediate waterfront hazard)",
+        },
+        seasonalAccess: {
+          rating: "Moderate (Dirt)",
+          details: "A 0.5-mile well-graded gravel forest road. Safe for all vehicles in summer; AWD/4WD recommended during active winter snowfall.",
+        },
+        naturalScentProfile: "No artificial fragrances or essential oils. Filled with organic pine needle musk and local cedar-wood aroma.",
+        poolHotTubMechanics: {
+          type: "Natural Circulating Stream-Water",
+          details: "The cedar wood hot tub uses a continuous gravity-fed circulating flow from an on-site natural spring, heated by an integrated wood stove without any chlorine.",
+        },
+      },
     },
     {
       id: "prop-2",
@@ -189,6 +283,43 @@ function getInitialDB(): DBStructure {
       maxGuests: 6,
       providerId: "user-1",
       createdAt: new Date("2026-03-15").toISOString(),
+      sensory: {
+        decibelAtmosphere: "Active River Noise",
+        decibelLevelDb: 35,
+        astrophotographyScore: 7,
+        astrophotographyDetails: "Bortle Class 3. Gentle lake reflections can create stellar double exposures. Low light interference from the distant valley.",
+        enclosedYard: {
+          dimensions: "30ft x 50ft",
+          fenceHeight: "5ft",
+          fenceMaterial: "Coated Wire Mesh & Redwood Posts",
+          exists: true,
+        },
+        ergonomicWorkstation: {
+          deskHeight: "29\" Fixed Redwood Board",
+          chairType: "Steelcase Gesture Ergonomic Swivel Chair",
+          uploadSpeedMbps: 250,
+          exists: true,
+        },
+        stoveFirewoodTracker: {
+          hasStove: false,
+          firewoodProvided: false,
+          lightingDifficulty: "None",
+        },
+        solitudeIndex: 6,
+        waterfrontSafety: {
+          steepness: "Gentle Slope",
+          safetyRating: "Shallow sandy beach entry with a child safety latch-gate leading to the wood-plank dock.",
+        },
+        seasonalAccess: {
+          rating: "Easy (Paved)",
+          details: "Fully paved state county highway leads straight to the property driveway. Easy access year-round.",
+        },
+        naturalScentProfile: "No artificial scents. Fresh water moisture, lake breeze, and clean slate stone.",
+        poolHotTubMechanics: {
+          type: "None",
+          details: "No hot tub on site. Excellent direct sandy-shore lake swimming access instead.",
+        },
+      },
     },
     {
       id: "prop-3",
@@ -206,6 +337,43 @@ function getInitialDB(): DBStructure {
       maxGuests: 2,
       providerId: "user-1",
       createdAt: new Date("2026-04-02").toISOString(),
+      sensory: {
+        decibelAtmosphere: "Whispering Pines",
+        decibelLevelDb: 26,
+        astrophotographyScore: 6,
+        astrophotographyDetails: "Bortle Class 3. Framed by tall old-growth Douglas fir canopies. Features skylights directly over the bed for protected celestial viewing.",
+        enclosedYard: {
+          dimensions: "N/A",
+          fenceHeight: "N/A",
+          fenceMaterial: "N/A",
+          exists: false,
+        },
+        ergonomicWorkstation: {
+          deskHeight: "30\" Natural Fir-Slab Console",
+          chairType: "Ergonomic Saddle Balance Stool",
+          uploadSpeedMbps: 85,
+          exists: true,
+        },
+        stoveFirewoodTracker: {
+          hasStove: true,
+          firewoodProvided: true,
+          lightingDifficulty: "Medium",
+        },
+        solitudeIndex: 9,
+        waterfrontSafety: {
+          steepness: "None",
+          safetyRating: "N/A (Situated high up in the woodland forest)",
+        },
+        seasonalAccess: {
+          rating: "Difficult (4WD/Chains Required)",
+          details: "Steep dirt road with sharp switchbacks. High-clearance AWD/4WD required, and snow chains mandatory in active winter storms.",
+        },
+        naturalScentProfile: "No artificial scents. Deep forest pine bark, wet moss, and crisp subalpine ferns.",
+        poolHotTubMechanics: {
+          type: "None",
+          details: "No soaking tub. Includes a magical outdoor open-air hot rainwater canopy shower.",
+        },
+      },
     },
     {
       id: "prop-4",
@@ -223,6 +391,43 @@ function getInitialDB(): DBStructure {
       maxGuests: 4,
       providerId: "user-1",
       createdAt: new Date("2026-04-10").toISOString(),
+      sensory: {
+        decibelAtmosphere: "Silent Meadow",
+        decibelLevelDb: 14,
+        astrophotographyScore: 10,
+        astrophotographyDetails: "Bortle Class 1. Extreme high-altitude peak clarity. Zero light pollution, direct view of the Milky Way core. Astro-tripod mounts on deck.",
+        enclosedYard: {
+          dimensions: "50ft x 100ft",
+          fenceHeight: "6ft",
+          fenceMaterial: "Black Powder-Coated Steel & Concrete Base",
+          exists: true,
+        },
+        ergonomicWorkstation: {
+          deskHeight: "28\" - 48\" Motorized Dual-Motor Standing Desk",
+          chairType: "Herman Miller Embody Ergonomic Task Chair",
+          uploadSpeedMbps: 300,
+          exists: true,
+        },
+        stoveFirewoodTracker: {
+          hasStove: true,
+          firewoodProvided: true,
+          lightingDifficulty: "Easy",
+        },
+        solitudeIndex: 10,
+        waterfrontSafety: {
+          steepness: "None",
+          safetyRating: "N/A (High dry alpine meadow)",
+        },
+        seasonalAccess: {
+          rating: "Difficult (4WD/Chains Required)",
+          details: "Steep gravel switchbacks. 4WD with high-clearance tires highly recommended; snow plowing is active daily in winter.",
+        },
+        naturalScentProfile: "Absolutely scent-free, hypoallergenic air system. Zero artificial fragrances or cabin musk.",
+        poolHotTubMechanics: {
+          type: "Saline",
+          details: "The indoor sunken modern soaking plunge uses a natural salt saline system instead of commercial chemical chlorine.",
+        },
+      },
     },
     {
       id: "prop-5",
@@ -240,6 +445,43 @@ function getInitialDB(): DBStructure {
       maxGuests: 2,
       providerId: "user-1",
       createdAt: new Date("2026-04-18").toISOString(),
+      sensory: {
+        decibelAtmosphere: "Active River Noise",
+        decibelLevelDb: 28,
+        astrophotographyScore: 8,
+        astrophotographyDetails: "Bortle Class 2. Wide-open 360-degree lake horizons. Perfect for long exposures of star-trails over the mountain outline.",
+        enclosedYard: {
+          dimensions: "N/A",
+          fenceHeight: "N/A",
+          fenceMaterial: "N/A",
+          exists: false,
+        },
+        ergonomicWorkstation: {
+          deskHeight: "29\" Vintage Mahogany Roll-Top Desk",
+          chairType: "Ergonomic leather swivel armchair",
+          uploadSpeedMbps: 120,
+          exists: true,
+        },
+        stoveFirewoodTracker: {
+          hasStove: false,
+          firewoodProvided: false,
+          lightingDifficulty: "None",
+        },
+        solitudeIndex: 5,
+        waterfrontSafety: {
+          steepness: "Steep Bank",
+          safetyRating: "Direct deep water diving depth from the edge of the wrap deck. Safety swim vests and rescue ring mounted on-site.",
+        },
+        seasonalAccess: {
+          rating: "Easy (Paved)",
+          details: "Paved lake access road with clear paths. Flat, sedan-accessible parking area directly at the shoreline.",
+        },
+        naturalScentProfile: "Zero artificial fragrances. Moist lake air and historic rain-seasoned cedar wood logs.",
+        poolHotTubMechanics: {
+          type: "None",
+          details: "No on-site tub. Immediate direct deep lake immersion directly off the deck steps.",
+        },
+      },
     }
   ];
 

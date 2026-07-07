@@ -36,10 +36,81 @@ function SearchContent() {
   const queryMax = searchParams.get("maxPrice") || "600";
   const queryAmenities = searchParams.get("amenities") || "";
 
+  // Sensory Filters Params
+  const queryDecibel = searchParams.get("decibelAtmosphere") || "";
+  const queryMinAstro = searchParams.get("minAstroScore") || "0";
+  const queryYardRequired = searchParams.get("enclosedYardRequired") || "false";
+  const queryMinFenceHeight = searchParams.get("minFenceHeight") || "";
+  const queryWorkstationRequired = searchParams.get("ergonomicWorkstationRequired") || "false";
+  const queryMinUploadSpeed = searchParams.get("minUploadSpeed") || "";
+  const queryStoveRequired = searchParams.get("stoveRequired") || "false";
+  const queryMinSolitude = searchParams.get("minSolitudeIndex") || "0";
+  const queryWaterfrontSafety = searchParams.get("waterfrontSafetySteepness") || "";
+  const querySeasonalAccess = searchParams.get("maxSeasonalAccessDifficulty") || "";
+  const queryFragranceFree = searchParams.get("fragranceFreeRequired") || "false";
+  const queryPoolMechanics = searchParams.get("poolMechanicsType") || "";
+
   // Local sync inputs
   const [locInput, setLocInput] = useState(queryLocation);
   const [guestCount, setGuestCount] = useState(parseInt(queryGuests, 10));
   const [dates, setDates] = useState({ start: queryStart, end: queryEnd });
+
+  // Sensory Toggle & Local States
+  const [showSensoryPanel, setShowSensoryPanel] = useState(false);
+  const [decibelFilter, setDecibelFilter] = useState<string[]>(queryDecibel ? queryDecibel.split(",") : []);
+  const [minAstroScore, setMinAstroScore] = useState<number>(parseInt(queryMinAstro, 10) || 0);
+  const [yardRequired, setYardRequired] = useState<boolean>(queryYardRequired === "true");
+  const [minFenceHeight, setMinFenceHeight] = useState<string>(queryMinFenceHeight);
+  const [workstationRequired, setWorkstationRequired] = useState<boolean>(queryWorkstationRequired === "true");
+  const [minUploadSpeed, setMinUploadSpeed] = useState<string>(queryMinUploadSpeed);
+  const [stoveRequired, setStoveRequired] = useState<boolean>(queryStoveRequired === "true");
+  const [minSolitude, setMinSolitude] = useState<number>(parseInt(queryMinSolitude, 10) || 0);
+  const [waterfrontSafety, setWaterfrontSafety] = useState<string[]>(queryWaterfrontSafety ? queryWaterfrontSafety.split(",") : []);
+  const [seasonalAccess, setSeasonalAccess] = useState<string[]>(querySeasonalAccess ? querySeasonalAccess.split(",") : []);
+  const [fragranceFree, setFragranceFree] = useState<boolean>(queryFragranceFree === "true");
+  const [poolMechanics, setPoolMechanics] = useState<string[]>(queryPoolMechanics ? queryPoolMechanics.split(",") : []);
+
+  const hasActiveSensoryFilters = () => {
+    return (
+      decibelFilter.length > 0 ||
+      minAstroScore > 0 ||
+      yardRequired ||
+      minFenceHeight !== "" ||
+      workstationRequired ||
+      minUploadSpeed !== "" ||
+      stoveRequired ||
+      minSolitude > 0 ||
+      waterfrontSafety.length > 0 ||
+      seasonalAccess.length > 0 ||
+      fragranceFree ||
+      poolMechanics.length > 0
+    );
+  };
+
+  const handleClearSensoryFilters = () => {
+    setDecibelFilter([]);
+    setMinAstroScore(0);
+    setYardRequired(false);
+    setMinFenceHeight("");
+    setWorkstationRequired(false);
+    setMinUploadSpeed("");
+    setStoveRequired(false);
+    setMinSolitude(0);
+    setWaterfrontSafety([]);
+    setSeasonalAccess([]);
+    setFragranceFree(false);
+    setPoolMechanics([]);
+
+    const params = new URLSearchParams();
+    if (locInput) params.set("location", locInput);
+    if (guestCount > 1) params.set("guests", String(guestCount));
+    if (dates.start) params.set("startDate", dates.start);
+    if (dates.end) params.set("endDate", dates.end);
+    if (queryMin !== "0") params.set("minPrice", queryMin);
+    if (queryMax !== "600") params.set("maxPrice", queryMax);
+    if (queryAmenities) params.set("amenities", queryAmenities);
+    router.push(`/search?${params.toString()}`);
+  };
 
   const fetchFilteredProperties = useCallback(async () => {
     setLoading(true);
@@ -73,6 +144,20 @@ function SearchContent() {
     if (queryMin !== "0") params.set("minPrice", queryMin);
     if (queryMax !== "600") params.set("maxPrice", queryMax);
     if (queryAmenities) params.set("amenities", queryAmenities);
+
+    // Advanced Sensory Filters
+    if (decibelFilter.length > 0) params.set("decibelAtmosphere", decibelFilter.join(","));
+    if (minAstroScore > 0) params.set("minAstroScore", String(minAstroScore));
+    if (yardRequired) params.set("enclosedYardRequired", "true");
+    if (minFenceHeight) params.set("minFenceHeight", minFenceHeight);
+    if (workstationRequired) params.set("ergonomicWorkstationRequired", "true");
+    if (minUploadSpeed) params.set("minUploadSpeed", minUploadSpeed);
+    if (stoveRequired) params.set("stoveRequired", "true");
+    if (minSolitude > 0) params.set("minSolitudeIndex", String(minSolitude));
+    if (waterfrontSafety.length > 0) params.set("waterfrontSafetySteepness", waterfrontSafety.join(","));
+    if (seasonalAccess.length > 0) params.set("maxSeasonalAccessDifficulty", seasonalAccess.join(","));
+    if (fragranceFree) params.set("fragranceFreeRequired", "true");
+    if (poolMechanics.length > 0) params.set("poolMechanicsType", poolMechanics.join(","));
 
     router.push(`/search?${params.toString()}`);
   };
@@ -190,6 +275,19 @@ function SearchContent() {
               </div>
 
               <button
+                onClick={() => setShowSensoryPanel(!showSensoryPanel)}
+                className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition shrink-0 ${
+                  showSensoryPanel || hasActiveSensoryFilters()
+                    ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
+                    : "border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300"
+                }`}
+                title="Sensory & Advanced Filters"
+              >
+                <SlidersHorizontal className="h-4.5 w-4.5" />
+                <span className="hidden sm:inline">Sensory</span>
+              </button>
+
+              <button
                 onClick={handleUpdateSearch}
                 className="rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 transition shrink-0 dark:bg-emerald-500"
               >
@@ -199,6 +297,332 @@ function SearchContent() {
           </div>
         </div>
       </section>
+
+      {/* Advanced Sensory Filters Expandable Panel (Batch 5) */}
+      <AnimatePresence>
+        {showSensoryPanel && (
+          <motion.section
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="border-b border-slate-200 bg-white shadow-md dark:border-slate-800 dark:bg-slate-900 z-10 shrink-0 overflow-y-auto max-h-[60vh]"
+          >
+            <div className="mx-auto max-w-7xl p-5 md:p-6 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+                <div>
+                  <h3 className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-2 uppercase tracking-wider">
+                    <SlidersHorizontal className="h-4 w-4 text-emerald-600" />
+                    <span>Sensory Atmosphere & Technical Support Specs</span>
+                  </h3>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                    Locate lodges aligned with absolute silence levels, dark night skyscapes, and professional pet / remote workstation specs.
+                  </p>
+                </div>
+                {hasActiveSensoryFilters() && (
+                  <button
+                    onClick={handleClearSensoryFilters}
+                    className="text-[9px] font-bold text-red-600 hover:text-red-700 uppercase tracking-wider bg-red-50 dark:bg-red-950/20 px-2.5 py-1.5 rounded-lg transition"
+                  >
+                    Reset Sensory Filters
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Column 1: Acoustics, Skies, Solitude */}
+                <div className="space-y-4">
+                  {/* Decibel Atmosphere Rating */}
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
+                      Decibel Atmosphere Rating
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {["Whispering Pines", "Active River Noise", "Silent Meadow"].map((val) => {
+                        const isChecked = decibelFilter.includes(val);
+                        return (
+                          <button
+                            key={val}
+                            onClick={() => {
+                              if (isChecked) {
+                                setDecibelFilter(decibelFilter.filter((v) => v !== val));
+                              } else {
+                                setDecibelFilter([...decibelFilter, val]);
+                              }
+                            }}
+                            className={`px-2 py-1 rounded-md text-[10px] font-semibold border transition ${
+                              isChecked
+                                ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                            }`}
+                          >
+                            {val === "Whispering Pines" ? "🌲 Whispering Pines (~22dB)" : val === "Active River Noise" ? "🌊 Active River (~30dB)" : "🔇 Silent Meadow (<15dB)"}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Solitude Index */}
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
+                      Solitude Index (Nearest Neighbor: {minSolitude ? `${minSolitude}+ Score` : "Any"})
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      value={minSolitude}
+                      onChange={(e) => setMinSolitude(parseInt(e.target.value, 10))}
+                      className="w-full accent-emerald-600 dark:accent-emerald-400 bg-slate-100 dark:bg-slate-800 rounded-lg h-1.5 cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[8px] text-slate-400 font-mono mt-1">
+                      <span>Shared Estate</span>
+                      <span>Secluded (0.5mi)</span>
+                      <span>Absolute Privacy</span>
+                    </div>
+                  </div>
+
+                  {/* Astrophotography Conditions Score */}
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
+                      Astrophotography Score (Min Rating: {minAstroScore ? `${minAstroScore}+` : "Any"})
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      value={minAstroScore}
+                      onChange={(e) => setMinAstroScore(parseInt(e.target.value, 10))}
+                      className="w-full accent-emerald-600 dark:accent-emerald-400 bg-slate-100 dark:bg-slate-800 rounded-lg h-1.5 cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[8px] text-slate-400 font-mono mt-1">
+                      <span>Any Sky</span>
+                      <span>6+ (Clean)</span>
+                      <span>10 (Bortle Class 1)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column 2: Pet Safety (Yard) & Remote Workstation */}
+                <div className="space-y-4">
+                  {/* Pet-Friendly Enclosed Yard */}
+                  <div className="rounded-xl border border-slate-150 p-3 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                        🐕 Fully Enclosed Yard
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={yardRequired}
+                        onChange={(e) => setYardRequired(e.target.checked)}
+                        className="rounded border-slate-300 text-emerald-600 accent-emerald-600 cursor-pointer h-4 w-4"
+                      />
+                    </div>
+                    {yardRequired && (
+                      <div className="space-y-2 pt-1 animate-fadeIn">
+                        <label className="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                          Minimum Fence Height Required
+                        </label>
+                        <select
+                          value={minFenceHeight}
+                          onChange={(e) => setMinFenceHeight(e.target.value)}
+                          className="w-full rounded-lg border border-slate-200 bg-white p-1.5 text-xs text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+                        >
+                          <option value="">Any Height</option>
+                          <option value="5">5.0+ Feet</option>
+                          <option value="6">6.0+ Feet</option>
+                          <option value="6.5">6.5+ Feet</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Remote Workstation Support */}
+                  <div className="rounded-xl border border-slate-150 p-3 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                        💻 Ergonomic Workstation
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={workstationRequired}
+                        onChange={(e) => setWorkstationRequired(e.target.checked)}
+                        className="rounded border-slate-300 text-emerald-600 accent-emerald-600 cursor-pointer h-4 w-4"
+                      />
+                    </div>
+                    {workstationRequired && (
+                      <div className="space-y-2 pt-1 animate-fadeIn">
+                        <label className="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                          Verified Internet Upload Speed
+                        </label>
+                        <select
+                          value={minUploadSpeed}
+                          onChange={(e) => setMinUploadSpeed(e.target.value)}
+                          className="w-full rounded-lg border border-slate-200 bg-white p-1.5 text-xs text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+                        >
+                          <option value="">Any Speed</option>
+                          <option value="100">100+ Mbps (High Upload)</option>
+                          <option value="150">150+ Mbps (Low Latency Stream)</option>
+                          <option value="250">250+ Mbps (Enterprise Standard)</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Column 3: Heating, Access, Waterfront, Scents, Tubs */}
+                <div className="space-y-4">
+                  {/* Quick-toggle Checklist */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex flex-col justify-between rounded-xl border border-slate-150 p-2 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+                      <span className="text-[9px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        🔥 Stove & Wood
+                      </span>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-[8px] font-medium text-slate-400">Available</span>
+                        <input
+                          type="checkbox"
+                          checked={stoveRequired}
+                          onChange={(e) => setStoveRequired(e.target.checked)}
+                          className="rounded border-slate-300 text-emerald-600 accent-emerald-600 cursor-pointer h-3.5 w-3.5"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col justify-between rounded-xl border border-slate-150 p-2 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+                      <span className="text-[9px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        🌿 Organic scent
+                      </span>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-[8px] font-medium text-slate-400">No Fragrance</span>
+                        <input
+                          type="checkbox"
+                          checked={fragranceFree}
+                          onChange={(e) => setFragranceFree(e.target.checked)}
+                          className="rounded border-slate-300 text-emerald-600 accent-emerald-600 cursor-pointer h-3.5 w-3.5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Waterfront Edge Incline / Safety */}
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
+                      Waterfront Access Slope
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {["Flat", "Gentle Slope", "Steep Bank", "None"].map((val) => {
+                        const isChecked = waterfrontSafety.includes(val);
+                        return (
+                          <button
+                            key={val}
+                            onClick={() => {
+                              if (isChecked) {
+                                setWaterfrontSafety(waterfrontSafety.filter((v) => v !== val));
+                              } else {
+                                setWaterfrontSafety([...waterfrontSafety, val]);
+                              }
+                            }}
+                            className={`px-2 py-1 rounded-md text-[9px] font-semibold border transition ${
+                              isChecked
+                                ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                            }`}
+                          >
+                            {val === "Flat" ? "🏖️ Flat" : val === "Gentle Slope" ? "🛶 Gentle" : val === "Steep Bank" ? "🧗 Cliff" : "🚫 None"}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Hot Tub / Pool Mechanics */}
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
+                      Water Tub Mechanics
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {["Saline", "Natural Circulating Stream-Water", "None"].map((val) => {
+                        const isChecked = poolMechanics.includes(val);
+                        return (
+                          <button
+                            key={val}
+                            onClick={() => {
+                              if (isChecked) {
+                                setPoolMechanics(poolMechanics.filter((v) => v !== val));
+                              } else {
+                                setPoolMechanics([...poolMechanics, val]);
+                              }
+                            }}
+                            className={`px-2 py-1 rounded-md text-[9px] font-semibold border transition ${
+                              isChecked
+                                ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                            }`}
+                          >
+                            {val === "Saline" ? "🧂 Saline" : val === "Natural Circulating Stream-Water" ? "💧 Stream" : "🚫 None"}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Seasonal Access Difficulty */}
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5">
+                      Access Road Difficulty
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {["Easy", "Moderate", "Difficult"].map((val) => {
+                        const isChecked = seasonalAccess.includes(val);
+                        return (
+                          <button
+                            key={val}
+                            onClick={() => {
+                              if (isChecked) {
+                                setSeasonalAccess(seasonalAccess.filter((v) => v !== val));
+                              } else {
+                                setSeasonalAccess([...seasonalAccess, val]);
+                              }
+                            }}
+                            className={`px-2 py-1 rounded-md text-[9px] font-semibold border transition ${
+                              isChecked
+                                ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                            }`}
+                          >
+                            {val === "Easy" ? "🚗 Paved" : val === "Moderate" ? "🚙 Dirt" : "❄️ 4WD/Chains"}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons inside Sensory Panel */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  onClick={() => setShowSensoryPanel(false)}
+                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    handleUpdateSearch();
+                    setShowSensoryPanel(false);
+                  }}
+                  className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-extrabold text-white hover:bg-emerald-700 transition dark:bg-emerald-500 shadow-sm shadow-emerald-500/20"
+                >
+                  Apply Sensory Filters
+                </button>
+              </div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       {/* Main Split-Screen Panel container */}
       <div className="flex-grow flex relative overflow-hidden">
@@ -315,6 +739,26 @@ function SearchContent() {
                         <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">
                           {p.description}
                         </p>
+
+                        {/* Sensory profile highlights */}
+                        {p.sensory && (
+                          <div className="flex flex-wrap gap-1 mt-2.5">
+                            <span className="inline-flex items-center gap-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 text-[8px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-100/30">
+                              🔊 {p.sensory.decibelAtmosphere}
+                            </span>
+                            <span className="inline-flex items-center gap-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/20 px-2 py-0.5 text-[8px] font-bold text-indigo-700 dark:text-indigo-400 border border-indigo-100/30">
+                              ✨ Skies: {p.sensory.astrophotographyScore}/10
+                            </span>
+                            <span className="inline-flex items-center gap-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/20 px-2 py-0.5 text-[8px] font-bold text-teal-700 dark:text-teal-400 border border-teal-100/30 font-medium">
+                              🌲 Solitude: {p.sensory.solitudeIndex}/10
+                            </span>
+                            {p.sensory.enclosedYard.exists && (
+                              <span className="inline-flex items-center gap-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 text-[8px] font-bold text-amber-700 dark:text-amber-400 border border-amber-100/30">
+                                🐕 Fence: {p.sensory.enclosedYard.fenceHeight} ({p.sensory.enclosedYard.fenceMaterial})
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex items-end justify-between mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/60">

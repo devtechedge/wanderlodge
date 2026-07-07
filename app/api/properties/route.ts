@@ -82,6 +82,138 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    // ==========================================
+    // SENSORY AND ADVANCED SEARCH FILTERS (BATCH 5)
+    // ==========================================
+
+    // 1. Filter by Decibel Atmosphere Rating
+    const decibelAtmosphere = searchParams.get("decibelAtmosphere");
+    if (decibelAtmosphere && decibelAtmosphere.trim() !== "") {
+      const allowed = decibelAtmosphere.split(",").map((v) => v.trim().toLowerCase());
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        return allowed.includes(p.sensory.decibelAtmosphere.toLowerCase());
+      });
+    }
+
+    // 2. Filter by Astrophotography Conditions Score
+    const minAstroScore = searchParams.get("minAstroScore");
+    if (minAstroScore) {
+      const scoreNum = parseInt(minAstroScore, 10);
+      if (!isNaN(scoreNum)) {
+        properties = properties.filter((p) => {
+          if (!p.sensory) return false;
+          return p.sensory.astrophotographyScore >= scoreNum;
+        });
+      }
+    }
+
+    // 3. Filter by Fully Enclosed Yard Required
+    const enclosedYardRequired = searchParams.get("enclosedYardRequired");
+    if (enclosedYardRequired === "true") {
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        return p.sensory.enclosedYard.exists === true;
+      });
+    }
+
+    // 3b. Filter by Min Fence Height
+    const minFenceHeightStr = searchParams.get("minFenceHeight");
+    if (minFenceHeightStr) {
+      const minHeight = parseFloat(minFenceHeightStr);
+      if (!isNaN(minHeight)) {
+        properties = properties.filter((p) => {
+          if (!p.sensory || !p.sensory.enclosedYard.exists) return false;
+          const heightVal = parseFloat(p.sensory.enclosedYard.fenceHeight) || 0;
+          return heightVal >= minHeight;
+        });
+      }
+    }
+
+    // 4. Filter by Ergonomic Workstation Required
+    const ergonomicWorkstationRequired = searchParams.get("ergonomicWorkstationRequired");
+    if (ergonomicWorkstationRequired === "true") {
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        return p.sensory.ergonomicWorkstation.exists === true;
+      });
+    }
+
+    // 4b. Filter by Min Internet Upload Speed (Mbps)
+    const minUploadSpeed = searchParams.get("minUploadSpeed");
+    if (minUploadSpeed) {
+      const speedNum = parseInt(minUploadSpeed, 10);
+      if (!isNaN(speedNum)) {
+        properties = properties.filter((p) => {
+          if (!p.sensory || !p.sensory.ergonomicWorkstation.exists) return false;
+          return p.sensory.ergonomicWorkstation.uploadSpeedMbps >= speedNum;
+        });
+      }
+    }
+
+    // 5. Filter by Wood-burning Stove Required
+    const stoveRequired = searchParams.get("stoveRequired");
+    if (stoveRequired === "true") {
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        return p.sensory.stoveFirewoodTracker.hasStove === true;
+      });
+    }
+
+    // 6. Filter by Solitude Index (Isolation Score)
+    const minSolitudeIndex = searchParams.get("minSolitudeIndex");
+    if (minSolitudeIndex) {
+      const solitudeNum = parseInt(minSolitudeIndex, 10);
+      if (!isNaN(solitudeNum)) {
+        properties = properties.filter((p) => {
+          if (!p.sensory) return false;
+          return p.sensory.solitudeIndex >= solitudeNum;
+        });
+      }
+    }
+
+    // 7. Filter by Waterfront Edge Safety Level (Steepness)
+    const waterfrontSafetySteepness = searchParams.get("waterfrontSafetySteepness");
+    if (waterfrontSafetySteepness && waterfrontSafetySteepness.trim() !== "") {
+      const allowed = waterfrontSafetySteepness.split(",").map((v) => v.trim().toLowerCase());
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        return allowed.includes(p.sensory.waterfrontSafety.steepness.toLowerCase());
+      });
+    }
+
+    // 8. Filter by Seasonal Access Difficulty Rating
+    const maxSeasonalAccessDifficulty = searchParams.get("maxSeasonalAccessDifficulty");
+    if (maxSeasonalAccessDifficulty && maxSeasonalAccessDifficulty.trim() !== "") {
+      const allowed = maxSeasonalAccessDifficulty.split(",").map((v) => v.trim().toLowerCase());
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        // Check if rating string contains any of the allowed keywords
+        const ratingLower = p.sensory.seasonalAccess.rating.toLowerCase();
+        return allowed.some((allowedVal) => ratingLower.includes(allowedVal));
+      });
+    }
+
+    // 9. Filter by Scent Profile (Artificial Fragrance Free)
+    const fragranceFreeRequired = searchParams.get("fragranceFreeRequired");
+    if (fragranceFreeRequired === "true") {
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        const profileLower = p.sensory.naturalScentProfile.toLowerCase();
+        return profileLower.includes("no artificial") || profileLower.includes("zero artificial");
+      });
+    }
+
+    // 10. Filter by Natural Pool/Hot Tub Mechanics
+    const poolMechanicsType = searchParams.get("poolMechanicsType");
+    if (poolMechanicsType && poolMechanicsType.trim() !== "") {
+      const allowed = poolMechanicsType.split(",").map((v) => v.trim().toLowerCase());
+      properties = properties.filter((p) => {
+        if (!p.sensory) return false;
+        return allowed.includes(p.sensory.poolHotTubMechanics.type.toLowerCase());
+      });
+    }
+
     return NextResponse.json({ properties });
   } catch (error) {
     console.error("Properties GET error", error);

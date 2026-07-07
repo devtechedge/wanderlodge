@@ -7,6 +7,7 @@ import { Compass, Calendar, MapPin, Send, HelpCircle, MessageSquare, ShieldCheck
 import { useStore } from "@/lib/store";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import GroupCoordinationHub from "@/components/GroupCoordinationHub";
 
 interface CoTraveler {
   name: string;
@@ -59,7 +60,7 @@ export default function TripsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeResId, setActiveResId] = useState<string | null>(null);
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning">("chat");
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"chat" | "planning" | "group">("chat");
 
   // Co-traveler form state
   const [newCoName, setNewCoName] = useState("");
@@ -484,9 +485,23 @@ export default function TripsPage() {
                     <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
                   )}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkspaceTab("group")}
+                  className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative shrink-0 ${
+                    activeWorkspaceTab === "group"
+                      ? "text-emerald-600 dark:text-emerald-400 font-extrabold"
+                      : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  }`}
+                >
+                  ✨ Group Coordination Hub
+                  {activeWorkspaceTab === "group" && (
+                    <motion.div layoutId="workspaceUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 dark:bg-emerald-400" />
+                  )}
+                </button>
               </div>
 
-              {activeWorkspaceTab === "chat" ? (
+              {activeWorkspaceTab === "chat" && (
                 <div className="flex-grow flex flex-col overflow-hidden">
                   {/* Custom Selections Banner */}
                   {(selectedRes.selectedAdventures?.length || selectedRes.comfortEquipment) && (
@@ -589,7 +604,9 @@ export default function TripsPage() {
                     </div>
                   </form>
                 </div>
-              ) : (
+              )}
+
+              {activeWorkspaceTab === "planning" && (
                 <div className="flex-grow overflow-y-auto px-6 py-6 space-y-6 bg-slate-50/50 dark:bg-slate-950/20">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
@@ -877,6 +894,10 @@ export default function TripsPage() {
                     })()}
                   </div>
                 </div>
+              )}
+
+              {activeWorkspaceTab === "group" && (
+                <GroupCoordinationHub reservation={selectedRes} currentUser={currentUser} />
               )}
             </div>
           ) : (

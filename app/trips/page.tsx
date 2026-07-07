@@ -17,6 +17,13 @@ interface Reservation {
   propertyTitle: string;
   propertyImage: string;
   propertyLocation: string;
+  selectedAdventures?: string[];
+  comfortEquipment?: {
+    orthoMats: boolean;
+    medicalKit: boolean;
+    largePrintGames: boolean;
+    walkerRamp: boolean;
+  };
 }
 
 interface Message {
@@ -315,6 +322,38 @@ export default function TripsPage() {
                   <span className="text-sm font-extrabold text-slate-800 dark:text-slate-200">${selectedRes.totalPrice}</span>
                 </div>
               </div>
+
+              {/* Custom Selections Banner */}
+              {(selectedRes.selectedAdventures?.length || selectedRes.comfortEquipment) && (
+                <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 px-6 py-2.5 flex flex-wrap gap-x-3 gap-y-2 text-xs text-slate-600 dark:bg-slate-900/60 dark:border-slate-800/60 shrink-0 z-10">
+                  {selectedRes.selectedAdventures && selectedRes.selectedAdventures.length > 0 && (
+                    <div className="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 rounded-lg px-2.5 py-1">
+                      <Compass className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="font-extrabold text-[9px] text-emerald-800 dark:text-emerald-400 uppercase tracking-wider">Adventures:</span>
+                      <span className="text-[10px] font-medium text-slate-700 dark:text-slate-300">{selectedRes.selectedAdventures.join(", ")}</span>
+                    </div>
+                  )}
+
+                  {selectedRes.comfortEquipment && Object.values(selectedRes.comfortEquipment).some(Boolean) && (
+                    <div className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 rounded-lg px-2.5 py-1">
+                      <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                      <span className="font-extrabold text-[9px] text-blue-800 dark:text-blue-400 uppercase tracking-wider">Comfort Gear:</span>
+                      <span className="text-[10px] font-medium text-slate-700 dark:text-slate-300">
+                        {Object.entries(selectedRes.comfortEquipment)
+                          .filter(([_, active]) => active)
+                          .map(([key]) => {
+                            if (key === "orthoMats") return "Orthopedic Mats";
+                            if (key === "medicalKit") return "Medical Kit";
+                            if (key === "largePrintGames") return "Large-Print Puzzles";
+                            if (key === "walkerRamp") return "Walkway Ramp";
+                            return key;
+                          })
+                          .join(", ")}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Chat Message Stream */}
               <div className="flex-grow overflow-y-auto px-6 py-6 space-y-4 bg-slate-50/50 dark:bg-slate-950/20">

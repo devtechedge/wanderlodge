@@ -69,6 +69,39 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [largePrintGames, setLargePrintGames] = useState(false);
   const [walkerRamp, setWalkerRamp] = useState(false);
 
+  // Local Adventures state
+  const [adventures, setAdventures] = useState<Array<{
+    title: string;
+    type: string;
+    distance: string;
+    description: string;
+    link: string;
+    difficulty?: string;
+  }>>([]);
+  const [loadingAdventures, setLoadingAdventures] = useState(false);
+  const [selectedAdventures, setSelectedAdventures] = useState<string[]>([]);
+  const [adventuresGrounded, setAdventuresGrounded] = useState(false);
+  const [adventuresSource, setAdventuresSource] = useState("");
+  const [verifiedSources, setVerifiedSources] = useState<Array<{ title: string; uri: string }>>([]);
+
+  const fetchLocalAdventures = useCallback(async () => {
+    setLoadingAdventures(true);
+    try {
+      const res = await fetch(`/api/adventures?propertyId=${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setAdventures(data.adventures || []);
+        setAdventuresGrounded(data.grounded || false);
+        setAdventuresSource(data.source || "");
+        setVerifiedSources(data.verifiedSources || []);
+      }
+    } catch (e) {
+      console.error("Failed to fetch local adventures:", e);
+    } finally {
+      setLoadingAdventures(false);
+    }
+  }, [id]);
+
   const fetchPropertyDetails = useCallback(async () => {
     setLoading(true);
     try {
@@ -92,8 +125,9 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     Promise.resolve().then(() => {
       fetchPropertyDetails();
+      fetchLocalAdventures();
     });
-  }, [fetchPropertyDetails]);
+  }, [fetchPropertyDetails, fetchLocalAdventures]);
 
   // Pricing math helper
   const getNightsCount = () => {
@@ -137,6 +171,13 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
           propertyId: id,
           startDate: dates.start,
           endDate: dates.end,
+          selectedAdventures,
+          comfortEquipment: {
+            orthoMats,
+            medicalKit,
+            largePrintGames,
+            walkerRamp,
+          },
         }),
       });
 
@@ -542,6 +583,141 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
               </AnimatePresence>
             </div>
 
+            {/* Seamless Local Adventures Section */}
+            <div className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Compass className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <h3 className="font-sans text-base font-bold text-slate-900 dark:text-white">
+                      Seamless Local Adventures
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Custom-curated local highlights and excursions grounded in real location data.
+                  </p>
+                </div>
+                {adventuresSource && (
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/60 px-3 py-1 text-[10px] font-medium text-emerald-700 dark:text-emerald-400 shrink-0 self-start sm:self-center">
+                    <Sparkles className="h-3 w-3" />
+                    <span>{adventuresSource}</span>
+                  </div>
+                )}
+              </div>
+
+              {loadingAdventures ? (
+                <div className="rounded-2xl border border-slate-150 p-8 text-center bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-3">
+                  <RefreshCw className="h-6 w-6 text-slate-400 dark:text-slate-600 animate-spin mx-auto" />
+                  <p className="text-xs text-slate-400 dark:text-slate-500 font-mono">
+                    Grounding regional adventure intelligence...
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    {adventures.map((adv) => {
+                      const isSelected = selectedAdventures.includes(adv.title);
+                      return (
+                        <div
+                          key={adv.title}
+                          className={`relative rounded-2xl border p-4 transition-all flex flex-col justify-between ${
+                            isSelected
+                              ? "bg-emerald-50/40 border-emerald-500 dark:bg-emerald-950/10 dark:border-emerald-600 shadow-sm"
+                              : "bg-white border-slate-150 hover:border-slate-300 dark:bg-slate-900/40 dark:border-slate-800 dark:hover:border-slate-750"
+                          }`}
+                        >
+                          <div className="space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                                {adv.type}
+                              </span>
+                              {adv.difficulty && (
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                                  adv.difficulty === "Easy" ? "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400" :
+                                  adv.difficulty === "Moderate" ? "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400" :
+                                  "bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400"
+                                }`}>
+                                  {adv.difficulty}
+                                </span>
+                              )}
+                            </div>
+                            <h4 className="text-xs font-bold text-slate-800 dark:text-white leading-snug">
+                              {adv.title}
+                            </h4>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3">
+                              {adv.description}
+                            </p>
+                          </div>
+
+                          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex flex-col gap-2">
+                            <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500">
+                              <span className="font-mono">{adv.distance}</span>
+                              {adv.link && (
+                                <a
+                                  href={adv.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-0.5"
+                                >
+                                  Sources <Eye className="h-3 w-3" />
+                                </a>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => {
+                                if (isSelected) {
+                                  setSelectedAdventures(selectedAdventures.filter(t => t !== adv.title));
+                                } else {
+                                  setSelectedAdventures([...selectedAdventures, adv.title]);
+                                }
+                              }}
+                              className={`w-full py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 ${
+                                isSelected
+                                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                                  : "bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-750 dark:text-slate-300"
+                              }`}
+                            >
+                              {isSelected ? (
+                                <>
+                                  <Check className="h-3 w-3" />
+                                  Added to Itinerary
+                                </>
+                              ) : (
+                                "Add to Itinerary"
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {verifiedSources.length > 0 && (
+                    <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3 dark:border-slate-850 dark:bg-slate-950/20">
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
+                        <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                        <span>Live Grounding Sources Verified by Gemini</span>
+                      </div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                        {verifiedSources.map((source, idx) => (
+                          <a
+                            key={idx}
+                            href={source.uri}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] text-slate-600 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 flex items-center gap-1 hover:underline"
+                          >
+                            <span className="text-slate-400 font-mono">[{idx + 1}]</span>
+                            <span className="truncate max-w-[200px]">{source.title}</span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Amenities Section */}
             <div className="border-t border-slate-200/80 dark:border-slate-800/80 pt-8">
               <h3 className="font-sans text-base font-bold text-slate-900 dark:text-white mb-4">
@@ -926,6 +1102,19 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
                   )}
 
+                  {selectedAdventures.length > 0 && (
+                    <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-3 dark:border-emerald-950/40 dark:bg-emerald-950/20 text-left">
+                      <span className="block text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider mb-1">
+                        Selected Local Adventures
+                      </span>
+                      <ul className="text-[10px] text-emerald-700 dark:text-emerald-300 space-y-1">
+                        {selectedAdventures.map((adv) => (
+                          <li key={adv} className="flex items-center gap-1">🧭 {adv} (Complimentary Support)</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <button
                     onClick={() => setBookingStep("payment")}
                     className="w-full rounded-2xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700"
@@ -1011,6 +1200,22 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                       </ul>
                       <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-1.5 leading-tight">
                         Our EliteProvider is pre-installing this layout before your arrival at the lodge.
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedAdventures.length > 0 && (
+                    <div className="rounded-xl border border-dashed border-emerald-200 bg-emerald-50/30 p-3 dark:border-emerald-950/20 text-left mt-2">
+                      <span className="block text-[10px] font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                        🧭 Registered Local Adventures:
+                      </span>
+                      <ul className="text-[10px] text-slate-500 dark:text-slate-400 space-y-1 font-medium">
+                        {selectedAdventures.map((adv) => (
+                          <li key={adv}>• {adv}</li>
+                        ))}
+                      </ul>
+                      <p className="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono mt-1.5 leading-tight">
+                        Complimentary pass coordinates & mapping instructions sent to your welcome chat thread.
                       </p>
                     </div>
                   )}

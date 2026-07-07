@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { propertyId, startDate, endDate } = body;
+    const { propertyId, startDate, endDate, selectedAdventures, comfortEquipment } = body;
 
     if (!propertyId || !startDate || !endDate) {
       return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
@@ -117,12 +117,30 @@ export async function POST(req: NextRequest) {
       totalPrice: totalPrice,
       status: ReservationStatus.CONFIRMED,
       createdAt: new Date().toISOString(),
+      selectedAdventures: selectedAdventures || [],
+      comfortEquipment: comfortEquipment || undefined,
     };
 
     db.reservations.push(newReservation);
     
     // Add an initial welcome message from the provider automatically to open the chat thread!
-    const welcomeMessageStr = `Welcome, ${user.name}! Thank you for reserving ${property.title}. Your booking is confirmed from ${startDate} to ${endDate}. Let me know if you have any questions or local adventure inquiries before your check-in!`;
+    let welcomeMessageStr = `Welcome, ${user.name}! Thank you for reserving ${property.title}. Your booking is confirmed from ${startDate} to ${endDate}.`;
+
+    if (comfortEquipment && (comfortEquipment.orthoMats || comfortEquipment.medicalKit || comfortEquipment.largePrintGames || comfortEquipment.walkerRamp)) {
+      const gearList = [];
+      if (comfortEquipment.orthoMats) gearList.push("Non-Slip Bath Mats & Shower Chair");
+      if (comfortEquipment.medicalKit) gearList.push("Immediate Medical Kit");
+      if (comfortEquipment.largePrintGames) gearList.push("Large-Print Games & Puzzles");
+      if (comfortEquipment.walkerRamp) gearList.push("Portable Walkway Threshold Ramp");
+      welcomeMessageStr += `\n\nI have queued your requested comfort equipment for dispatch: ${gearList.join(", ")}. It will be prepared and styled in the lodge prior to your arrival!`;
+    }
+
+    if (selectedAdventures && selectedAdventures.length > 0) {
+      welcomeMessageStr += `\n\nI'm absolutely thrilled that you are embarking on these dynamic local adventures: ${selectedAdventures.join(", ")}. I have notified our regional guides to prep your equipment and secure any necessary trail passes.`;
+    }
+
+    welcomeMessageStr += `\n\nPlease let me know if you have any questions or additional custom planning requests. Have an amazing stay!`;
+
     db.messages.push({
       id: `msg-welcome-${Date.now()}`,
       senderId: property.providerId,

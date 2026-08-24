@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DatePicker from "@/components/DatePicker";
 import { SensoryProfile } from "@/lib/db";
+import { quoteStay } from "@/lib/pricing";
 
 interface PropertyDetails {
   id: string;
@@ -176,26 +177,23 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [showCleaningFeeBreakdown, setShowCleaningFeeBreakdown] = useState(false);
 
-  // Pricing math helper
-  const getNightsCount = () => {
-    if (isDayRetreat) return 1;
-    if (!dates.start || !dates.end) return 0;
-    const start = new Date(dates.start);
-    const end = new Date(dates.end);
-    const msPerDay = 1000 * 60 * 60 * 24;
-    return Math.ceil((end.getTime() - start.getTime()) / msPerDay);
-  };
-
-  const nights = getNightsCount();
-  const nightlySubtotal = property 
-    ? (isDayRetreat ? Math.round(property.price * 0.5) : property.price * nights) 
-    : 0;
-  const serviceFee = parseFloat((nightlySubtotal * 0.10).toFixed(2));
-  const gastronomyTotal = (pantryOrganicEggs ? 12 : 0) + 
-                          (pantryOrganicMilk ? 8 : 0) + 
-                          (pantryFreshProduce ? 25 : 0) + 
-                          (smoresKit ? 18 : 0);
-  const totalPrice = nightlySubtotal + serviceFee + gastronomyTotal;
+  const quote = quoteStay({
+    nightlyPrice: property?.price ?? 0,
+    startDate: dates.start || "",
+    endDate: dates.end || dates.start || "",
+    isDayRetreat,
+    upgrades: {
+      pantryOrganicEggs,
+      pantryOrganicMilk,
+      pantryFreshProduce,
+      smoresKit,
+    },
+  });
+  const nights = quote.nights;
+  const nightlySubtotal = quote.nightlySubtotal;
+  const serviceFee = quote.serviceFee;
+  const gastronomyTotal = quote.upgradesCost;
+  const totalPrice = quote.totalPrice;
 
   const handleCreateReservation = async () => {
     if (!currentUser) {
@@ -1542,7 +1540,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
           {/* Right Column (Sticky Reservation Calculator - Lg: 4) */}
           <div className="lg:col-span-4 lg:sticky lg:top-24">
-            <div className="rounded-3xl border border-slate-150 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+            <div data-testid="booking-card" className="rounded-3xl border border-slate-150 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-baseline justify-between mb-4">
                 <div>
                   <span className="font-sans text-2xl font-extrabold text-slate-900 dark:text-white">

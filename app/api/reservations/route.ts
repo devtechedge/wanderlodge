@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readDB, writeDB, Reservation, ReservationStatus, Role } from "@/lib/db";
+import { readDB, writeDB, Reservation, ReservationStatus } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
+import { datesOverlap, quoteStay } from "@/lib/pricing";
+import { canBookStay, canViewReservation } from "@/lib/rbac";
 
 export async function GET() {
   try {
@@ -10,42 +12,21 @@ export async function GET() {
     }
 
     const db = readDB();
-    
-    if (user.role === Role.TRAVELER) {
-      // Return traveler's own bookings
-      const travelerReservations = db.reservations
-        .filter((r) => r.travelerId === user.id)
-        .map((res) => {
-          const property = db.properties.find((p) => p.id === res.propertyId);
-          return {
-            ...res,
-            propertyTitle: property ? property.title : "Unknown Property",
-            propertyImage: property && property.images.length > 0 ? property.images[0] : "",
-            propertyLocation: property ? property.location : "",
-          };
-        });
-      return NextResponse.json({ reservations: travelerReservations });
-    } else {
-      // Return provider's properties' reservations
-      const providerPropertyIds = db.properties
-        .filter((p) => p.providerId === user.id)
-        .map((p) => p.id);
-      
-      const providerReservations = db.reservations
-        .filter((r) => providerPropertyIds.includes(r.propertyId))
-        .map((res) => {
-          const property = db.properties.find((p) => p.id === res.propertyId);
-          const traveler = db.users.find((u) => u.id === res.travelerId);
-          return {
-            ...res,
-            propertyTitle: property ? property.title : "Unknown Property",
-            propertyImage: property && property.images.length > 0 ? property.images[0] : "",
-            travelerName: traveler ? traveler.name : "Guest",
-            travelerImage: traveler ? traveler.image : "",
-          };
-        });
-      return NextResponse.json({ reservations: providerReservations });
-    }
+    const visible = db.reservations
+      .filter((r) => canViewReservation(user, r, db.properties))
+      .map((res) => {
+        const property = db.properties.find((p) => p.id === res.propertyId);
+        const traveler = db.users.find((u) => u.id === res.travelerId);
+        return {
+          ...res,
+          propertyTitle: property ? property.title : "Unknown Property",
+          propertyImage: property && property.images.length > 0 ? property.images[0] : "",
+          propertyLocation: property ? property.location : "",
+          travelerName: traveler ? traveler.name : "Guest",
+          travelerImage: traveler ? traveler.image : "",
+        };
+      });
+    return NextResponse.json({ reservations: visible });
   } catch (error) {
     console.error("Reservations GET error", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -55,7 +36,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const user = await getSessionUser();
-    if (!user) {
+    if (!canBookStay(user) || !user) {
       return NextResponse.json({ error: "Unauthorized. Please log in." }, { status: 401 });
     }
 
@@ -83,15 +64,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Check-out date must be after Check-in" }, { status: 400 });
     }
 
-    // Overlapping reservation validation (Check for CONFIRMED bookings only)
     const overlaps = db.reservations.some((res) => {
       if (res.propertyId !== propertyId || res.status === ReservationStatus.CANCELLED) {
         return false;
       }
-      const existingStart = new Date(res.startDate);
-      const existingEnd = new Date(res.endDate);
-      
-      return start < existingEnd && end > existingStart;
+      return datesOverlap(start, end, res.startDate, res.endDate);
     });
 
     if (overlaps) {
@@ -101,29 +78,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Calculate nights and price
-    let nights = 1;
-    let nightlyTotal = property.price;
-    if (isDayRetreat) {
-      nightlyTotal = Math.round(property.price * 0.5); // Day retreats are 50% price
-    } else {
-      const msPerDay = 1000 * 60 * 60 * 24;
-      nights = Math.ceil((end.getTime() - start.getTime()) / msPerDay);
-      nightlyTotal = property.price * nights;
-    }
-    const serviceFee = parseFloat((nightlyTotal * 0.10).toFixed(2)); // 10% service fee
-    let upgradesCost = 0;
-    if (gastronomyUpgrades) {
-      if (gastronomyUpgrades.pantryOrganicEggs) upgradesCost += 12;
-      if (gastronomyUpgrades.pantryOrganicMilk) upgradesCost += 8;
-      if (gastronomyUpgrades.pantryFreshProduce) upgradesCost += 25;
-      if (gastronomyUpgrades.smoresKit) upgradesCost += 18;
-    }
-    const totalPrice = nightlyTotal + serviceFee + upgradesCost;
-
-    // Milestone payment calculation
-    const depositPaid = partialPayment ? parseFloat((totalPrice * 0.3).toFixed(2)) : totalPrice;
-    const remainingBalance = partialPayment ? parseFloat((totalPrice * 0.7).toFixed(2)) : 0;
+    const quote = quoteStay({
+      nightlyPrice: property.price,
+      startDate,
+      endDate,
+      isDayRetreat: !!isDayRetreat,
+      upgrades: gastronomyUpgrades,
+      partialPayment: !!partialPayment,
+    });
+    const { totalPrice, depositPaid, remainingBalance } = quote;
     const paymentMilestones = partialPayment ? [
       { title: "Initial Deposit (30%)", amount: depositPaid, dueDate: new Date().toISOString().slice(0, 10), paid: true },
       { title: "Remaining Balance (70%)", amount: remainingBalance, dueDate: new Date(start.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), paid: false }

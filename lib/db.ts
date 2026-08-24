@@ -207,7 +207,7 @@ interface DBStructure {
 
 const DB_FILE_PATH = "/tmp/wanderlodge_db.json";
 
-function getInitialDB(): DBStructure {
+export function getInitialDB(): DBStructure {
   const users: User[] = [
     {
       id: "user-1",
@@ -548,8 +548,8 @@ function getInitialDB(): DBStructure {
       id: "res-1",
       propertyId: "prop-1",
       travelerId: "user-2",
-      startDate: "2026-08-10",
-      endDate: "2026-08-15",
+      startDate: "2026-08-22",
+      endDate: "2026-09-02",
       totalPrice: 1200,
       status: ReservationStatus.CONFIRMED,
       createdAt: new Date("2026-06-10").toISOString(),
@@ -667,3 +667,8 @@ export function writeDB(data: DBStructure): boolean {
     return false;
   }
 }
+
+export function getInitialProperties(): Property[] {
+  return getInitialDB().properties;
+}
+

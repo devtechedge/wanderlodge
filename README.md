@@ -30,6 +30,10 @@ This is the **only** public repo for the project.
 
 ## Screenshots
 
+<p align="center">
+  <img src="docs/social-preview.png" alt="WanderLodge" width="800">
+</p>
+
 | Explore | Property |
 |---------|----------|
 | ![Lodge grid on the explore home](docs/screenshots/01-explore-lodges.png) | ![Property detail and booking card](docs/screenshots/02-property-detail.png) |

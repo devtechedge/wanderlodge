@@ -19,7 +19,7 @@
 | Payments | **Simulated** | 30/70 milestone split is math only. No Stripe, no card vault. |
 | Gemini | **Optional** | Herb / Q&A / adventure routes fall back to canned JSON without a key. |
 
-**Overall (public Vercel demo):** Low residual risk for a hiring-manager walkthrough. Do not treat this as a production marketplace.
+**Overall (public Vercel demo):** Low residual risk for a public demo walkthrough. Do not treat this as a production marketplace.
 
 ---
 

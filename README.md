@@ -2,7 +2,7 @@
 
 Peer-to-peer marketplace for subalpine cabins and lodges. Search sensory-scored stays, book as a traveler or host as a provider, then run a trip workspace with group expenses, in-stay cabin controls, and a wilderness log.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://wanderlodge.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://wanderlodge-taupe.vercel.app)
 [![CI](https://github.com/devtechedge/wanderlodge/actions/workflows/ci.yml/badge.svg)](https://github.com/devtechedge/wanderlodge/actions/workflows/ci.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -13,7 +13,7 @@ Peer-to-peer marketplace for subalpine cabins and lodges. Search sensory-scored 
 
 ## Live Demo
 
-**https://wanderlodge.vercel.app**
+**https://wanderlodge-taupe.vercel.app**
 
 > **Status:** Portfolio demo. Listings and bookings live in an in-memory JSON store (`/tmp` on Vercel, so writes reset). Gemini herb/Q&A/adventure calls fall back to canned payloads when `GEMINI_API_KEY` is unset. Auth is an unsigned demo cookie, not JWT or NextAuth. Payments are simulated.
 

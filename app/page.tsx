@@ -389,12 +389,13 @@ export default function Home() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div data-testid="lodge-grid" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {properties.map((p, idx) => {
                 const hasWishlist = isSavedInAnyWishlist(p.id);
                 return (
                   <motion.div
                     key={p.id}
+                    data-testid={`lodge-card-${p.id}`}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: idx * 0.05 }}

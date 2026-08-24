@@ -593,7 +593,7 @@ export default function TripsPage() {
               </div>
 
               {/* Workspace Navigation Tabs */}
-              <div className="bg-white border-b border-slate-200 px-6 flex dark:bg-slate-900 dark:border-slate-800 shrink-0 overflow-x-auto scrollbar-none">
+              <div data-testid="trip-workspace" className="bg-white border-b border-slate-200 px-6 flex dark:bg-slate-900 dark:border-slate-800 shrink-0 overflow-x-auto scrollbar-none">
                 <button
                   type="button"
                   onClick={() => setActiveWorkspaceTab("chat")}
@@ -624,6 +624,7 @@ export default function TripsPage() {
                 </button>
                 <button
                   type="button"
+                  data-testid="tab-group"
                   onClick={() => setActiveWorkspaceTab("group")}
                   className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative mr-6 shrink-0 ${
                     activeWorkspaceTab === "group"
@@ -666,6 +667,7 @@ export default function TripsPage() {
                 </button>
                 <button
                   type="button"
+                  data-testid="tab-wilderness"
                   onClick={() => setActiveWorkspaceTab("wilderness")}
                   className={`py-3 text-xs font-bold uppercase tracking-wider transition-all relative shrink-0 ml-6 ${
                     activeWorkspaceTab === "wilderness"

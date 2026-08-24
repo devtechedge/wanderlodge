@@ -127,6 +127,7 @@ export default function Navbar() {
           {/* Theme Toggle */}
           <button
             id="theme-toggle-btn"
+            data-testid="theme-toggle"
             onClick={toggleTheme}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
             aria-label="Toggle Theme Mode"
@@ -231,6 +232,7 @@ export default function Navbar() {
           ) : (
             <button
               id="open-auth-modal-btn"
+              data-testid="sign-in"
               onClick={() => {
                 setAuthMode("login");
                 setIsOpenAuthModal(true);
@@ -309,6 +311,7 @@ export default function Navbar() {
                   </label>
                   <input
                     type="email"
+                    data-testid="auth-email"
                     required
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
@@ -328,6 +331,7 @@ export default function Navbar() {
                   </label>
                   <input
                     type="password"
+                    data-testid="auth-password"
                     required
                     value={authPassword}
                     onChange={(e) => setAuthPassword(e.target.value)}
@@ -377,6 +381,7 @@ export default function Navbar() {
 
                 <button
                   type="submit"
+                  data-testid="auth-submit"
                   disabled={loadingAuth}
                   className="mt-2 w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/10 transition-transform hover:bg-emerald-700 focus:scale-[0.98] disabled:opacity-50 dark:bg-emerald-500 dark:hover:bg-emerald-600"
                 >

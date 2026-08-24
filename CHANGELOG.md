@@ -41,4 +41,4 @@ This major release delivers a completely unified, immersive, and highly gamified
 
 ---
 
-[1.0.0]: https://github.com/your-username/wanderlodge/releases/tag/v1.0.0
+[1.0.0]: https://github.com/devtechedge/wanderlodge/releases/tag/v1.0.0

@@ -13,6 +13,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "WanderLodge — Curated Cabins, Lodges & Local Adventures",
   description: "Explore highly curated architectural lodges, mountain-view timber cabins, and bespoke waterfront retreats.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

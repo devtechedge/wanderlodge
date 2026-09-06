@@ -340,7 +340,7 @@ export default function Navbar() {
                   />
                   {authMode === "login" && (
                     <span className="block mt-1 text-[10px] text-slate-400 dark:text-slate-500">
-                      Password is <b>password123</b>
+                      Demo password is server-side — see <b>SECURITY.md</b>
                     </span>
                   )}
                 </div>

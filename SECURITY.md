@@ -1,6 +1,6 @@
 # Security Assessment — WanderLodge
 
-**Date:** 2026-08-24  
+**Date:** 2026-09-06  
 **Scope:** Auth, XSS, injection, CORS, secrets, payments, third-party APIs  
 **Context:** Public deploy is a **portfolio demo** on Vercel. Listings, bookings, and chat persist in a JSON file under `/tmp` (ephemeral on serverless). Gemini is optional and mocked when `GEMINI_API_KEY` is unset.
 
@@ -131,3 +131,11 @@ npx playwright install chromium
 npm run test:e2e
 npm audit --omit=dev
 ```
+
+## Repository visibility
+
+This repository is currently **public** for portfolio review. When the open-source
+build story is no longer needed, **the GitHub repo will go private**. Making the
+repo private reduces source disclosure; it does **not** replace strong production
+secrets, auth allow-lists, webhook signatures, or Vercel/Actions environment
+hygiene. Rotate any credential that was pasted into chat, tickets, or screenshots.

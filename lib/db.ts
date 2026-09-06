@@ -213,7 +213,7 @@ export function getInitialDB(): DBStructure {
       id: "user-1",
       name: "Evelyn Lodge",
       email: "evelyn@wanderlodge.com",
-      password: "password123", // Pre-hashed or simple string for MVP
+      password: "a383d2c3ead4c77fa92a9468b6c4acd525d00ddb594c06a10fcc4c9253d3e806", // sha256(salt:demo)
       image: "https://picsum.photos/seed/evelyn/150/150",
       role: Role.PROVIDER,
       createdAt: new Date("2026-01-10").toISOString(),
@@ -222,7 +222,7 @@ export function getInitialDB(): DBStructure {
       id: "user-2",
       name: "Marcus Traveler",
       email: "marcus@wanderlodge.com",
-      password: "password123",
+      password: "a383d2c3ead4c77fa92a9468b6c4acd525d00ddb594c06a10fcc4c9253d3e806", // sha256(salt:demo)
       image: "https://picsum.photos/seed/marcus/150/150",
       role: Role.TRAVELER,
       createdAt: new Date("2026-02-14").toISOString(),

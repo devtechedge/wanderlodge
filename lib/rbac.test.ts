@@ -44,6 +44,7 @@ describe("rbac", () => {
 
   it("documents the public demo passwords", () => {
     expect(DEMO_ACCOUNTS).toHaveLength(2);
-    expect(DEMO_ACCOUNTS.every((account) => account.password === "password123")).toBe(true);
+    expect(DEMO_ACCOUNTS.every((account) => Boolean(account.email))).toBe(true);
+    expect(DEMO_ACCOUNTS[0]).not.toHaveProperty("password");
   });
 });

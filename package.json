@@ -2,7 +2,7 @@
   "name": "wanderlodge",
   "version": "1.0.0",
   "private": true,
-  "description": "Peer-to-peer lodge marketplace for subalpine cabins — search, book, host, and run a trip workspace.",
+  "description": "Peer-to-peer lodge marketplace for subalpine cabins - search, book, host, and run a trip workspace.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

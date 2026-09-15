@@ -194,7 +194,7 @@ export default function ProviderPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-5 mb-8 dark:border-slate-800 gap-4">
           <div>
             <span className="rounded bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 uppercase dark:bg-emerald-950/40 dark:text-emerald-400">
-              Provider Portal — Elite Tier Account
+              Provider Portal - Elite Tier Account
             </span>
             <h1 className="font-sans text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
               Sanctuary Management

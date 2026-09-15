@@ -1,4 +1,4 @@
-/** Demo password hashing (SHA-256 + static salt). Portfolio only — not Argon2. */
+/** Demo password hashing (SHA-256 + static salt). Portfolio only - not Argon2. */
 const SALT = "wanderlodge_demo_salt_2026";
 
 export async function hashPassword(password: string): Promise<string> {
@@ -21,5 +21,5 @@ export function passwordsEqual(a: string, b: string): boolean {
   return mismatch === 0;
 }
 
-/** Public demo password — documented; compared only after hashing on the server. */
+/** Public demo password - documented; compared only after hashing on the server. */
 export const DEMO_PASSWORD = process.env.DEMO_PASSWORD?.trim() || "password123";

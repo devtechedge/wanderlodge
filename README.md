@@ -51,7 +51,7 @@ This is the **only** public repo for the project.
 - Traveler / provider demo auth with a one-click role switch
 - Booking card: nights, 50% day-retreat, pantry upgrades, 30/70 deposit split
 - Trip workspace: host chat, co-traveler expense split, in-stay cabin controls, wilderness log
-- Optional Gemini botanist / concierge — mocked on the public demo
+- Optional Gemini botanist / concierge - mocked on the public demo
 
 ---
 
@@ -62,10 +62,10 @@ This is the **only** public repo for the project.
 | Frontend | Next.js 15 (App Router), React 19, TypeScript, Tailwind 4 |
 | Motion | Motion (`motion/react`) |
 | Data | JSON file store in `lib/db.ts` (not Prisma, not Mongo) |
-| Auth | HttpOnly user-id cookie (`lib/session.ts`) — demo only |
+| Auth | HttpOnly user-id cookie (`lib/session.ts`) - demo only |
 | AI | Optional `@google/genai` with canned fallback |
 | Hosting | Vercel |
-| CI | GitHub Actions — Vitest, `tsc`, Playwright |
+| CI | GitHub Actions - Vitest, `tsc`, Playwright |
 
 ---
 

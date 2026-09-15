@@ -1,4 +1,4 @@
-# Security Assessment — WanderLodge
+# Security Assessment - WanderLodge
 
 **Date:** 2026-09-06  
 **Scope:** Auth, XSS, injection, CORS, secrets, payments, third-party APIs  

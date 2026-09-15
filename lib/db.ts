@@ -509,7 +509,7 @@ export function getInitialDB(): DBStructure {
       id: "rev-1",
       propertyId: "prop-1",
       authorId: "user-2",
-      comment: "Absolutely breathtaking! The cedar hot tub under the stars was an experience we will never forget. Evelyn was a perfect provider—meticulous instructions and total privacy. The Eldorado Ridge Cabin exceeded all our hopes.",
+      comment: "Absolutely breathtaking! The cedar hot tub under the stars was an experience we will never forget. Evelyn was a perfect provider - meticulous instructions and total privacy. The Eldorado Ridge Cabin exceeded all our hopes.",
       ratingClean: 5,
       ratingComm: 5,
       ratingLoc: 5,
@@ -578,7 +578,7 @@ export function getInitialDB(): DBStructure {
       senderId: "user-1",
       receiverId: "user-2",
       reservationId: "res-1",
-      content: "Hello Marcus! We are so excited to host you. No need to bring anything—we provide a fully stocked firewood rack right next to the hot tub, plus organic cedar firestarters. See you soon!",
+      content: "Hello Marcus! We are so excited to host you. No need to bring anything - we provide a fully stocked firewood rack right next to the hot tub, plus organic cedar firestarters. See you soon!",
       timestamp: new Date("2026-06-10T14:45:00Z").toISOString(),
     }
   ];

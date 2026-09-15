@@ -15,7 +15,7 @@ export type PropertyRef = {
   providerId: string;
 };
 
-/** Public demo identities (emails only). Passwords live server-side — see SECURITY.md. */
+/** Public demo identities (emails only). Passwords live server-side - see SECURITY.md. */
 export const DEMO_ACCOUNTS = [
   { email: "marcus@wanderlodge.com", role: Role.TRAVELER, name: "Marcus Traveler" },
   { email: "evelyn@wanderlodge.com", role: Role.PROVIDER, name: "Evelyn Lodge" },

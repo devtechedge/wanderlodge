@@ -10,9 +10,25 @@ const inter = Inter({
   display: "swap",
 });
 
+const PAGE_TITLE = "WanderLodge - Curated Cabins, Lodges & Local Adventures";
+const PAGE_DESCRIPTION = "Explore highly curated architectural lodges, mountain-view timber cabins, and bespoke waterfront retreats.";
+const SITE_URL = "https://wanderlodge-taupe.vercel.app";
+
 export const metadata: Metadata = {
-  title: "WanderLodge - Curated Cabins, Lodges & Local Adventures",
-  description: "Explore highly curated architectural lodges, mountain-view timber cabins, and bespoke waterfront retreats.",
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  // Shared links (LinkedIn, Slack, email) render a bare URL without these.
+  openGraph: {
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: SITE_URL,
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+  },
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },

@@ -15,8 +15,8 @@ export default function DatePicker({
   startDate,
   endDate,
   onDatesChange,
-  placeholderStart = "Add check-in date",
-  placeholderEnd = "Add check-out date",
+  placeholderStart = "Add date",
+  placeholderEnd = "Add date",
 }: DatePickerProps) {
   const [showCalendar, setShowCalendar] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -121,16 +121,16 @@ export default function DatePicker({
   return (
     <div ref={containerRef} id="datepicker-container" className="relative w-full">
       {/* Target Triggers */}
-      <div className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-800 dark:bg-slate-950">
+      <div className="grid min-w-0 grid-cols-2 gap-1 sm:gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-800 dark:bg-slate-950">
         <button
           type="button"
           onClick={() => setShowCalendar(true)}
-          className="flex flex-col items-start px-4 py-2.5 text-left rounded-xl transition hover:bg-white dark:hover:bg-slate-900"
+          className="flex min-w-0 flex-col items-start px-2 sm:px-4 py-2.5 text-left rounded-xl transition hover:bg-white dark:hover:bg-slate-900"
         >
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Check-In
           </span>
-          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate w-full">
+          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate w-full min-w-0">
             {startDate ? new Date(startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : placeholderStart}
           </span>
         </button>
@@ -138,12 +138,12 @@ export default function DatePicker({
         <button
           type="button"
           onClick={() => setShowCalendar(true)}
-          className="flex flex-col items-start px-4 py-2.5 text-left rounded-xl transition hover:bg-white dark:hover:bg-slate-900 border-l border-slate-200/50 dark:border-slate-800/50"
+          className="flex min-w-0 flex-col items-start px-2 sm:px-4 py-2.5 text-left rounded-xl transition hover:bg-white dark:hover:bg-slate-900 border-l border-slate-200/50 dark:border-slate-800/50"
         >
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Check-Out
           </span>
-          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate w-full">
+          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate w-full min-w-0">
             {endDate ? new Date(endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : placeholderEnd}
           </span>
         </button>
@@ -153,7 +153,7 @@ export default function DatePicker({
       {showCalendar && (
         <div
           id="datepicker-dropdown"
-          className="absolute left-0 mt-2 z-50 w-[320px] rounded-3xl border border-slate-150 bg-white p-4 shadow-2xl dark:border-slate-800 dark:bg-slate-900 sm:w-[350px]"
+          className="absolute left-0 mt-2 z-50 w-[min(320px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-3xl border border-slate-150 bg-white p-4 shadow-2xl dark:border-slate-800 dark:bg-slate-900 sm:w-[350px]"
         >
           {/* Header Controls */}
           <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">

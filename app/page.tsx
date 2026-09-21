@@ -231,12 +231,12 @@ export default function Home() {
             >
               <form
                 onSubmit={handleSearchSubmit}
-                className="rounded-3xl border border-slate-150 bg-white p-3 shadow-2xl dark:border-slate-800 dark:bg-slate-900 grid grid-cols-1 md:grid-cols-12 gap-2 items-center text-slate-800 dark:text-white"
+                className="rounded-3xl border border-slate-150 bg-white p-3 shadow-2xl dark:border-slate-800 dark:bg-slate-900 grid min-w-0 grid-cols-1 md:grid-cols-12 gap-2 items-center text-slate-800 dark:text-white overflow-hidden"
               >
                 {/* Location input */}
-                <div className="md:col-span-4 flex items-center gap-2 px-3 py-2 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
+                <div className="md:col-span-4 flex min-w-0 items-center gap-2 px-3 py-2 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
                   <MapPin className="h-5 w-5 text-emerald-500 shrink-0" />
-                  <div className="text-left w-full">
+                  <div className="text-left min-w-0 w-full">
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                       Where
                     </label>
@@ -245,14 +245,14 @@ export default function Home() {
                       value={locInput}
                       onChange={(e) => setLocInput(e.target.value)}
                       placeholder="e.g. Pinecrest Valley, Sunset Bay..."
-                      className="w-full text-xs font-semibold text-slate-800 dark:text-slate-200 bg-transparent border-none outline-none placeholder:text-slate-400"
+                      className="w-full min-w-0 text-xs font-semibold text-slate-800 dark:text-slate-200 bg-transparent border-none outline-none placeholder:text-slate-400"
                     />
                   </div>
                 </div>
 
                 {/* Datepicker input */}
-                <div className="md:col-span-5 flex items-center gap-2 px-3 py-1 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
-                  <div className="w-full">
+                <div className="md:col-span-5 flex min-w-0 items-center gap-2 px-2 sm:px-3 py-1 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
+                  <div className="min-w-0 w-full">
                     <DatePicker
                       startDate={dates.start}
                       endDate={dates.end}
@@ -297,10 +297,10 @@ export default function Home() {
 
         {/* Discovery Filter Header Category Section */}
         <section id="categories-section" className="border-b border-slate-200 bg-white transition-colors dark:border-slate-800 dark:bg-slate-900/40 relative">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 flex items-center relative overflow-hidden">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 flex min-w-0 items-center relative overflow-x-clip">
             
             {/* Scrollable Categories List Tracker Container */}
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pr-32 w-full scroll-smooth snap-x">
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pr-28 sm:pr-32 w-full max-w-full scroll-smooth snap-x overscroll-x-contain">
               {[
                 { name: "All Stays", desc: "Every lodge" },
                 { name: "Eco-Friendly", desc: "Min 90% Eco-Score" },
@@ -330,13 +330,14 @@ export default function Home() {
             </div>
 
             {/* Masked Sticky Filter Anchor Component Wrapper */}
-            <div className="absolute right-0 top-0 bottom-0 w-36 bg-gradient-to-l from-white via-white/95 dark:from-slate-900 dark:via-slate-900/95 to-transparent flex items-center justify-end pr-4 sm:pr-6 lg:pr-8 pointer-events-none">
+            <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-36 bg-gradient-to-l from-white via-white/95 dark:from-slate-900 dark:via-slate-900/95 to-transparent flex items-center justify-end pr-4 sm:pr-6 lg:pr-8 pointer-events-none">
               <button
                 onClick={() => setShowFilterModal(true)}
                 className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-slate-200 bg-white dark:bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
-                <SlidersHorizontal className="h-4 w-4 text-emerald-500" />
-                <span className="whitespace-nowrap">Advanced Filters</span>
+                <SlidersHorizontal className="h-4 w-4 shrink-0 text-emerald-500" />
+                <span className="hidden whitespace-nowrap sm:inline">Advanced Filters</span>
+                <span className="whitespace-nowrap sm:hidden">Filters</span>
               </button>
             </div>
 

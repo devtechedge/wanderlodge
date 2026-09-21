@@ -66,8 +66,8 @@
 }
 
 @theme {
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-syne), var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   /* Semantic colors */
@@ -152,9 +152,9 @@
   h2,
   h3,
   .font-display {
-    font-family: var(--font-display);
-    letter-spacing: -0.03em;
-    line-height: 1.15;
+    font-family: var(--font-sans);
+    letter-spacing: normal;
+    line-height: 1.25;
   }
 
   :focus-visible {

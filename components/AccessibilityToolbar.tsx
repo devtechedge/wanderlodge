@@ -298,12 +298,12 @@ export default function AccessibilityToolbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="mb-3 w-80 rounded-3xl bg-white p-5 shadow-2xl border border-slate-200 dark:bg-slate-900 dark:border-slate-800 text-slate-800 dark:text-slate-100 max-h-[85vh] overflow-y-auto"
+              className="mb-3 w-80 rounded-3xl bg-card p-5 shadow-[var(--shadow-lift)] border border-border text-foreground max-h-[85vh] overflow-y-auto"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <div className="h-7 w-7 rounded-lg bg-brand-muted flex items-center justify-center text-brand">
                     <Sparkles className="h-4 w-4" />
                   </div>
                   <div>
@@ -482,7 +482,7 @@ export default function AccessibilityToolbar() {
               speakText("Accessibility options opened.");
             }
           }}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-white shadow-xl hover:bg-slate-800 transition-transform active:scale-95 border-2 border-white focus:outline-none focus:ring-4 focus:ring-emerald-500/50 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-950"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-foreground text-background shadow-[var(--shadow-lift)] hover:opacity-90 transition-transform active:scale-95 border-2 border-card focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/40"
           aria-label="Universal Comfort & Accessibility Settings Panel"
           title="Comfort Settings"
           style={{ touchAction: "manipulation", minWidth: "48px", minHeight: "48px" }}

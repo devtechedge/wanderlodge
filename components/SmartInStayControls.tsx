@@ -352,7 +352,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
   ];
 
   return (
-    <div id="smart-instay-comfort-controls" className="flex-grow flex flex-col bg-slate-50 dark:bg-slate-950 overflow-hidden">
+    <div id="smart-instay-comfort-controls" className="flex-grow flex flex-col bg-background overflow-hidden">
       
       {/* 1. Header & Emergency banner */}
       <div className="bg-white border-b border-slate-250/50 px-6 py-4 dark:bg-slate-900 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 z-20 shadow-xs">
@@ -535,7 +535,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
               {/* Wi-Fi Connections Widget */}
-              <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col justify-between min-h-[220px]">
+              <div className="bg-card rounded-3xl border border-border p-5 flex flex-col justify-between min-h-[220px]">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -549,7 +549,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
                 </div>
 
                 {/* Simulated QR Code Widget */}
-                <div className="flex items-center gap-4 py-3 bg-slate-50 dark:bg-slate-950/40 rounded-2xl p-3 border border-slate-100 dark:border-slate-850 my-2">
+                <div className="flex items-center gap-4 py-3 bg-background/40 rounded-2xl p-3 border border-slate-100 dark:border-slate-850 my-2">
                   <div className="h-20 w-20 bg-white p-1 rounded-xl border border-slate-200/80 shadow-xs shrink-0 flex items-center justify-center">
                     {/* SVG representation of standard QR */}
                     <svg viewBox="0 0 100 100" className="h-full w-full text-slate-850">
@@ -600,7 +600,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
               </div>
 
               {/* Local Stream-Flow Metrics */}
-              <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col justify-between min-h-[220px]">
+              <div className="bg-card rounded-3xl border border-border p-5 flex flex-col justify-between min-h-[220px]">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -618,13 +618,13 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
 
                 {/* Metric Display */}
                 <div className="grid grid-cols-2 gap-2 my-2">
-                  <div className="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-100 dark:border-slate-850">
+                  <div className="bg-background p-2 rounded-xl border border-slate-100 dark:border-slate-850">
                     <span className="block text-[8px] font-bold text-slate-400 uppercase">Flow Speed</span>
                     <span className="font-mono text-xs font-black text-slate-800 dark:text-slate-200">
                       {riverSafety.flowRate} m³/sec
                     </span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-100 dark:border-slate-850">
+                  <div className="bg-background p-2 rounded-xl border border-slate-100 dark:border-slate-850">
                     <span className="block text-[8px] font-bold text-slate-400 uppercase">Water Temp</span>
                     <span className="font-mono text-xs font-black text-slate-850 dark:text-slate-250">
                       {riverSafety.temp}°F (Chilly!)
@@ -645,7 +645,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
             </div>
 
             {/* B. Translate-Ready House Manuals */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800">
+            <div className="bg-card rounded-3xl border border-border p-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -662,7 +662,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
                   <select
                     value={selectedLanguage}
                     onChange={(e) => setSelectedLanguage(e.target.value)}
-                    className="rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   >
                     {LANGUAGES_LIST.map((lang) => (
                       <option key={lang.code} value={lang.code}>
@@ -675,7 +675,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
 
               {/* Translation Display cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
+                <div className="bg-background p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
                   <span className="text-[9px] font-extrabold text-emerald-600 uppercase tracking-widest font-mono">
                     🌲 Welcome & Stay Code
                   </span>
@@ -684,7 +684,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
                   </p>
                 </div>
 
-                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
+                <div className="bg-background p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
                   <span className="text-[9px] font-extrabold text-indigo-500 uppercase tracking-widest font-mono">
                     🐻 Bear Protection & Waste
                   </span>
@@ -693,7 +693,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
                   </p>
                 </div>
 
-                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
+                <div className="bg-background p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
                   <span className="text-[9px] font-extrabold text-amber-500 uppercase tracking-widest font-mono">
                     🌡️ Geothermal Climate
                   </span>
@@ -702,7 +702,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
                   </p>
                 </div>
 
-                <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
+                <div className="bg-background p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left">
                   <span className="text-[9px] font-extrabold text-rose-500 uppercase tracking-widest font-mono">
                     🏔️ Wilderness Firewood
                   </span>
@@ -722,7 +722,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
             </div>
 
             {/* C. On-Site Safety Map Pins */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800">
+            <div className="bg-card rounded-3xl border border-border p-5">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -811,7 +811,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
           <div className="lg:col-span-5 space-y-6">
 
             {/* D. Thermostat Interactive Tutor & Video */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+            <div className="bg-card rounded-3xl border border-border p-5 text-left">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -907,7 +907,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
             </div>
 
             {/* E. Smart Appliance Visual Guides */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+            <div className="bg-card rounded-3xl border border-border p-5 text-left">
               <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5 mb-2">
                 <Coffee className="h-4 w-4 text-amber-600" />
                 <span>Smart Appliance Manual Guides</span>
@@ -945,7 +945,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
               </div>
 
               {/* Appliance Specific instructions and checkboxes */}
-              <div className="bg-slate-50 dark:bg-slate-950/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-850">
+              <div className="bg-background/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-850">
                 {activeAppliance === "espresso" && (
                   <div className="space-y-3">
                     <span className="font-mono text-[9px] font-extrabold text-amber-500 uppercase block">
@@ -1054,7 +1054,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
             </div>
 
             {/* F. Local Pantry Inventory Logs */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800">
+            <div className="bg-card rounded-3xl border border-border p-5">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1100,7 +1100,7 @@ export default function SmartInStayControls({ reservation, currentUser }: SmartI
             </div>
 
             {/* G. Digital Key Smart Share */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800">
+            <div className="bg-card rounded-3xl border border-border p-5">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">

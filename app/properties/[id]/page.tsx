@@ -443,7 +443,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
   if (loading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-2">
           <RefreshCw className="h-8 w-8 text-emerald-600 animate-spin" />
           <p className="text-xs font-bold text-slate-400 font-mono">LOADING PROPERTY MATRICES...</p>
@@ -457,7 +457,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const isSavedVal = isSaved();
 
   return (
-    <div id="pdp-container" className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div id="pdp-container" className="min-h-screen flex flex-col bg-background transition-colors">
       <Navbar />
 
       <main className="flex-grow mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -474,7 +474,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
           <div className="flex items-center gap-3">
             <button
               onClick={handleToggleWishlist}
-              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-border dark:bg-card dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <Heart className={`h-4 w-4 ${isSavedVal ? "fill-red-500 text-red-500" : "text-slate-500"}`} />
               <span>{isSavedVal ? "Saved in wishlists" : "Save to wishlist"}</span>
@@ -489,7 +489,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
               EliteProvider Verified Lodge
             </span>
           </div>
-          <h1 className="font-sans text-2xl font-extrabold sm:text-3xl text-slate-900 dark:text-white mt-1.5 leading-tight">
+          <h1 className="font-display text-2xl font-extrabold sm:text-3xl text-foreground mt-1.5 leading-tight">
             {property.title}
           </h1>
           <div className="mt-2 flex items-center gap-3 text-xs font-medium text-slate-500 dark:text-slate-400">
@@ -538,7 +538,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
           <div className="lg:col-span-8 space-y-8">
             {/* Description card */}
             <div className="space-y-4">
-              <h3 className="font-sans text-lg font-bold text-slate-900 dark:text-white">
+              <h3 className="font-display text-lg font-bold text-foreground">
                 About this sanctuary
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
@@ -561,7 +561,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Decibel & Acoustics */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🔊</span>
@@ -577,7 +577,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Astrophotography */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">✨</span>
@@ -593,7 +593,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Fully Enclosed Yard */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🐕</span>
@@ -619,7 +619,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Ergonomic Workstation */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">💻</span>
@@ -634,7 +634,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                         <p className="leading-relaxed">
                           Designed with posture correction and verified low-latency connection speeds.
                         </p>
-                        <div className="grid grid-cols-2 gap-1 text-[9px] font-mono bg-slate-50 dark:bg-slate-950 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                        <div className="grid grid-cols-2 gap-1 text-[9px] font-mono bg-background p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
                           <div>⚡ Upload: {property.sensory.ergonomicWorkstation.uploadSpeedMbps} Mbps</div>
                           <div>📏 Desk: {property.sensory.ergonomicWorkstation.deskHeight}</div>
                           <div className="col-span-2 mt-0.5 truncate">💺 Chair: {property.sensory.ergonomicWorkstation.chairType}</div>
@@ -646,7 +646,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Stove & Firewood Tracker */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🔥</span>
@@ -672,7 +672,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Solitude Index */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🌲</span>
@@ -688,7 +688,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Scent Profile */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🌿</span>
@@ -704,7 +704,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Pool & Hot Tub Mechanics */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">💧</span>
@@ -720,7 +720,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Waterfront Edge Safety */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🛶</span>
@@ -736,7 +736,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Seasonal Access */}
-                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/45 space-y-2.5">
+                  <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/45 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">❄️</span>
@@ -801,7 +801,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
                   >
                     {/* Entryway */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           🚪
@@ -817,7 +817,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
 
                     {/* Bath */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           🚿
@@ -833,7 +833,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
 
                     {/* Bed */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           🛏️
@@ -849,7 +849,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
 
                     {/* Traction */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           👣
@@ -874,7 +874,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
                   >
                     {/* Sound proof */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           🔊
@@ -890,7 +890,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
 
                     {/* Lighting */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           💡
@@ -906,7 +906,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
 
                     {/* Medical */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           🩺
@@ -922,7 +922,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     </div>
 
                     {/* Childproof */}
-                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-2">
+                    <div className="rounded-2xl border border-slate-150 p-4 bg-white dark:border-border dark:bg-card/40 space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                           🧸
@@ -964,7 +964,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
               </div>
 
               {loadingAdventures ? (
-                <div className="rounded-2xl border border-slate-150 p-8 text-center bg-white dark:border-slate-800 dark:bg-slate-900/40 space-y-3">
+                <div className="rounded-2xl border border-slate-150 p-8 text-center bg-white dark:border-border dark:bg-card/40 space-y-3">
                   <RefreshCw className="h-6 w-6 text-slate-400 dark:text-slate-600 animate-spin mx-auto" />
                   <p className="text-xs text-slate-400 dark:text-slate-500 font-mono">
                     Grounding regional adventure intelligence...
@@ -1085,7 +1085,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                 {property.amenities.map((amenity) => (
                   <div
                     key={amenity}
-                    className="flex items-center gap-2.5 rounded-xl border border-slate-150 p-3 bg-white dark:border-slate-800 dark:bg-slate-900/60"
+                    className="flex items-center gap-2.5 rounded-xl border border-slate-150 p-3 bg-white dark:border-border dark:bg-card/60"
                   >
                     <div className="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 dark:bg-emerald-950/40 dark:text-emerald-400">
                       <Sparkles className="h-4 w-4" />
@@ -1204,8 +1204,8 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
                   {/* Add review form (for authenticated travelers) */}
                   {currentUser && currentUser.role === "TRAVELER" && (
-                    <div className="rounded-3xl border border-slate-150 bg-white p-5 dark:border-slate-800 dark:bg-slate-900/60">
-                      <h4 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-1">
+                    <div className="rounded-3xl border border-border bg-card p-5 dark:border-border dark:bg-card/60">
+                      <h4 className="font-display text-sm font-bold text-foreground mb-4 flex items-center gap-1">
                         <Star className="h-4 w-4 fill-emerald-500 text-emerald-500" />
                         <span>Leave your feedback</span>
                       </h4>
@@ -1253,7 +1253,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                             value={reviewComment}
                             onChange={(e) => setReviewComment(e.target.value)}
                             placeholder="Detail your stay... cedar hot tub speed, check-in instructions, local vistas"
-                            className="w-full rounded-xl border border-slate-250 bg-slate-50 px-4 py-2.5 text-xs outline-none transition-colors focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500"
+                            className="w-full rounded-xl border border-slate-250 bg-slate-50 px-4 py-2.5 text-xs outline-none transition-colors focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background dark:focus:border-emerald-500"
                           />
                         </div>
 
@@ -1331,8 +1331,8 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
                   {/* Add Question input */}
                   {currentUser ? (
-                    <div className="rounded-3xl border border-slate-150 bg-white p-5 dark:border-slate-800 dark:bg-slate-900/60">
-                      <h4 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-2">
+                    <div className="rounded-3xl border border-border bg-card p-5 dark:border-border dark:bg-card/60">
+                      <h4 className="font-display text-sm font-bold text-foreground mb-2">
                         Ask the Community Board
                       </h4>
                       {questionError && (
@@ -1347,7 +1347,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                           value={newQuestionText}
                           onChange={(e) => setNewQuestionText(e.target.value)}
                           placeholder="e.g., Is there cell signal? Is firewood provided for the hot tub?"
-                          className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                          className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                         />
                         <button
                           type="submit"
@@ -1466,7 +1466,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                                   value={newAnswerText}
                                   onChange={(e) => setNewAnswerText(e.target.value)}
                                   placeholder="Type your answer here..."
-                                  className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                                  className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                                 />
                                 <button
                                   type="submit"
@@ -1540,10 +1540,10 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
           {/* Right Column (Sticky Reservation Calculator - Lg: 4) */}
           <div className="lg:col-span-4 lg:sticky lg:top-24">
-            <div data-testid="booking-card" className="rounded-3xl border border-slate-150 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+            <div data-testid="booking-card" className="rounded-3xl border border-border bg-card p-6 shadow-xl dark:border-border dark:bg-card">
               <div className="flex items-baseline justify-between mb-4">
                 <div>
-                  <span className="font-sans text-2xl font-extrabold text-slate-900 dark:text-white">
+                  <span className="font-display text-2xl font-extrabold text-foreground">
                     ${isDayRetreat ? Math.round(property.price * 0.5) : property.price}
                   </span>
                   <span className="text-xs text-slate-400 dark:text-slate-500 font-medium"> {isDayRetreat ? "/ day-retreat" : "/ night"}</span>
@@ -1598,7 +1598,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                       {isDayRetreat ? "Retreat Date (9:00 AM - 5:00 PM)" : "Check-in & Check-out Selection"}
                     </label>
                     {isDayRetreat ? (
-                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950 flex items-center justify-between gap-2">
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-border dark:bg-background flex items-center justify-between gap-2">
                         <input
                           type="date"
                           value={dates.start}
@@ -1622,7 +1622,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
                       Guests
                     </label>
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-border dark:bg-background">
                       <select
                         value={guestCount}
                         onChange={(e) => setGuestCount(parseInt(e.target.value, 10))}
@@ -1642,7 +1642,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                     <button
                       type="button"
                       onClick={() => setShowHeatmap(!showHeatmap)}
-                      className="w-full flex items-center justify-between text-left rounded-2xl border border-slate-150 bg-white p-3 hover:bg-slate-50 transition text-xs font-bold text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-850 dark:text-slate-300"
+                      className="w-full flex items-center justify-between text-left rounded-2xl border border-border bg-card p-3 hover:bg-slate-50 transition text-xs font-bold text-slate-700 dark:border-border dark:bg-card dark:hover:bg-slate-850 dark:text-slate-300"
                     >
                       <span className="flex items-center gap-1.5">
                         📅 View Season Pricing Heatmap
@@ -1652,7 +1652,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                       </span>
                     </button>
                     {showHeatmap && (
-                      <div className="mt-2 p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-2xl text-[10px] space-y-2 animate-fadeIn text-left">
+                      <div className="mt-2 p-3 bg-background border border-slate-200 dark:border-slate-850 rounded-2xl text-[10px] space-y-2 animate-fadeIn text-left">
                         <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800 pb-1.5">
                           <span className="font-extrabold uppercase text-slate-450 text-[8px] tracking-wider">Demand Season Cycles</span>
                           <span className="font-mono text-[8px] text-slate-400">Dynamic Rates</span>
@@ -1682,7 +1682,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Complimentary Intergenerational Support Equipment */}
-                  <div className="rounded-2xl border border-slate-150 p-3 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-950/40 space-y-2">
+                  <div className="rounded-2xl border border-slate-150 p-3 bg-slate-50/50 dark:border-border dark:bg-background/40 space-y-2">
                     <span className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       👵 Child & Senior Comfort Setup
                     </span>
@@ -1742,7 +1742,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Local Gastronomy & Wilderness Cooking Upgrades */}
-                  <div className="rounded-2xl border border-slate-150 p-3.5 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-950/40 space-y-2">
+                  <div className="rounded-2xl border border-slate-150 p-3.5 bg-slate-50/50 dark:border-border dark:bg-background/40 space-y-2">
                     <span className="block text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       🍽️ Local Gastronomy & Pantry Upgrades
                     </span>
@@ -1823,7 +1823,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                   </div>
 
                   {/* Partial Payment Milestones Toggle */}
-                  <div className="rounded-2xl border border-slate-150 p-3 bg-slate-50/40 dark:border-slate-800 dark:bg-slate-950/20 space-y-1.5 text-left">
+                  <div className="rounded-2xl border border-slate-150 p-3 bg-slate-50/40 dark:border-border dark:bg-background/20 space-y-1.5 text-left">
                     <label className="flex items-start gap-2.5 cursor-pointer select-none">
                       <input
                         type="checkbox"
@@ -1977,7 +1977,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
               {bookingStep === "review" && (
                 <div className="space-y-4">
-                  <h4 className="font-sans text-sm font-bold text-slate-900 dark:text-white">Review House Rules</h4>
+                  <h4 className="font-display text-sm font-bold text-foreground">Review House Rules</h4>
                   <ul className="text-xs text-slate-500 space-y-2">
                     <li className="flex items-start gap-1.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -2033,7 +2033,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
               {bookingStep === "payment" && (
                 <div className="space-y-4">
-                  <h4 className="font-sans text-sm font-bold text-slate-900 dark:text-white">Simulated Payment processing</h4>
+                  <h4 className="font-display text-sm font-bold text-foreground">Simulated Payment processing</h4>
                   <div className="rounded-xl border border-slate-100 bg-slate-50 p-3.5 dark:border-slate-850 dark:bg-slate-950">
                     <span className="block text-[10px] font-bold text-slate-400 uppercase">Grand Total to Charge</span>
                     <span className="text-lg font-extrabold text-emerald-600">${totalPrice}</span>
@@ -2056,7 +2056,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                       placeholder="4111 2222 3333 4444"
                       value={simulatedCardNumber}
                       onChange={(e) => setSimulatedCardNumber(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                     />
                   </div>
 
@@ -2143,7 +2143,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.15 }}
-              className="relative w-full max-w-lg rounded-3xl border border-slate-150 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 overflow-hidden"
+              className="relative w-full max-w-lg rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-lift)] overflow-hidden"
             >
               {/* Close button */}
               <button
@@ -2179,7 +2179,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                       Elite Provider
                     </span>
                   </div>
-                  <h3 className="font-sans text-lg font-bold text-slate-900 dark:text-white">
+                  <h3 className="font-display text-lg font-bold text-foreground">
                     {provider.name}
                   </h3>
                   <p className="text-[10px] text-slate-400 font-mono uppercase">
@@ -2263,7 +2263,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
                       placeholder={`Ask ${provider.name} about local trails, early check-in, or equipment...`}
                       value={hostMessageContent}
                       onChange={(e) => setHostMessageContent(e.target.value)}
-                      className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                      className="flex-grow rounded-xl border border-slate-250 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                     />
                     <button
                       type="button"

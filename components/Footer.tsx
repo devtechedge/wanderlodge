@@ -5,23 +5,23 @@ import { Compass, ShieldCheck, HelpCircle, Flame, Globe } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer id="main-footer" className="border-t border-slate-200 bg-white py-12 transition-colors dark:border-slate-800 dark:bg-slate-900">
+    <footer id="main-footer" className="border-t border-border bg-card/80 py-12 transition-colors backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand Col */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white dark:bg-emerald-500">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand text-brand-foreground shadow-[var(--glow-brand)]">
                 <Compass className="h-4 w-4" />
               </div>
-              <span className="font-sans text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-                Wander<span className="text-emerald-600 dark:text-emerald-400">Lodge</span>
+              <span className="font-display text-lg font-bold tracking-tight text-foreground">
+                Wander<span className="text-brand">Lodge</span>
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               Bespoke architectural sanctuaries and private adventures. Experience wilderness lodgings with absolute peace of mind.
             </p>
-            <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Globe className="h-4 w-4" />
               <span>Global Marketplace</span>
             </div>
@@ -29,20 +29,20 @@ export default function Footer() {
 
           {/* Guarantee Column */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">Wander Guarantee</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground mb-4">Wander Guarantee</h4>
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
-                <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                <ShieldCheck className="h-4 w-4 text-brand shrink-0 mt-0.5" />
                 <div>
-                  <span className="block text-xs font-bold text-slate-700 dark:text-slate-300">WanderGuarantee</span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">24/7 protection against sudden host cancellations.</span>
+                  <span className="block text-xs font-bold text-foreground">WanderGuarantee</span>
+                  <span className="text-[10px] text-muted-foreground">24/7 protection against sudden host cancellations.</span>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <Flame className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                <Flame className="h-4 w-4 text-brand shrink-0 mt-0.5" />
                 <div>
-                  <span className="block text-xs font-bold text-slate-700 dark:text-slate-300">EliteProvider Standard</span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">Rigorous inspection and premium wilderness checklist.</span>
+                  <span className="block text-xs font-bold text-foreground">EliteProvider Standard</span>
+                  <span className="text-[10px] text-muted-foreground">Rigorous inspection and premium wilderness checklist.</span>
                 </div>
               </li>
             </ul>
@@ -50,25 +50,25 @@ export default function Footer() {
 
           {/* Discovery Column */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">Local Adventures</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground mb-4">Local Adventures</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
+                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
                   Alpine Chalets
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
+                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
                   Forest Treehouses
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
+                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
                   Sunset Waterfronts
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
+                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
                   Custom Expeditions
                 </Link>
               </li>
@@ -77,26 +77,26 @@ export default function Footer() {
 
           {/* Support Column */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">Assistance</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground mb-4">Assistance</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
-                  <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
+                <Link href="/" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
+                  <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
                   Wander Support Desk
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
+                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
                   Safety Protocol
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
+                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
                   Provider Guidelines
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 font-medium">
+                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors">
                   Cancel Policy
                 </Link>
               </li>
@@ -104,8 +104,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-slate-100 pt-6 text-center dark:border-slate-800">
-          <p className="text-[10px] font-mono tracking-wider text-slate-400 dark:text-slate-500 uppercase">
+        <div className="mt-8 border-t border-border pt-6 text-center">
+          <p className="text-[10px] font-mono tracking-[0.18em] text-muted-foreground uppercase">
             © 2026 WANDERLODGE GLOBAL MARKETPLACE INC. ALL SANCTUARIES RESERVED.
           </p>
         </div>

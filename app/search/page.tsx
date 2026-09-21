@@ -221,11 +221,11 @@ function SearchContent() {
   };
 
   return (
-    <div id="searchpage-container" className="h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden">
+    <div id="searchpage-container" className="h-screen flex flex-col bg-background transition-colors overflow-hidden">
       <Navbar />
 
       {/* Mini-Query Search Subbar */}
-      <section id="search-subbar" className="border-b border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 z-10 shrink-0">
+      <section id="search-subbar" className="border-b border-slate-200 bg-white p-3 shadow-sm dark:border-border dark:bg-card z-10 shrink-0">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center gap-3">
           <button
             onClick={() => router.push("/")}
@@ -237,7 +237,7 @@ function SearchContent() {
 
           <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-2 items-center">
             {/* Location */}
-            <div className="md:col-span-3 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 dark:border-slate-800 dark:bg-slate-950">
+            <div className="md:col-span-3 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 dark:border-border dark:bg-background">
               <MapPin className="h-4 w-4 text-emerald-500 shrink-0" />
               <input
                 type="text"
@@ -259,7 +259,7 @@ function SearchContent() {
 
             {/* Guests & Action button */}
             <div className="md:col-span-3 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-950 w-full">
+              <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 dark:border-border dark:bg-background w-full">
                 <Users className="h-4 w-4 text-emerald-500 shrink-0" />
                 <select
                   value={guestCount}
@@ -279,7 +279,7 @@ function SearchContent() {
                 className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition shrink-0 ${
                   showSensoryPanel || hasActiveSensoryFilters()
                     ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
-                    : "border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300"
+                    : "border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 dark:border-border dark:bg-background dark:text-slate-300"
                 }`}
                 title="Sensory & Advanced Filters"
               >
@@ -306,7 +306,7 @@ function SearchContent() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="border-b border-slate-200 bg-white shadow-md dark:border-slate-800 dark:bg-slate-900 z-10 shrink-0 overflow-y-auto max-h-[60vh]"
+            className="border-b border-slate-200 bg-white shadow-md dark:border-border dark:bg-card z-10 shrink-0 overflow-y-auto max-h-[60vh]"
           >
             <div className="mx-auto max-w-7xl p-5 md:p-6 space-y-6">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
@@ -353,7 +353,7 @@ function SearchContent() {
                             className={`px-2 py-1 rounded-md text-[10px] font-semibold border transition ${
                               isChecked
                                 ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
-                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-border dark:bg-background dark:text-slate-400 hover:bg-slate-100"
                             }`}
                           >
                             {val === "Whispering Pines" ? "🌲 Whispering Pines (~22dB)" : val === "Active River Noise" ? "🌊 Active River (~30dB)" : "🔇 Silent Meadow (<15dB)"}
@@ -407,7 +407,7 @@ function SearchContent() {
                 {/* Column 2: Pet Safety (Yard) & Remote Workstation */}
                 <div className="space-y-4">
                   {/* Pet-Friendly Enclosed Yard */}
-                  <div className="rounded-xl border border-slate-150 p-3 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 space-y-2">
+                  <div className="rounded-xl border border-slate-150 p-3 bg-slate-50 dark:border-border dark:bg-background space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
                         🐕 Fully Enclosed Yard
@@ -427,7 +427,7 @@ function SearchContent() {
                         <select
                           value={minFenceHeight}
                           onChange={(e) => setMinFenceHeight(e.target.value)}
-                          className="w-full rounded-lg border border-slate-200 bg-white p-1.5 text-xs text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+                          className="w-full rounded-lg border border-border bg-card p-1.5 text-xs text-slate-700 dark:border-border dark:bg-card dark:text-slate-300"
                         >
                           <option value="">Any Height</option>
                           <option value="5">5.0+ Feet</option>
@@ -439,7 +439,7 @@ function SearchContent() {
                   </div>
 
                   {/* Remote Workstation Support */}
-                  <div className="rounded-xl border border-slate-150 p-3 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 space-y-2">
+                  <div className="rounded-xl border border-slate-150 p-3 bg-slate-50 dark:border-border dark:bg-background space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
                         💻 Ergonomic Workstation
@@ -459,7 +459,7 @@ function SearchContent() {
                         <select
                           value={minUploadSpeed}
                           onChange={(e) => setMinUploadSpeed(e.target.value)}
-                          className="w-full rounded-lg border border-slate-200 bg-white p-1.5 text-xs text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+                          className="w-full rounded-lg border border-border bg-card p-1.5 text-xs text-slate-700 dark:border-border dark:bg-card dark:text-slate-300"
                         >
                           <option value="">Any Speed</option>
                           <option value="100">100+ Mbps (High Upload)</option>
@@ -475,7 +475,7 @@ function SearchContent() {
                 <div className="space-y-4">
                   {/* Quick-toggle Checklist */}
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="flex flex-col justify-between rounded-xl border border-slate-150 p-2 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+                    <div className="flex flex-col justify-between rounded-xl border border-slate-150 p-2 bg-slate-50 dark:border-border dark:bg-background">
                       <span className="text-[9px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         🔥 Stove & Wood
                       </span>
@@ -490,7 +490,7 @@ function SearchContent() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col justify-between rounded-xl border border-slate-150 p-2 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+                    <div className="flex flex-col justify-between rounded-xl border border-slate-150 p-2 bg-slate-50 dark:border-border dark:bg-background">
                       <span className="text-[9px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         🌿 Organic scent
                       </span>
@@ -527,7 +527,7 @@ function SearchContent() {
                             className={`px-2 py-1 rounded-md text-[9px] font-semibold border transition ${
                               isChecked
                                 ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
-                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-border dark:bg-background dark:text-slate-400 hover:bg-slate-100"
                             }`}
                           >
                             {val === "Flat" ? "🏖️ Flat" : val === "Gentle Slope" ? "🛶 Gentle" : val === "Steep Bank" ? "🧗 Cliff" : "🚫 None"}
@@ -558,7 +558,7 @@ function SearchContent() {
                             className={`px-2 py-1 rounded-md text-[9px] font-semibold border transition ${
                               isChecked
                                 ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
-                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-border dark:bg-background dark:text-slate-400 hover:bg-slate-100"
                             }`}
                           >
                             {val === "Saline" ? "🧂 Saline" : val === "Natural Circulating Stream-Water" ? "💧 Stream" : "🚫 None"}
@@ -589,7 +589,7 @@ function SearchContent() {
                             className={`px-2 py-1 rounded-md text-[9px] font-semibold border transition ${
                               isChecked
                                 ? "border-emerald-500 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-400"
-                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 hover:bg-slate-100"
+                                : "border-slate-200 bg-slate-50 text-slate-600 dark:border-border dark:bg-background dark:text-slate-400 hover:bg-slate-100"
                             }`}
                           >
                             {val === "Easy" ? "🚗 Paved" : val === "Moderate" ? "🚙 Dirt" : "❄️ 4WD/Chains"}
@@ -638,7 +638,7 @@ function SearchContent() {
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Found {properties.length} total • showing {filteredListProperties.length} on map
               </span>
-              <h2 className="font-sans text-xl font-bold tracking-tight text-slate-900 dark:text-white mt-0.5">
+              <h2 className="font-display text-xl font-bold tracking-tight text-foreground mt-0.5">
                 Lodgings in {queryLocation || "Wander Valley"}
               </h2>
             </div>
@@ -660,7 +660,7 @@ function SearchContent() {
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="rounded-3xl border border-slate-150 bg-white p-4 flex gap-4 dark:border-slate-800 dark:bg-slate-900 animate-pulse">
+                <div key={n} className="rounded-3xl border border-border bg-card p-4 flex gap-4 dark:border-border dark:bg-card animate-pulse">
                   <div className="h-28 w-36 rounded-2xl bg-slate-200 dark:bg-slate-800 shrink-0" />
                   <div className="space-y-2 w-full py-1">
                     <div className="h-4 w-2/3 rounded-md bg-slate-200 dark:bg-slate-800" />
@@ -701,7 +701,7 @@ function SearchContent() {
                     className={`group rounded-3xl border overflow-hidden bg-white p-3 flex flex-col sm:flex-row gap-4 transition-all hover:shadow-xl cursor-pointer ${
                       isSelected
                         ? "border-emerald-500 ring-1 ring-emerald-500/20 dark:border-emerald-500 dark:bg-slate-900/60"
-                        : "border-slate-150 dark:border-slate-800 dark:bg-slate-900"
+                        : "border-slate-150 dark:border-border dark:bg-card"
                     }`}
                   >
                     {/* Lodge thumbnail */}
@@ -732,7 +732,7 @@ function SearchContent() {
                           </div>
                         </div>
 
-                        <h3 className="font-sans font-bold text-sm text-slate-900 dark:text-white mt-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                        <h3 className="font-display font-bold text-sm text-foreground mt-1 group-hover:text-brand">
                           {p.title}
                         </h3>
 
@@ -831,7 +831,7 @@ function SearchContent() {
 export default function Search() {
   return (
     <Suspense fallback={
-      <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
         <Compass className="h-10 w-10 text-emerald-600 animate-spin" />
       </div>
     }>

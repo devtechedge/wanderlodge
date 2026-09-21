@@ -121,7 +121,7 @@ export default function DatePicker({
   return (
     <div ref={containerRef} id="datepicker-container" className="relative w-full">
       {/* Target Triggers */}
-      <div className="grid min-w-0 grid-cols-2 gap-1 sm:gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-800 dark:bg-slate-950">
+      <div className="grid min-w-0 grid-cols-2 gap-1 sm:gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 dark:border-border dark:bg-background">
         <button
           type="button"
           onClick={() => setShowCalendar(true)}
@@ -153,7 +153,7 @@ export default function DatePicker({
       {showCalendar && (
         <div
           id="datepicker-dropdown"
-          className="absolute left-0 mt-2 z-50 w-[min(320px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-3xl border border-slate-150 bg-white p-4 shadow-2xl dark:border-slate-800 dark:bg-slate-900 sm:w-[350px]"
+          className="absolute left-0 mt-2 z-50 w-[min(320px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-3xl border border-border bg-card p-4 shadow-2xl dark:border-border dark:bg-card sm:w-[350px]"
         >
           {/* Header Controls */}
           <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">

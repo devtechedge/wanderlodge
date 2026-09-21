@@ -53,7 +53,7 @@ export default function WishlistPage() {
 
   if (loadingUser) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
         <Compass className="h-10 w-10 text-emerald-600 animate-spin" />
       </div>
     );
@@ -61,10 +61,10 @@ export default function WishlistPage() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
         <main className="flex-grow flex items-center justify-center px-4 py-20 text-center">
-          <div className="max-w-md rounded-3xl border border-slate-150 bg-white p-8 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+          <div className="max-w-md rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-lift)]">
             <FolderHeart className="mx-auto h-12 w-12 text-slate-350 animate-bounce" />
             <h3 className="mt-4 text-lg font-bold text-slate-800 dark:text-slate-200">Sign In Required</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -75,7 +75,7 @@ export default function WishlistPage() {
                 const btn = document.getElementById("open-auth-modal-btn");
                 if (btn) btn.click();
               }}
-              className="mt-6 rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 dark:bg-emerald-500"
+              className="mt-6 rounded-xl btn-brand px-6 py-2.5 text-xs font-bold"
             >
               Secure Sign In
             </button>
@@ -89,7 +89,7 @@ export default function WishlistPage() {
   const activeWishlist = wishlists.find((w) => w.id === activeListId);
 
   return (
-    <div id="wishlists-container" className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div id="wishlists-container" className="min-h-screen flex flex-col bg-background transition-colors">
       <Navbar />
 
       <main className="flex-grow mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 w-full">
@@ -109,7 +109,7 @@ export default function WishlistPage() {
           {/* Left folders list (Col 4) */}
           <div className="md:col-span-4 space-y-4">
             <div>
-              <h1 className="font-sans text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="font-display text-xl font-bold tracking-tight text-foreground">
                 My Saved Folders
               </h1>
               <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -130,7 +130,7 @@ export default function WishlistPage() {
                       className={`w-full flex items-center justify-between gap-3 rounded-2xl border p-4 text-left transition ${
                         isActive
                           ? "border-emerald-600 bg-emerald-50/20 dark:border-emerald-500 dark:bg-emerald-950/25"
-                          : "border-slate-150 bg-white dark:border-slate-800 dark:bg-slate-900"
+                          : "border-slate-150 bg-white dark:border-border dark:bg-card"
                       }`}
                     >
                       <div>
@@ -154,7 +154,7 @@ export default function WishlistPage() {
             {activeWishlist ? (
               <div className="space-y-6">
                 <div className="border-b border-slate-150 pb-3 dark:border-slate-800 flex justify-between items-baseline">
-                  <h2 className="font-sans text-lg font-bold text-slate-900 dark:text-white">
+                  <h2 className="font-display text-lg font-bold text-foreground">
                     {activeWishlist.name} Directory
                   </h2>
                   <span className="text-xs font-mono text-slate-400 uppercase">
@@ -190,7 +190,7 @@ export default function WishlistPage() {
                     {activeWishlist.properties.map((p: any) => (
                       <div
                         key={p.id}
-                        className="group relative rounded-3xl border border-slate-150 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all dark:border-slate-800 dark:bg-slate-900"
+                        className="group relative rounded-3xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-lg transition-all dark:border-border dark:bg-card"
                       >
                         {/* Remove button */}
                         <button

@@ -151,7 +151,7 @@ export default function ProviderPage() {
 
   if (loadingUser) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
         <Compass className="h-10 w-10 text-emerald-600 animate-spin" />
       </div>
     );
@@ -160,10 +160,10 @@ export default function ProviderPage() {
   // Authorize: Must be Provider
   if (!currentUser || currentUser.role !== "PROVIDER") {
     return (
-      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
         <main className="flex-grow flex items-center justify-center px-4 py-20 text-center">
-          <div className="max-w-md rounded-3xl border border-slate-150 bg-white p-8 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+          <div className="max-w-md rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-lift)]">
             <AlertCircle className="mx-auto h-12 w-12 text-amber-500 animate-pulse" />
             <h3 className="mt-4 text-lg font-bold text-slate-800 dark:text-slate-200">Lodge Provider Tier Needed</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -174,7 +174,7 @@ export default function ProviderPage() {
                 const btn = document.getElementById("user-profile-menu-btn");
                 if (btn) btn.click();
               }}
-              className="mt-6 rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 dark:bg-emerald-500"
+              className="mt-6 rounded-xl btn-brand px-6 py-2.5 text-xs font-bold"
             >
               Access Account Menu
             </button>
@@ -186,7 +186,7 @@ export default function ProviderPage() {
   }
 
   return (
-    <div id="provider-dashboard-container" className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div id="provider-dashboard-container" className="min-h-screen flex flex-col bg-background transition-colors duration-300">
       <Navbar />
 
       <main className="flex-grow mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 w-full">
@@ -196,7 +196,7 @@ export default function ProviderPage() {
             <span className="rounded bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 uppercase dark:bg-emerald-950/40 dark:text-emerald-400">
               Provider Portal - Elite Tier Account
             </span>
-            <h1 className="font-sans text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
+            <h1 className="font-display text-2xl font-extrabold text-foreground mt-1">
               Sanctuary Management
             </h1>
           </div>
@@ -207,7 +207,7 @@ export default function ProviderPage() {
               className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold border transition ${
                 activeTab === "dashboard"
                   ? "border-emerald-600 bg-emerald-50 text-emerald-800 dark:border-emerald-500 dark:bg-emerald-950/25 dark:text-emerald-400"
-                  : "border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                  : "border-slate-200 bg-white hover:bg-slate-50 dark:border-border dark:bg-card dark:hover:bg-slate-800"
               }`}
             >
               <LayoutDashboard className="h-4 w-4 text-emerald-500" />
@@ -219,7 +219,7 @@ export default function ProviderPage() {
               className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold border transition ${
                 activeTab === "calendar"
                   ? "border-emerald-600 bg-emerald-50 text-emerald-800 dark:border-emerald-500 dark:bg-emerald-950/25 dark:text-emerald-400"
-                  : "border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                  : "border-slate-200 bg-white hover:bg-slate-50 dark:border-border dark:bg-card dark:hover:bg-slate-800"
               }`}
             >
               <Calendar className="h-4 w-4 text-emerald-500" />
@@ -241,7 +241,7 @@ export default function ProviderPage() {
           <div className="space-y-8">
             {/* Metric widgets block */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-              <div className="rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gross Income</span>
                   <DollarSign className="h-4.5 w-4.5 text-emerald-600" />
@@ -254,7 +254,7 @@ export default function ProviderPage() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Stays Logged</span>
                   <BarChart3 className="h-4.5 w-4.5 text-emerald-600" />
@@ -267,7 +267,7 @@ export default function ProviderPage() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Lodges</span>
                   <Sparkles className="h-4.5 w-4.5 text-emerald-600" />
@@ -284,8 +284,8 @@ export default function ProviderPage() {
             {/* Visual analytics chart & incoming reservation grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* SVG analytics bar */}
-              <div className="lg:col-span-4 rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <h3 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-4">
+              <div className="lg:col-span-4 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+                <h3 className="font-display text-sm font-bold text-foreground mb-4">
                   Earnings Breakdown by Lodge
                 </h3>
                 {/* Simulated Custom SVG Chart */}
@@ -309,8 +309,8 @@ export default function ProviderPage() {
               </div>
 
               {/* Reservations feed */}
-              <div className="lg:col-span-8 rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <h3 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-4">
+              <div className="lg:col-span-8 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+                <h3 className="font-display text-sm font-bold text-foreground mb-4">
                   Incoming Reservations Feed
                 </h3>
                 
@@ -362,8 +362,8 @@ export default function ProviderPage() {
         {activeTab === "calendar" && (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
             {/* Block date form */}
-            <div className="md:col-span-5 rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <h3 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-4">
+            <div className="md:col-span-5 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+              <h3 className="font-display text-sm font-bold text-foreground mb-4">
                 Block Lodge Calendar Dates
               </h3>
               <form onSubmit={handleAddBlockedRange} className="space-y-4">
@@ -371,7 +371,7 @@ export default function ProviderPage() {
                   <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
                     Select Lodge Property
                   </label>
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-border dark:bg-background">
                     <select
                       value={blockLodgeId}
                       onChange={(e) => setBlockLodgeId(e.target.value)}
@@ -395,7 +395,7 @@ export default function ProviderPage() {
                       required
                       value={blockStart}
                       onChange={(e) => setBlockStart(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-bold outline-none focus:border-emerald-500 dark:border-slate-800 dark:bg-slate-950 text-slate-800 dark:text-white"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-bold outline-none focus:border-emerald-500 dark:border-border dark:bg-background text-slate-800 dark:text-white"
                     />
                   </div>
                   <div>
@@ -407,7 +407,7 @@ export default function ProviderPage() {
                       required
                       value={blockEnd}
                       onChange={(e) => setBlockEnd(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-bold outline-none focus:border-emerald-500 dark:border-slate-800 dark:bg-slate-950 text-slate-800 dark:text-white"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-bold outline-none focus:border-emerald-500 dark:border-border dark:bg-background text-slate-800 dark:text-white"
                     />
                   </div>
                 </div>
@@ -422,8 +422,8 @@ export default function ProviderPage() {
             </div>
 
             {/* Current blocks list */}
-            <div className="md:col-span-7 rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <h3 className="font-sans text-sm font-bold text-slate-900 dark:text-white mb-4">
+            <div className="md:col-span-7 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+              <h3 className="font-display text-sm font-bold text-foreground mb-4">
                 Blocked Dates Registry
               </h3>
               {blockedRanges.length === 0 ? (
@@ -458,7 +458,7 @@ export default function ProviderPage() {
 
         {/* List New Lodge wizard tab */}
         {activeTab === "list-lodge" && (
-          <div className="max-w-2xl mx-auto rounded-3xl border border-slate-150 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+          <div className="max-w-2xl mx-auto rounded-3xl border border-border bg-card p-6 shadow-xl dark:border-border dark:bg-card">
             {/* Step Indicators */}
             <div className="flex items-center justify-center gap-6 mb-8 border-b border-slate-100 pb-5 dark:border-slate-800">
               {[
@@ -502,7 +502,7 @@ export default function ProviderPage() {
                       placeholder="e.g. Eldorado Ridge Cabin"
                       value={lodgeTitle}
                       onChange={(e) => setLodgeTitle(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                     />
                   </div>
 
@@ -516,7 +516,7 @@ export default function ProviderPage() {
                       placeholder="Detail your structure, wilderness view depth, fireplace dimensions..."
                       value={lodgeDesc}
                       onChange={(e) => setLodgeDesc(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                     />
                   </div>
 
@@ -531,7 +531,7 @@ export default function ProviderPage() {
                         placeholder="220"
                         value={lodgePrice}
                         onChange={(e) => setLodgePrice(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                       />
                     </div>
 
@@ -545,7 +545,7 @@ export default function ProviderPage() {
                         placeholder="Pinecrest Valley"
                         value={lodgeLocation}
                         onChange={(e) => setLodgeLocation(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background"
                       />
                     </div>
 
@@ -556,7 +556,7 @@ export default function ProviderPage() {
                       <select
                         value={lodgeGuests}
                         onChange={(e) => setLodgeGuests(parseInt(e.target.value, 10))}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 cursor-pointer"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background cursor-pointer"
                       >
                         {[1, 2, 3, 4, 5, 6].map((n) => (
                           <option key={n} value={n}>

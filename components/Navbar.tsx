@@ -70,18 +70,18 @@ export default function Navbar() {
   };
 
   return (
-    <header id="main-header" className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md transition-colors dark:border-slate-800 dark:bg-slate-900/95">
+    <header id="main-header" className="sticky top-0 z-50 w-full nav-frost transition-colors duration-300">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8 gap-x-2">
         {/* Logo */}
         <Link id="nav-logo-link" href="/" className="flex items-center gap-1.5 sm:gap-2 group shrink-0">
-          <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-600/10 transition-transform group-hover:scale-105 dark:bg-emerald-500">
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-2xl bg-brand text-brand-foreground shadow-[var(--glow-brand)] transition-transform group-hover:scale-105">
             <Compass className="h-5 w-5 animate-spin-slow" />
           </div>
           <div className="shrink-0">
-            <span className="font-sans text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white block whitespace-nowrap">
-              Wander<span className="text-emerald-600 dark:text-emerald-400">Lodge</span>
+            <span className="font-display text-base sm:text-xl font-bold tracking-tight text-foreground block whitespace-nowrap">
+              Wander<span className="text-brand">Lodge</span>
             </span>
-            <div className="hidden text-[10px] font-mono tracking-wider text-slate-400 dark:text-slate-500 sm:block uppercase">
+            <div className="hidden text-[10px] font-mono tracking-[0.18em] text-muted-foreground sm:block uppercase">
               Elite Lodging
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function Navbar() {
             id="nav-link-explore"
             href="/"
             className={`text-sm font-medium transition-colors ${
-              pathname === "/" ? "text-emerald-600 dark:text-emerald-400" : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              pathname === "/" ? "text-brand" : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Explore Lodges
@@ -103,7 +103,7 @@ export default function Navbar() {
               id="nav-link-provider"
               href="/provider"
               className={`text-sm font-medium transition-colors ${
-                pathname.startsWith("/provider") ? "text-emerald-600 dark:text-emerald-400" : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                pathname.startsWith("/provider") ? "text-brand" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Provider Area
@@ -114,7 +114,7 @@ export default function Navbar() {
               id="nav-link-trips"
               href="/trips"
               className={`text-sm font-medium transition-colors ${
-                pathname === "/trips" ? "text-emerald-600 dark:text-emerald-400" : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                pathname === "/trips" ? "text-brand" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               My Journeys
@@ -129,7 +129,7 @@ export default function Navbar() {
             id="theme-toggle-btn"
             data-testid="theme-toggle"
             onClick={toggleTheme}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border text-foreground hover:bg-muted transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Toggle Theme Mode"
           >
             {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
@@ -137,20 +137,20 @@ export default function Navbar() {
 
           {/* Session Actions */}
           {loadingUser ? (
-            <div className="h-10 w-24 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800 shrink-0" />
+            <div className="h-10 w-24 animate-pulse rounded-2xl bg-muted shrink-0" />
           ) : currentUser ? (
             <div className="relative shrink-0">
               <button
                 id="user-profile-menu-btn"
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-slate-200 p-1 pr-2 sm:pr-3 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800 shrink-0"
+                className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-border p-1 pr-2 sm:pr-3 transition-colors hover:bg-muted shrink-0"
               >
                 <img
                   src={currentUser.image}
                   alt={currentUser.name}
                   className="h-8 w-8 rounded-full object-cover shrink-0"
                 />
-                <span className="hidden text-sm font-medium text-slate-700 dark:text-slate-300 sm:inline truncate max-w-[80px]">
+                <span className="hidden text-sm font-medium text-foreground sm:inline truncate max-w-[80px]">
                   {currentUser.name.split(" ")[0]}
                 </span>
               </button>
@@ -169,12 +169,12 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 z-50 w-56 rounded-2xl border border-slate-150 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+                      className="absolute right-0 mt-2 z-50 w-56 rounded-2xl border border-border bg-card p-2 shadow-[var(--shadow-lift)]"
                     >
-                      <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
-                        <p className="text-xs text-slate-400 font-medium">Signed in as</p>
-                        <p className="font-semibold text-sm truncate text-slate-800 dark:text-slate-200">{currentUser.name}</p>
-                        <span className="inline-block mt-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 px-2 py-0.5">
+                      <div className="px-3 py-2 border-b border-border">
+                        <p className="text-xs text-muted-foreground font-medium">Signed in as</p>
+                        <p className="font-semibold text-sm truncate text-foreground">{currentUser.name}</p>
+                        <span className="inline-block mt-1 rounded-full bg-brand-muted text-[10px] font-semibold text-brand px-2 py-0.5">
                           {currentUser.role === "PROVIDER" ? "Elite Provider" : "Traveler Mode"}
                         </span>
                       </div>
@@ -186,31 +186,31 @@ export default function Navbar() {
                             await switchRole();
                             router.push(currentUser.role === "PROVIDER" ? "/trips" : "/provider");
                           }}
-                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-semibold text-foreground hover:bg-muted"
                         >
-                          <Sparkles className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                          <Sparkles className="h-4 w-4 text-brand" />
                           Switch to {currentUser.role === "PROVIDER" ? "Traveler" : "Provider"}
                         </button>
 
                         <Link
                           href={currentUser.role === "PROVIDER" ? "/provider" : "/trips"}
                           onClick={() => setShowProfileMenu(false)}
-                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted"
                         >
-                          <LayoutDashboard className="h-4 w-4 text-slate-400" />
+                          <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
                           {currentUser.role === "PROVIDER" ? "Provider Dashboard" : "My Journeys"}
                         </Link>
 
                         <Link
                           href="/wishlist"
                           onClick={() => setShowProfileMenu(false)}
-                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted"
                         >
                           <Heart className="h-4 w-4 text-red-500" />
                           My Wishlists
                         </Link>
 
-                        <hr className="my-1 border-slate-100 dark:border-slate-800" />
+                        <hr className="my-1 border-border" />
 
                         <button
                           onClick={() => {
@@ -237,7 +237,7 @@ export default function Navbar() {
                 setAuthMode("login");
                 setIsOpenAuthModal(true);
               }}
-              className="h-10 px-3 sm:px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm shrink-0 focus:outline-none focus:ring-2 focus:ring-emerald-500 active:scale-95 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+              className="h-10 px-3 sm:px-4 btn-brand font-medium rounded-2xl flex items-center justify-center gap-1.5 transition-all shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
             >
               <LogIn className="h-4 w-4 shrink-0" />
               <span className="whitespace-nowrap text-xs sm:text-sm font-semibold tracking-wide">Sign In</span>
@@ -254,30 +254,30 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
+              className="fixed inset-0 bg-slate-950/50 backdrop-blur-sm"
               onClick={() => setIsOpenAuthModal(false)}
             />
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative z-50 w-full max-w-md overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+              className="relative z-50 w-full max-w-md overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-lift)]"
             >
               <button
                 onClick={() => setIsOpenAuthModal(false)}
-                className="absolute right-4 top-4 rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="absolute right-4 top-4 rounded-xl p-1.5 text-muted-foreground hover:bg-muted"
               >
                 <X className="h-5 w-5" />
               </button>
 
               <div className="mb-6 flex flex-col items-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-muted text-brand">
                   <Compass className="h-6 w-6" />
                 </div>
-                <h3 className="mt-3 font-sans text-xl font-bold text-slate-900 dark:text-white">
+                <h3 className="mt-3 font-display text-xl font-bold text-foreground tracking-tight">
                   {authMode === "login" ? "Welcome back to WanderLodge" : "Create your account"}
                 </h3>
-                <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-center text-xs text-muted-foreground mt-1">
                   Connect with world-class providers and exclusive local lodges.
                 </p>
               </div>
@@ -291,7 +291,7 @@ export default function Navbar() {
               <form onSubmit={handleAuthSubmit} className="space-y-4">
                 {authMode === "register" && (
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1">
                       Full Name
                     </label>
                     <input
@@ -300,13 +300,13 @@ export default function Navbar() {
                       value={authName}
                       onChange={(e) => setAuthName(e.target.value)}
                       placeholder="e.g. Marcus Traveler"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500"
+                      className="w-full rounded-2xl border border-border bg-muted px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand focus:bg-card"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1">
                     Email Address
                   </label>
                   <input
@@ -316,17 +316,17 @@ export default function Navbar() {
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
                     placeholder="e.g. marcus@wanderlodge.com"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500"
+                    className="w-full rounded-2xl border border-border bg-muted px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand focus:bg-card"
                   />
                   {authMode === "login" && (
-                    <span className="block mt-1 text-[10px] text-slate-400 dark:text-slate-500">
+                    <span className="block mt-1 text-[10px] text-muted-foreground">
                       Try <b>marcus@wanderlodge.com</b> or <b>evelyn@wanderlodge.com</b>
                     </span>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1">
                     Password
                   </label>
                   <input
@@ -336,10 +336,10 @@ export default function Navbar() {
                     value={authPassword}
                     onChange={(e) => setAuthPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500"
+                    className="w-full rounded-2xl border border-border bg-muted px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand focus:bg-card"
                   />
                   {authMode === "login" && (
-                    <span className="block mt-1 text-[10px] text-slate-400 dark:text-slate-500">
+                    <span className="block mt-1 text-[10px] text-muted-foreground">
                       Demo password is server-side - see <b>SECURITY.md</b>
                     </span>
                   )}
@@ -347,7 +347,7 @@ export default function Navbar() {
 
                 {authMode === "register" && (
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
+                    <label className="block text-xs font-semibold text-muted-foreground mb-2">
                       Account Tier / Role
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -356,8 +356,8 @@ export default function Navbar() {
                         onClick={() => setAuthRole("TRAVELER")}
                         className={`rounded-xl border p-2.5 text-center transition-all ${
                           authRole === "TRAVELER"
-                            ? "border-emerald-500 bg-emerald-50/50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400"
-                            : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400"
+                            ? "border-brand bg-brand-muted text-brand"
+                            : "border-border bg-muted text-muted-foreground"
                         }`}
                       >
                         <span className="block text-xs font-bold">Traveler</span>
@@ -368,8 +368,8 @@ export default function Navbar() {
                         onClick={() => setAuthRole("PROVIDER")}
                         className={`rounded-xl border p-2.5 text-center transition-all ${
                           authRole === "PROVIDER"
-                            ? "border-emerald-500 bg-emerald-50/50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400"
-                            : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400"
+                            ? "border-brand bg-brand-muted text-brand"
+                            : "border-border bg-muted text-muted-foreground"
                         }`}
                       >
                         <span className="block text-xs font-bold">Lodge Provider</span>
@@ -383,7 +383,7 @@ export default function Navbar() {
                   type="submit"
                   data-testid="auth-submit"
                   disabled={loadingAuth}
-                  className="mt-2 w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/10 transition-transform hover:bg-emerald-700 focus:scale-[0.98] disabled:opacity-50 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                  className="mt-2 w-full rounded-2xl btn-brand py-3 text-sm font-semibold transition-transform focus:scale-[0.98] disabled:opacity-50"
                 >
                   {loadingAuth ? "Please wait..." : authMode === "login" ? "Sign In" : "Register and Sign In"}
                 </button>
@@ -392,7 +392,7 @@ export default function Navbar() {
               <div className="mt-4 text-center">
                 <button
                   onClick={toggleAuthMode}
-                  className="text-xs font-semibold text-emerald-600 hover:underline dark:text-emerald-400"
+                  className="text-xs font-semibold text-brand hover:underline"
                 >
                   {authMode === "login" ? "Don't have an account? Create one" : "Already have an account? Sign In"}
                 </button>

@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Syne } from "next/font/google";
 import { StoreProvider } from "@/lib/store";
 import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import "./globals.css";
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
   display: "swap",
 });
 
@@ -38,8 +44,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} font-sans`}>
-      <body suppressHydrationWarning className="bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
+    <html lang="en" className={`${dmSans.variable} ${syne.variable}`}>
+      <body suppressHydrationWarning className="bg-background text-foreground transition-colors duration-300">
         <StoreProvider>
           {children}
           <AccessibilityToolbar />

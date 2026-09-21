@@ -436,7 +436,7 @@ export default function TripsPage() {
 
   if (loadingUser) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
         <Compass className="h-10 w-10 text-emerald-600 animate-spin" />
       </div>
     );
@@ -444,10 +444,10 @@ export default function TripsPage() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
         <main className="flex-grow flex items-center justify-center px-4 py-20 text-center">
-          <div className="max-w-md rounded-3xl border border-slate-150 bg-white p-8 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+          <div className="max-w-md rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-lift)]">
             <Compass className="mx-auto h-12 w-12 text-slate-300 animate-bounce" />
             <h3 className="mt-4 text-lg font-bold text-slate-800 dark:text-slate-200">Sign In Required</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -472,14 +472,14 @@ export default function TripsPage() {
   const selectedRes = reservations.find((r) => r.id === activeResId);
 
   return (
-    <div id="tripspage-container" className="h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden">
+    <div id="tripspage-container" className="h-screen flex flex-col bg-background transition-colors overflow-hidden">
       <Navbar />
 
       <main className="flex-grow flex relative overflow-hidden">
         {/* Left column: Itinerary List */}
         <div id="trips-itinerary-panel" className="w-full md:w-[45%] lg:w-[40%] h-full overflow-y-auto px-4 py-6 border-r border-slate-200 dark:border-slate-800">
           <div className="mb-6">
-            <h1 className="font-sans text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="font-display text-xl font-bold tracking-tight text-foreground">
               My Journeys & Itineraries
             </h1>
             <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -518,7 +518,7 @@ export default function TripsPage() {
                     className={`rounded-2xl border p-4 flex gap-4 transition cursor-pointer text-left relative overflow-hidden ${
                       isSelected
                         ? "border-emerald-500 bg-emerald-50/10 dark:border-emerald-500 dark:bg-emerald-950/10"
-                        : "border-slate-150 bg-white dark:border-slate-800 dark:bg-slate-900"
+                        : "border-slate-150 bg-white dark:border-border dark:bg-card"
                     }`}
                   >
                     {/* Tiny visual bar indicator */}
@@ -576,7 +576,7 @@ export default function TripsPage() {
                     <MessageSquare className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-sans text-sm font-bold text-slate-900 dark:text-white">
+                    <h3 className="font-display text-sm font-bold text-foreground">
                       Elite Chat: {selectedRes.propertyTitle}
                     </h3>
                     <p className="text-[10px] text-emerald-600 font-bold dark:text-emerald-400 flex items-center gap-1 uppercase tracking-wider mt-0.5">
@@ -793,7 +793,7 @@ export default function TripsPage() {
                     
                     {/* Left Pane: Co-Travelers */}
                     <div className="space-y-4">
-                      <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800">
+                      <div className="bg-card rounded-2xl border border-border p-5">
                         <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-3 flex items-center gap-1.5">
                           <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                           <span>Travel Companions ({selectedRes.coTravelers?.length || 0})</span>
@@ -846,7 +846,7 @@ export default function TripsPage() {
                               value={newCoName}
                               onChange={(e) => setNewCoName(e.target.value)}
                               placeholder="Name"
-                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 text-slate-800 dark:text-white"
+                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background text-slate-800 dark:text-white"
                             />
                             <input
                               type="email"
@@ -854,14 +854,14 @@ export default function TripsPage() {
                               value={newCoEmail}
                               onChange={(e) => setNewCoEmail(e.target.value)}
                               placeholder="Email"
-                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 text-slate-800 dark:text-white"
+                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background text-slate-800 dark:text-white"
                             />
                           </div>
                           <div className="flex gap-2">
                             <select
                               value={newCoRole}
                               onChange={(e) => setNewCoRole(e.target.value)}
-                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 dark:border-slate-800 dark:bg-slate-950 cursor-pointer text-slate-800 dark:text-slate-200 flex-grow"
+                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 dark:border-border dark:bg-background cursor-pointer text-slate-800 dark:text-slate-200 flex-grow"
                             >
                               <option value="Adult">Adult</option>
                               <option value="Child">Child</option>
@@ -881,7 +881,7 @@ export default function TripsPage() {
 
                     {/* Right Pane: Shared Ledger */}
                     <div className="space-y-4">
-                      <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800">
+                      <div className="bg-card rounded-2xl border border-border p-5">
                         <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-3 flex items-center gap-1.5">
                           <CreditCard className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                           <span>Shared Ledger Expenses ({selectedRes.groupExpenses?.length || 0})</span>
@@ -938,7 +938,7 @@ export default function TripsPage() {
                               value={expDesc}
                               onChange={(e) => setExpDesc(e.target.value)}
                               placeholder="Description (e.g., Kayaks)"
-                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 text-slate-800 dark:text-white"
+                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background text-slate-800 dark:text-white"
                             />
                             <input
                               type="number"
@@ -948,14 +948,14 @@ export default function TripsPage() {
                               value={expAmt}
                               onChange={(e) => setExpAmt(e.target.value)}
                               placeholder="Amount ($)"
-                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 text-slate-800 dark:text-white"
+                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background text-slate-800 dark:text-white"
                             />
                           </div>
                           <div className="flex gap-2">
                             <select
                               value={expPaidBy}
                               onChange={(e) => setExpPaidBy(e.target.value)}
-                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 dark:border-slate-800 dark:bg-slate-950 cursor-pointer text-slate-800 dark:text-slate-200 flex-grow"
+                              className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs outline-none focus:border-emerald-500 dark:border-border dark:bg-background cursor-pointer text-slate-800 dark:text-slate-200 flex-grow"
                             >
                               <option value="">Paid by: Me ({currentUser?.name})</option>
                               {selectedRes.coTravelers?.map((co, i) => (
@@ -976,7 +976,7 @@ export default function TripsPage() {
                   </div>
 
                   {/* Dynamic Expense Settling & Balance Matrix */}
-                  <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800">
+                  <div className="bg-card rounded-3xl border border-border p-5">
                     <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-3 flex items-center gap-1.5">
                       <Compass className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       <span>Dynamic Settlement & Splits</span>
@@ -1003,15 +1003,15 @@ export default function TripsPage() {
                       return (
                         <div className="space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center font-sans">
-                            <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl">
+                            <div className="bg-background p-3 rounded-2xl">
                               <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Grand Total Budget</span>
                               <span className="text-sm font-black text-slate-900 dark:text-white">${grandTotalPlan.toFixed(2)}</span>
                             </div>
-                            <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl">
+                            <div className="bg-background p-3 rounded-2xl">
                               <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Splitting Between</span>
                               <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{totalSharePersons} Person{totalSharePersons > 1 ? "s" : ""}</span>
                             </div>
-                            <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl">
+                            <div className="bg-background p-3 rounded-2xl">
                               <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Per-Person Share</span>
                               <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">${sharePerPerson.toFixed(2)}</span>
                             </div>
@@ -1089,7 +1089,7 @@ export default function TripsPage() {
                 <div className="flex-grow overflow-y-auto px-6 py-6 space-y-6 bg-slate-50/50 dark:bg-slate-950/20">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Stay Extender Card */}
-                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                    <div className="bg-card rounded-2xl border border-border p-5 text-left">
                       <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-2 flex items-center gap-1.5">
                         <Clock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                         <span>Stretch Your Serenity: Stay Extender</span>
@@ -1118,7 +1118,7 @@ export default function TripsPage() {
                     </div>
 
                     {/* Rain-Check Weather Guarantee Card */}
-                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                    <div className="bg-card rounded-2xl border border-border p-5 text-left">
                       <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-2 flex items-center gap-1.5">
                         <CloudRain className="h-4 w-4 text-sky-500" />
                         <span>Rain-Check Weather Guarantee</span>
@@ -1143,7 +1143,7 @@ export default function TripsPage() {
                                 type="date"
                                 value={rainCheckStart}
                                 onChange={(e) => setRainCheckStart(e.target.value)}
-                                className="w-full rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none text-slate-800 dark:text-white dark:border-slate-800 dark:bg-slate-950"
+                                className="w-full rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none text-slate-800 dark:text-white dark:border-border dark:bg-background"
                               />
                             </div>
                             <div>
@@ -1152,7 +1152,7 @@ export default function TripsPage() {
                                 type="date"
                                 value={rainCheckEnd}
                                 onChange={(e) => setRainCheckEnd(e.target.value)}
-                                className="w-full rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none text-slate-800 dark:text-white dark:border-slate-800 dark:bg-slate-950"
+                                className="w-full rounded-xl border border-slate-250 bg-slate-50 px-2.5 py-1.5 text-xs outline-none text-slate-800 dark:text-white dark:border-border dark:bg-background"
                               />
                             </div>
                           </div>
@@ -1171,14 +1171,14 @@ export default function TripsPage() {
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Escrow and Payment Milestones Card */}
-                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                    <div className="bg-card rounded-2xl border border-border p-5 text-left">
                       <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-3 flex items-center gap-1.5">
                         <CreditCard className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                         <span>Security Deposit & Payment Milestones</span>
                       </h4>
                       <div className="space-y-4">
                         {/* Escrow Status */}
-                        <div className="flex items-start justify-between p-3 bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-850 rounded-xl">
+                        <div className="flex items-start justify-between p-3 bg-background border border-slate-150 dark:border-slate-850 rounded-xl">
                           <div>
                             <span className="block text-[10px] font-bold text-slate-850 dark:text-slate-200">🔒 WanderTrust Damage Deposit Escrow</span>
                             <span className="block text-[8px] text-slate-450 mt-0.5">Held in neutral holding account. Cleared 48 hrs after stay.</span>
@@ -1194,7 +1194,7 @@ export default function TripsPage() {
                           {selectedRes.paymentMilestones ? (
                             <div className="space-y-2">
                               {selectedRes.paymentMilestones.map((m: any, idx: number) => (
-                                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900/35">
+                                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 dark:border-border dark:bg-card/35">
                                   <div>
                                     <span className="block text-xs font-bold text-slate-800 dark:text-slate-200">{m.title}</span>
                                     <span className="block text-[8px] text-slate-450">Due Date: {m.dueDate}</span>
@@ -1227,7 +1227,7 @@ export default function TripsPage() {
                     </div>
 
                     {/* WanderShield Guarantee Sandbox (Host Cancellation) */}
-                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                    <div className="bg-card rounded-2xl border border-border p-5 text-left">
                       <h4 className="font-sans text-xs font-extrabold text-red-600 uppercase tracking-wider dark:text-red-400 mb-2 flex items-center gap-1.5">
                         <AlertTriangle className="h-4 w-4" />
                         <span>WanderShield Host Cancellation Sandbox</span>
@@ -1244,7 +1244,7 @@ export default function TripsPage() {
                         </div>
                       ) : (
                         <div className="space-y-3">
-                          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-3 rounded-xl text-[9px] text-slate-500 leading-normal">
+                          <div className="bg-background border border-slate-200 dark:border-slate-850 p-3 rounded-xl text-[9px] text-slate-500 leading-normal">
                             🔍 **How to test**: Tap the button below. The system will mark this lodge booking as cancelled and instantly establish a brand new alternative booking under the same dates, matching your price, and transferring all co-travelers and custom safety setup items.
                           </div>
                           <button
@@ -1264,7 +1264,7 @@ export default function TripsPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
                     {/* 1. Off-Season Pricing Heatmap & Day-Retreat Micro-Stays */}
-                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-1">
+                    <div className="bg-card rounded-2xl border border-border p-5 text-left lg:col-span-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
                           <span>🗓️ Off-Season Rate Heatmap</span>
@@ -1333,7 +1333,7 @@ export default function TripsPage() {
                       </div>
 
                       {selectedHeatmapDay ? (
-                        <div className="bg-slate-50 dark:bg-slate-950/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 text-[10px] leading-normal space-y-2">
+                        <div className="bg-background/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 text-[10px] leading-normal space-y-2">
                           <div className="flex items-center justify-between text-slate-850 dark:text-white">
                             <strong>Day-Retreat Option:</strong>
                             <span className="font-mono bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[8px] font-bold">AVAILABLE</span>
@@ -1356,7 +1356,7 @@ export default function TripsPage() {
                     </div>
 
                     {/* 2. Price-Drop Notifications & Wishlist Alerts */}
-                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-1 flex flex-col justify-between">
+                    <div className="bg-card rounded-2xl border border-border p-5 text-left lg:col-span-1 flex flex-col justify-between">
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1385,7 +1385,7 @@ export default function TripsPage() {
                             Active Price-Drop Alerts:
                           </span>
 
-                          <div className="bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 flex items-center justify-between text-[10px]">
+                          <div className="bg-background p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 flex items-center justify-between text-[10px]">
                             <div>
                               <strong className="block text-slate-850 dark:text-white leading-none">MeadowView Lodge</strong>
                               <span className="text-[8px] text-slate-450 mt-1 block">Selected Dates: Oct 12 - 14</span>
@@ -1396,7 +1396,7 @@ export default function TripsPage() {
                             </div>
                           </div>
 
-                          <div className="bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 flex items-center justify-between text-[10px]">
+                          <div className="bg-background p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 flex items-center justify-between text-[10px]">
                             <div>
                               <strong className="block text-slate-850 dark:text-white leading-none">Subalpine Creekside Cabin</strong>
                               <span className="text-[8px] text-slate-450 mt-1 block">Selected Dates: Nov 5 - 8</span>
@@ -1415,7 +1415,7 @@ export default function TripsPage() {
                     </div>
 
                     {/* 3. Transparent Cleaning Fee Breakdown */}
-                    <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-1 flex flex-col justify-between">
+                    <div className="bg-card rounded-2xl border border-border p-5 text-left lg:col-span-1 flex flex-col justify-between">
                       <div>
                         <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5 mb-2">
                           <span>📊 Transparent Cleaning Fees</span>
@@ -1426,7 +1426,7 @@ export default function TripsPage() {
                         </p>
 
                         <div className="space-y-2 border-t border-slate-100 dark:border-slate-850 pt-2.5 text-[10px]">
-                          <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-2 rounded-lg">
+                          <div className="flex justify-between items-center bg-background p-2 rounded-lg">
                             <div>
                               <span className="font-bold text-slate-850 dark:text-white block leading-none">Local Living Wages</span>
                               <span className="text-[8px] text-slate-450 mt-0.5 block">Fair compensation for housekeepers</span>
@@ -1434,7 +1434,7 @@ export default function TripsPage() {
                             <span className="font-mono font-black text-slate-900 dark:text-white">$65.00 (65%)</span>
                           </div>
 
-                          <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-2 rounded-lg">
+                          <div className="flex justify-between items-center bg-background p-2 rounded-lg">
                             <div>
                               <span className="font-bold text-slate-850 dark:text-white block leading-none">Organic Cleaning materials</span>
                               <span className="text-[8px] text-slate-450 mt-0.5 block">Biodegradable, allergen-safe supplies</span>
@@ -1442,7 +1442,7 @@ export default function TripsPage() {
                             <span className="font-mono font-black text-slate-900 dark:text-white">$20.00 (20%)</span>
                           </div>
 
-                          <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-2 rounded-lg">
+                          <div className="flex justify-between items-center bg-background p-2 rounded-lg">
                             <div>
                               <span className="font-bold text-slate-850 dark:text-white block leading-none">Subalpine Waste Compliance</span>
                               <span className="text-[8px] text-slate-450 mt-0.5 block">Bear-safe disposal & organic compost</span>

@@ -334,7 +334,7 @@ export default function WildernessExplorationHub() {
   ];
 
   return (
-    <div id="wilderness-exploration-hub" className="rounded-3xl border border-slate-150 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 overflow-hidden flex flex-col transition-all duration-300">
+    <div id="wilderness-exploration-hub" className="rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)] overflow-hidden flex flex-col transition-all duration-300">
       
       {/* Main Header */}
       <div className="bg-slate-950 text-white p-6 relative overflow-hidden">
@@ -396,7 +396,7 @@ export default function WildernessExplorationHub() {
               className="grid grid-cols-1 lg:grid-cols-2 gap-6"
             >
               {/* Personal Nature Logbook */}
-              <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left flex flex-col justify-between">
+              <div className="bg-card rounded-2xl border border-border p-5 text-left flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -503,7 +503,7 @@ export default function WildernessExplorationHub() {
               </div>
 
               {/* Wanderer's Photo Journal Feed */}
-              <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left flex flex-col justify-between">
+              <div className="bg-card rounded-2xl border border-border p-5 text-left flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -519,7 +519,7 @@ export default function WildernessExplorationHub() {
                   </div>
 
                   {sharingPhoto ? (
-                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-850 mb-4 space-y-3">
+                    <div className="bg-background p-4 rounded-xl border border-slate-100 dark:border-slate-850 mb-4 space-y-3">
                       <span className="block text-[9px] font-mono font-extrabold text-slate-400 uppercase tracking-widest">
                         Configure Deck Snapshot
                       </span>
@@ -548,7 +548,7 @@ export default function WildernessExplorationHub() {
                           value={photoCaption}
                           onChange={(e) => setPhotoCaption(e.target.value)}
                           placeholder="Write a cozy caption for fellow wanders..."
-                          className="w-full text-xs rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none focus:border-emerald-500 dark:border-slate-850 dark:bg-slate-900 text-slate-800 dark:text-slate-100"
+                          className="w-full text-xs rounded-xl border border-border bg-card px-3 py-2 outline-none focus:border-emerald-500 dark:border-slate-850 dark:bg-slate-900 text-slate-800 dark:text-slate-100"
                         />
                         <button
                           onClick={handleSharePhoto}
@@ -611,7 +611,7 @@ export default function WildernessExplorationHub() {
             >
               
               {/* Milestone Badges Board */}
-              <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-2">
+              <div className="bg-card rounded-2xl border border-border p-5 text-left lg:col-span-2">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
                     <Award className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
@@ -745,7 +745,7 @@ export default function WildernessExplorationHub() {
                       />
                       <button
                         type="submit"
-                        className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-[9px] font-bold uppercase py-2"
+                        className="rounded-xl btn-brand font-mono text-[9px] font-bold uppercase py-2"
                       >
                         ✍️ Sign stewardship Pledge
                       </button>
@@ -755,7 +755,7 @@ export default function WildernessExplorationHub() {
               </div>
 
               {/* Tree Reforestation Tracker */}
-              <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left flex flex-col justify-between">
+              <div className="bg-card rounded-2xl border border-border p-5 text-left flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -769,7 +769,7 @@ export default function WildernessExplorationHub() {
                   </p>
 
                   {/* Growth Stage visual */}
-                  <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-850 text-center space-y-3">
+                  <div className="bg-background p-4 rounded-xl border border-slate-100 dark:border-slate-850 text-center space-y-3">
                     <span className="text-4xl block animate-bounce-slow">
                       {completedStays < 5 ? "🌱" : completedStays < 10 ? "🌿" : "🌲"}
                     </span>
@@ -827,7 +827,7 @@ export default function WildernessExplorationHub() {
             >
               
               {/* Local Trailhead Logs */}
-              <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left lg:col-span-2">
+              <div className="bg-card rounded-2xl border border-border p-5 text-left lg:col-span-2">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
                     <MapPin className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
@@ -848,7 +848,7 @@ export default function WildernessExplorationHub() {
                     return (
                       <div 
                         key={trail.id}
-                        className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-850 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                        className="bg-background p-3 rounded-xl border border-slate-100 dark:border-slate-850 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
                       >
                         <div className="text-left space-y-1">
                           <div className="flex items-center gap-2">
@@ -939,7 +939,7 @@ export default function WildernessExplorationHub() {
               <div className="space-y-6">
                 
                 {/* Geolocation Lodge Route */}
-                <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                <div className="bg-card rounded-2xl border border-border p-5 text-left">
                   <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-2 flex items-center gap-1.5">
                     <Compass className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Lodge-to-Lodge Wandering Trail</span>
@@ -975,7 +975,7 @@ export default function WildernessExplorationHub() {
                 </div>
 
                 {/* Regional community impact receipt */}
-                <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left">
+                <div className="bg-card rounded-2xl border border-border p-5 text-left">
                   <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-2 flex items-center gap-1.5">
                     <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Regional Footprint Summary</span>
@@ -1023,7 +1023,7 @@ export default function WildernessExplorationHub() {
             >
               
               {/* Flora & Fauna Matching Game */}
-              <div className="bg-white rounded-2xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 text-left flex flex-col justify-between">
+              <div className="bg-card rounded-2xl border border-border p-5 text-left flex flex-col justify-between">
                 <div>
                   <h3 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 mb-2 flex items-center gap-1.5">
                     <Sparkles className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
@@ -1059,7 +1059,7 @@ export default function WildernessExplorationHub() {
                   </div>
 
                   {faunaFeedback ? (
-                    <div className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 text-xs">
+                    <div className="bg-background p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 text-xs">
                       <span className="block text-[8px] font-mono font-black text-emerald-500 uppercase tracking-widest mb-1">
                         SPECIMEN INSIGHTS
                       </span>

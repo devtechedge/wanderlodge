@@ -189,19 +189,21 @@ export default function Home() {
   };
 
   return (
-    <div id="homepage-container" className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div id="homepage-container" className="min-h-screen flex flex-col bg-background transition-colors duration-300">
       <Navbar />
 
       <main className="flex-grow">
         {/* Hero Banner Section */}
-        <section id="hero-banner" className="relative overflow-hidden bg-slate-900 py-20 text-white dark:bg-slate-950 lg:py-28">
-          {/* Animated Background Vector Lines */}
-          <div className="absolute inset-0 opacity-15">
+        <section id="hero-banner" className="relative overflow-hidden bg-hero-mesh py-20 text-white lg:py-32">
+          {/* Atmospheric grain + contour lines */}
+          <div className="absolute inset-0 opacity-[0.12] pointer-events-none">
             <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <path d="M0,50 Q25,20 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              <path d="M0,30 Q30,70 60,30 T100,30" fill="none" stroke="currentColor" strokeWidth="0.3" />
+              <path d="M0,50 Q25,20 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M0,30 Q30,70 60,30 T100,30" fill="none" stroke="currentColor" strokeWidth="0.25" />
+              <path d="M0,70 Q40,40 70,70 T100,70" fill="none" stroke="currentColor" strokeWidth="0.2" />
             </svg>
           </div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,oklch(0.12_0.03_265/0.55)_100%)] pointer-events-none" />
 
           <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10">
             <motion.div
@@ -209,15 +211,15 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400 border border-emerald-500/25 uppercase tracking-wider mb-4">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3.5 py-1.5 text-[11px] font-semibold text-emerald-300 border border-white/10 uppercase tracking-[0.16em] mb-6 backdrop-blur-md">
                 <Compass className="h-3.5 w-3.5 animate-spin-slow" />
                 <span>The WanderGuarantee Standard</span>
               </span>
-              <h1 className="font-sans text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl max-w-3xl mx-auto leading-tight">
+              <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl mx-auto leading-[1.05] text-balance">
                 Find Sanctuary. <br />
-                <span className="text-emerald-400 bg-clip-text">Architectural Lodges</span> Built for Wilderness.
+                <span className="text-emerald-300">Architectural Lodges</span> Built for Wilderness.
               </h1>
-              <p className="mx-auto mt-4 max-w-xl text-sm sm:text-base text-slate-300 leading-relaxed">
+              <p className="mx-auto mt-5 max-w-xl text-sm sm:text-base text-slate-300/90 leading-relaxed">
                 Peer-to-peer luxury log cabins, glassy waterfront boathouses, and dry-sauna alpine chalets curated by local adventurers.
               </p>
             </motion.div>
@@ -231,7 +233,7 @@ export default function Home() {
             >
               <form
                 onSubmit={handleSearchSubmit}
-                className="rounded-3xl border border-slate-150 bg-white p-3 shadow-2xl dark:border-slate-800 dark:bg-slate-900 grid min-w-0 grid-cols-1 md:grid-cols-12 gap-2 items-center text-slate-800 dark:text-white overflow-hidden"
+                className="rounded-[28px] border border-white/20 bg-white/95 p-2.5 sm:p-3 shadow-[var(--shadow-lift)] dark:border-white/10 dark:bg-slate-900/90 backdrop-blur-xl grid min-w-0 grid-cols-1 md:grid-cols-12 gap-2 items-center text-slate-800 dark:text-white overflow-hidden"
               >
                 {/* Location input */}
                 <div className="md:col-span-4 flex min-w-0 items-center gap-2 px-3 py-2 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
@@ -285,7 +287,7 @@ export default function Home() {
 
                   <button
                     type="submit"
-                    className="rounded-2xl bg-emerald-600 p-3.5 text-white transition hover:bg-emerald-700 hover:scale-105 active:scale-95 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                    className="rounded-2xl btn-brand p-3.5 transition hover:scale-105 active:scale-95"
                   >
                     <Search className="h-5 w-5" />
                   </button>
@@ -296,7 +298,7 @@ export default function Home() {
         </section>
 
         {/* Discovery Filter Header Category Section */}
-        <section id="categories-section" className="border-b border-slate-200 bg-white transition-colors dark:border-slate-800 dark:bg-slate-900/40 relative">
+        <section id="categories-section" className="border-b border-border bg-card/70 transition-colors relative backdrop-blur-sm">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 flex min-w-0 items-center relative overflow-x-clip">
             
             {/* Scrollable Categories List Tracker Container */}
@@ -316,10 +318,10 @@ export default function Home() {
                   <button
                     key={cat.name}
                     onClick={() => setSelectedCategory(cat.name)}
-                    className={`rounded-2xl px-4 py-2.5 text-left border transition-all shrink-0 snap-start focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                    className={`rounded-2xl px-4 py-2.5 text-left border transition-all shrink-0 snap-start focus:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                       isActive
-                        ? "border-emerald-600 bg-emerald-50 text-emerald-800 dark:border-emerald-500 dark:bg-emerald-950/20 dark:text-emerald-400"
-                        : "border-slate-200 hover:border-slate-350 bg-slate-50 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400"
+                        ? "border-brand bg-brand-muted text-brand shadow-sm"
+                        : "border-border hover:border-slate-350 bg-muted/60 text-muted-foreground"
                     }`}
                   >
                     <span className="block text-xs font-bold leading-none">{cat.name}</span>
@@ -330,10 +332,10 @@ export default function Home() {
             </div>
 
             {/* Masked Sticky Filter Anchor Component Wrapper */}
-            <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-36 bg-gradient-to-l from-white via-white/95 dark:from-slate-900 dark:via-slate-900/95 to-transparent flex items-center justify-end pr-4 sm:pr-6 lg:pr-8 pointer-events-none">
+            <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-36 bg-gradient-to-l from-card via-card/95 to-transparent flex items-center justify-end pr-4 sm:pr-6 lg:pr-8 pointer-events-none">
               <button
                 onClick={() => setShowFilterModal(true)}
-                className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-slate-200 bg-white dark:bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 text-xs font-semibold text-foreground hover:bg-muted transition-all shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <SlidersHorizontal className="h-4 w-4 shrink-0 text-emerald-500" />
                 <span className="hidden whitespace-nowrap sm:inline">Advanced Filters</span>
@@ -353,7 +355,7 @@ export default function Home() {
         <section id="featured-lodges" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-8 flex items-baseline justify-between">
             <div>
-              <h2 className="font-sans text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 Featured Wilderness Sanctuaries
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -368,7 +370,7 @@ export default function Home() {
           {loading ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="rounded-3xl border border-slate-150 bg-white p-4 space-y-3 dark:border-slate-800 dark:bg-slate-900 animate-pulse">
+                <div key={n} className="rounded-3xl border border-border bg-card p-4 space-y-3 animate-pulse">
                   <div className="h-52 w-full rounded-2xl bg-slate-200 dark:bg-slate-800" />
                   <div className="h-5 w-2/3 rounded-md bg-slate-200 dark:bg-slate-800" />
                   <div className="h-4 w-1/3 rounded-md bg-slate-200 dark:bg-slate-800" />
@@ -400,12 +402,12 @@ export default function Home() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: idx * 0.05 }}
-                    className="group relative rounded-3xl border border-slate-150 bg-white overflow-hidden shadow-sm hover:shadow-xl transition-all dark:border-slate-800 dark:bg-slate-900"
+                    className="group relative rounded-3xl border border-border bg-card overflow-hidden shadow-[var(--shadow-soft)] card-hover"
                   >
                     {/* Heart wishlist toggle */}
                     <button
                       onClick={() => handleToggleWishlist(p.id)}
-                      className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-slate-600 shadow-md transition hover:scale-105 dark:bg-slate-900/90"
+                      className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-card/90 backdrop-blur-md text-foreground shadow-md transition hover:scale-105 border border-border/60"
                     >
                       <Heart
                         className={`h-4.5 w-4.5 transition-colors ${
@@ -417,14 +419,15 @@ export default function Home() {
                     {/* Image slider link */}
                     <div
                       onClick={() => router.push(`/properties/${p.id}`)}
-                      className="relative h-52 w-full overflow-hidden bg-slate-100 cursor-pointer"
+                      className="relative h-56 w-full overflow-hidden bg-muted cursor-pointer"
                     >
                       <img
                         src={p.images[0]}
                         alt={p.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute bottom-3 left-3 rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-[10px] font-bold text-white tracking-wide">
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-transparent pointer-events-none" />
+                      <div className="absolute bottom-3 left-3 rounded-full bg-slate-950/70 backdrop-blur-md px-3 py-1 text-[10px] font-bold text-white tracking-wide border border-white/10">
                         {p.location}
                       </div>
                     </div>
@@ -434,12 +437,12 @@ export default function Home() {
                       <div className="flex items-center justify-between gap-2">
                         <h3
                           onClick={() => router.push(`/properties/${p.id}`)}
-                          className="font-sans font-bold text-base text-slate-900 dark:text-white truncate hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer"
+                          className="font-display font-bold text-base text-foreground truncate hover:text-brand cursor-pointer"
                         >
                           {p.title}
                         </h3>
-                        <div className="flex items-center gap-1 text-xs font-bold text-amber-500 shrink-0">
-                          <Star className="h-4 w-4 fill-amber-500" />
+                        <div className="rating-chip shrink-0">
+                          <Star className="h-3.5 w-3.5 fill-current" />
                           <span>4.9</span>
                         </div>
                       </div>
@@ -481,14 +484,14 @@ export default function Home() {
 
                       <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
                         <div>
-                          <span className="font-sans text-lg font-extrabold text-slate-900 dark:text-white">
+                          <span className="font-display text-lg font-extrabold text-foreground tracking-tight">
                             ${p.price}
                           </span>
-                          <span className="text-xs text-slate-400 dark:text-slate-500 font-medium"> / night</span>
+                          <span className="text-xs text-muted-foreground font-medium"> / night</span>
                         </div>
                         <button
                           onClick={() => router.push(`/properties/${p.id}`)}
-                          className="rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs px-3.5 py-2 transition dark:bg-emerald-950/40 dark:text-emerald-400 dark:hover:bg-emerald-900/40"
+                          className="rounded-xl bg-brand-muted text-brand hover:brightness-105 font-bold text-xs px-3.5 py-2 transition"
                         >
                           Secure Stay
                         </button>
@@ -502,41 +505,41 @@ export default function Home() {
         </section>
 
         {/* Wanderlodge Security Credentials Section */}
-        <section id="security-credentials" className="bg-slate-100 py-16 transition-colors dark:bg-slate-900/20">
+        <section id="security-credentials" className="bg-muted/60 py-16 transition-colors">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-muted text-brand">
                   <Shield className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 font-sans text-sm font-bold text-slate-900 dark:text-white">
+                <h3 className="mt-4 font-display text-sm font-bold text-foreground">
                   The WanderGuarantee Program
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
                   Every reservation is secured. If a provider cancels within 48 hours of check-in, we source equal or superior lodging instantly, guaranteed.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-muted text-brand">
                   <Flame className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 font-sans text-sm font-bold text-slate-900 dark:text-white">
+                <h3 className="mt-4 font-display text-sm font-bold text-foreground">
                   EliteProvider Verified Checklists
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
                   We check each structure physically. Cleanliness, water supply density, and star-link speed rates verified before accepting list postings.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-muted text-brand">
                   <Map className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 font-sans text-sm font-bold text-slate-900 dark:text-white">
+                <h3 className="mt-4 font-display text-sm font-bold text-foreground">
                   Bespoke Local Adventures
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
                   Enhance your lodgings. Message your EliteProvider about organizing custom kayaking lines, private fishing docks, or guided snowshoes.
                 </p>
               </div>
@@ -563,12 +566,12 @@ export default function Home() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 220 }}
-              className="relative z-50 h-full w-full max-w-md border-l border-slate-100 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between"
+              className="relative z-50 h-full w-full max-w-md border-l border-slate-100 bg-white p-6 shadow-2xl dark:border-border dark:bg-card flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
                   <div>
-                    <h3 className="font-sans text-lg font-bold text-slate-900 dark:text-white">
+                    <h3 className="font-display text-lg font-bold text-foreground">
                       Advanced Lodge Filters
                     </h3>
                     <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -589,7 +592,7 @@ export default function Home() {
                     Nightly Price Limits
                   </h4>
                   <div className="mt-4 grid grid-cols-2 gap-4">
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-left dark:border-slate-800 dark:bg-slate-950">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-left dark:border-border dark:bg-background">
                       <span className="block text-[10px] font-bold text-slate-400 uppercase">Minimum</span>
                       <input
                         type="number"
@@ -598,7 +601,7 @@ export default function Home() {
                         className="w-full text-sm font-bold text-slate-800 dark:text-slate-200 bg-transparent outline-none mt-0.5"
                       />
                     </div>
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-left dark:border-slate-800 dark:bg-slate-950">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-left dark:border-border dark:bg-background">
                       <span className="block text-[10px] font-bold text-slate-400 uppercase">Maximum</span>
                       <input
                         type="number"
@@ -696,7 +699,7 @@ export default function Home() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative z-50 w-full max-w-sm rounded-3xl border border-slate-150 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+              className="relative z-50 w-full max-w-sm rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-lift)]"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
                 <h4 className="font-sans text-base font-bold text-slate-900 dark:text-white">
@@ -755,7 +758,7 @@ export default function Home() {
                       value={newWishlistName}
                       onChange={(e) => setNewWishlistName(e.target.value)}
                       placeholder="e.g. Summer Vacation 2027"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transitionfocus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 dark:focus:border-emerald-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none transitionfocus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background dark:focus:border-emerald-500"
                     />
                     <button
                       onClick={handleCreateWishlist}

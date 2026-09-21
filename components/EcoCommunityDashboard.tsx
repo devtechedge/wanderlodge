@@ -7,14 +7,14 @@ export default function EcoCommunityDashboard() {
   const [activeTab, setActiveTab] = useState<"impact" | "energy">("impact");
 
   return (
-    <div id="eco-community-dashboard" className="rounded-3xl border border-slate-150 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 transition-all duration-300">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+    <div id="eco-community-dashboard" className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)] transition-all duration-300">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
           <div className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">
               <Leaf className="h-4.5 w-4.5" />
             </span>
-            <h2 className="font-sans text-sm font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            <h2 className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
               Eco-Community Registry & Impact Diagnostics
             </h2>
           </div>

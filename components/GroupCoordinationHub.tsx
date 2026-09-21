@@ -496,7 +496,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
   const arrivedCount = arrivals.filter(a => a.status.toLowerCase().includes("arrived")).length;
 
   return (
-    <div id="group-coordination-hub-workspace" className="flex-grow flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <div id="group-coordination-hub-workspace" className="flex-grow flex flex-col overflow-hidden bg-background">
       {/* Sub-Navigation Rail */}
       <div className="bg-white/80 dark:bg-slate-900 border-b border-slate-200/60 px-6 py-2.5 flex items-center justify-between shrink-0 overflow-x-auto gap-4 z-10">
         <div className="flex items-center gap-1.5 shrink-0">
@@ -569,7 +569,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
             
             {/* 1. Group Message Pinboards */}
             <div className="space-y-4">
-              <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[420px]">
+              <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[420px]">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <div>
                     <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -633,12 +633,12 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                       placeholder="Note Title"
                       value={newNoteTitle}
                       onChange={(e) => setNewNoteTitle(e.target.value)}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background text-slate-850 dark:text-white"
                     />
                     <select
                       value={newNoteColor}
                       onChange={(e) => setNewNoteColor(e.target.value as any)}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                     >
                       <option value="yellow">💛 Yellow Sticky</option>
                       <option value="blue">💙 Blue Sticky</option>
@@ -653,7 +653,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                       placeholder="Note details, door directions, wifi instructions..."
                       value={newNoteContent}
                       onChange={(e) => setNewNoteContent(e.target.value)}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] outline-none focus:border-emerald-500 focus:bg-white dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white flex-grow"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] outline-none focus:border-emerald-500 focus:bg-white dark:border-border dark:bg-background text-slate-850 dark:text-white flex-grow"
                     />
                     <button
                       type="submit"
@@ -668,7 +668,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
 
             {/* 2. Family Arrival Pinboards */}
             <div className="space-y-4">
-              <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[420px]">
+              <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[420px]">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <div>
                     <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -742,7 +742,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                 {/* Arrivals Info List */}
                 <div className="space-y-2 mt-4 overflow-y-auto max-h-[120px] pr-1 flex-grow">
                   {arrivals.map((arrival) => (
-                    <div key={arrival.id} className="flex items-center justify-between p-2 rounded-xl border border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-950/40">
+                    <div key={arrival.id} className="flex items-center justify-between p-2 rounded-xl border border-slate-100 bg-slate-50 dark:border-border dark:bg-background/40">
                       <div className="flex items-center gap-2">
                         <span
                           style={{ backgroundColor: arrival.color }}
@@ -777,7 +777,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                       value={transitName}
                       onChange={(e) => setTransitName(e.target.value)}
                       required
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                     >
                       <option value="">Select Who</option>
                       {allTravelers.map((t, idx) => (
@@ -790,12 +790,12 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                       placeholder="Origin (Seattle...)"
                       value={transitFrom}
                       onChange={(e) => setTransitFrom(e.target.value)}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                     />
                     <select
                       value={transitMode}
                       onChange={(e) => setTransitMode(e.target.value as any)}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                     >
                       <option value="car">🚗 Driving</option>
                       <option value="plane">✈️ Flying</option>
@@ -808,14 +808,14 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                       placeholder="Current status (e.g., stops for snacks)"
                       value={transitStatus}
                       onChange={(e) => setTransitStatus(e.target.value)}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white flex-grow"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white flex-grow"
                     />
                     <input
                       type="text"
                       placeholder="ETA (e.g. 1.5h)"
                       value={transitEta}
                       onChange={(e) => setTransitEta(e.target.value)}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white w-20 shrink-0"
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white w-20 shrink-0"
                     />
                     <button
                       type="submit"
@@ -836,7 +836,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
           <div className="space-y-6">
             
             {/* Split-Bill Tracker Card */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-6 dark:bg-slate-900 dark:border-slate-800">
+            <div className="bg-card rounded-3xl border border-border p-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -849,11 +849,11 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                 </div>
 
                 <div className="flex gap-4 text-left">
-                  <div className="bg-slate-50 dark:bg-slate-950 px-3 py-2 rounded-2xl border border-slate-100 dark:border-slate-850">
+                  <div className="bg-background px-3 py-2 rounded-2xl border border-slate-100 dark:border-slate-850">
                     <span className="block text-[8px] font-bold text-slate-400 uppercase tracking-wider">Total Lodge Budget</span>
                     <span className="text-base font-black text-slate-900 dark:text-white">${grandTotalPlan.toFixed(2)}</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-950 px-3 py-2 rounded-2xl border border-slate-100 dark:border-slate-850">
+                  <div className="bg-background px-3 py-2 rounded-2xl border border-slate-100 dark:border-slate-850">
                     <span className="block text-[8px] font-bold text-slate-400 uppercase tracking-wider">Your Share ({numPeople} Ways)</span>
                     <span className="text-base font-black text-emerald-600 dark:text-emerald-400">${perPersonShare.toFixed(2)}</span>
                   </div>
@@ -895,7 +895,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                       className={`rounded-2xl border p-4.5 flex items-center justify-between transition-all ${
                         isPaid
                           ? "border-emerald-150 bg-emerald-50/5 dark:border-emerald-950/40"
-                          : "border-slate-150 bg-white dark:border-slate-800 dark:bg-slate-900"
+                          : "border-slate-150 bg-white dark:border-border dark:bg-card"
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -947,7 +947,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 text-center shadow-2xl relative overflow-hidden"
+                    className="max-w-md w-full bg-card rounded-3xl border border-border p-6 text-center shadow-2xl relative overflow-hidden"
                   >
                     {!paymentSuccess ? (
                       <div className="space-y-4">
@@ -963,7 +963,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                           </p>
                         </div>
 
-                        <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left space-y-1.5 font-mono text-[11px]">
+                        <div className="bg-background p-4 rounded-2xl border border-slate-100 dark:border-slate-850 text-left space-y-1.5 font-mono text-[11px]">
                           <div className="flex justify-between text-slate-500">
                             <span>Splits / Share:</span>
                             <span>1 of {numPeople}</span>
@@ -1029,7 +1029,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* 1. Shared Travel Checklists (Gear) */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[440px]">
+            <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[440px]">
               <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1046,7 +1046,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                   <div
                     key={item.id}
                     onClick={() => handleToggleChecklist(item.id)}
-                    className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/30 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition text-left"
+                    className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-background/30 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition text-left"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className={`h-4.5 w-4.5 rounded-md border flex items-center justify-center transition shrink-0 ${
@@ -1074,12 +1074,12 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="Add gear item..."
                     value={newCheckItem}
                     onChange={(e) => setNewCheckItem(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   />
                   <select
                     value={newCheckAssign}
                     onChange={(e) => setNewCheckAssign(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   >
                     <option value="">Assign To</option>
                     {allTravelers.map((t, idx) => (
@@ -1097,7 +1097,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
             </div>
 
             {/* 2. Shared Grocery Planner */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[440px]">
+            <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[440px]">
               <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1114,7 +1114,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                   <div
                     key={item.id}
                     onClick={() => handleToggleGrocery(item.id)}
-                    className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/30 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition text-left"
+                    className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-background/30 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition text-left"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className={`h-4.5 w-4.5 rounded-md border flex items-center justify-center transition shrink-0 ${
@@ -1145,21 +1145,21 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="E.g., Eggs"
                     value={newGroceryItem}
                     onChange={(e) => setNewGroceryItem(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white col-span-2"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white col-span-2"
                   />
                   <input
                     type="text"
                     placeholder="Qty (E.g. 2 ct)"
                     value={newGroceryQty}
                     onChange={(e) => setNewGroceryQty(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   />
                 </div>
                 <div className="flex gap-2">
                   <select
                     value={newGroceryAssign}
                     onChange={(e) => setNewGroceryAssign(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white flex-grow"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white flex-grow"
                   >
                     <option value="">Buyer</option>
                     {allTravelers.map((t, idx) => (
@@ -1177,7 +1177,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
             </div>
 
             {/* 3. Group Check-Out Chore Allocations */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[440px]">
+            <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[440px]">
               <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1194,7 +1194,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                   <div
                     key={chore.id}
                     onClick={() => handleToggleChore(chore.id)}
-                    className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/30 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition text-left"
+                    className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-background/30 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition text-left"
                   >
                     <div className="flex items-start gap-2.5">
                       <div className={`h-4.5 w-4.5 rounded-md border flex items-center justify-center transition mt-0.5 shrink-0 ${
@@ -1227,7 +1227,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                 const chorePercent = totalChores > 0 ? Math.round((doneChores / totalChores) * 100) : 0;
 
                 return (
-                  <div className="bg-slate-50 dark:bg-slate-950/60 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-850 my-2 text-[10px] font-sans">
+                  <div className="bg-background/60 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-850 my-2 text-[10px] font-sans">
                     <div className="flex justify-between items-center mb-1 text-slate-500 font-medium">
                       <span>Checkout Readiness Gauge:</span>
                       <span className="font-mono font-bold text-emerald-600">{chorePercent}%</span>
@@ -1248,12 +1248,12 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="Chore title"
                     value={newChoreTitle}
                     onChange={(e) => setNewChoreTitle(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   />
                   <select
                     value={newChoreAssign}
                     onChange={(e) => setNewChoreAssign(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   >
                     <option value="">Assignee</option>
                     {allTravelers.map((t, idx) => (
@@ -1268,7 +1268,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="Short description..."
                     value={newChoreDesc}
                     onChange={(e) => setNewChoreDesc(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white flex-grow"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white flex-grow"
                   />
                   <button
                     type="submit"
@@ -1288,7 +1288,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* 1. Joint Group Voting Boards */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[460px]">
+            <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[460px]">
               <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1359,12 +1359,12 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="E.g., Sunrise Ridge Picnic"
                     value={newVoteTitle}
                     onChange={(e) => setNewVoteTitle(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white flex-grow"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white flex-grow"
                   />
                   <select
                     value={newVoteCat}
                     onChange={(e) => setNewVoteCat(e.target.value as any)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white w-24 shrink-0"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white w-24 shrink-0"
                   >
                     <option value="activity">Excursion</option>
                     <option value="lodge">Dining</option>
@@ -1380,7 +1380,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
             </div>
 
             {/* 2. Individual Itinerary Builders */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[460px]">
+            <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[460px]">
               <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1392,7 +1392,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
               </div>
 
               {/* Daily timeline filter tabs */}
-              <div className="flex gap-1 bg-slate-50 dark:bg-slate-950 p-0.5 rounded-lg border border-slate-200/40 dark:border-slate-850 shrink-0 mb-3">
+              <div className="flex gap-1 bg-background p-0.5 rounded-lg border border-slate-200/40 dark:border-slate-850 shrink-0 mb-3">
                 {[1, 2, 3].map((d) => (
                   <button
                     key={d}
@@ -1415,7 +1415,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                   .map((it) => (
                     <div
                       key={it.id}
-                      className="p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/20 text-left relative overflow-hidden"
+                      className="p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-background/20 text-left relative overflow-hidden"
                     >
                       <div className="flex items-baseline justify-between gap-1.5">
                         <span className="font-mono font-black text-[9px] text-indigo-600 dark:text-indigo-400 shrink-0">
@@ -1447,12 +1447,12 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="Time (E.g. 8:30 AM)"
                     value={newItTime}
                     onChange={(e) => setNewItTime(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   />
                   <select
                     value={newItOwner}
                     onChange={(e) => setNewItOwner(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   >
                     <option value="">Owner (Group)</option>
                     {allTravelers.map((t, idx) => (
@@ -1467,7 +1467,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="Event title (E.g. Yoga)"
                     value={newItTitle}
                     onChange={(e) => setNewItTitle(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white flex-grow"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white flex-grow"
                   />
                   <button
                     type="submit"
@@ -1480,7 +1480,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
             </div>
 
             {/* 3. Joint Photo Journaling */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col h-full min-h-[460px]">
+            <div className="bg-card rounded-3xl border border-border p-5 flex flex-col h-full min-h-[460px]">
               <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
                   <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5">
@@ -1523,7 +1523,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                   <select
                     value={newPhotoPreset}
                     onChange={(e) => setNewPhotoPreset(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   >
                     <option value="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80">🏔️ Snowy Peaks</option>
                     <option value="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80">⛺ Campfire Night</option>
@@ -1535,7 +1535,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
                     placeholder="Short caption..."
                     value={newPhotoCaption}
                     onChange={(e) => setNewPhotoCaption(e.target.value)}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-850 dark:text-white"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[10px] outline-none dark:border-border dark:bg-background text-slate-850 dark:text-white"
                   />
                 </div>
                 <button
@@ -1556,7 +1556,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* floor plan visual blueprint */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-5 dark:bg-slate-900 dark:border-slate-800 flex flex-col justify-between min-h-[380px]">
+            <div className="bg-card rounded-3xl border border-border p-5 flex flex-col justify-between min-h-[380px]">
               <div>
                 <h4 className="font-sans text-xs font-extrabold text-slate-800 uppercase tracking-wider dark:text-slate-200 flex items-center gap-1.5 mb-1">
                   <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
@@ -1628,7 +1628,7 @@ export default function GroupCoordinationHub({ reservation, currentUser }: Group
             </div>
 
             {/* active safety zone detail panel */}
-            <div className="bg-white rounded-3xl border border-slate-150 p-6 dark:bg-slate-900 dark:border-slate-800 flex flex-col justify-between">
+            <div className="bg-card rounded-3xl border border-border p-6 flex flex-col justify-between">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-mono">
                   Active Zone Diagnostics

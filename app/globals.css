@@ -24,7 +24,13 @@
   --ring: oklch(0.58 0.13 188);
 
   --surface-elevated: oklch(1 0 0);
-  --hero-ink: oklch(0.18 0.03 250);
+  --hero-ink: oklch(0.985 0.006 85);
+  --hero-mesh-1: oklch(0.88 0.06 188 / 0.28);
+  --hero-mesh-2: oklch(0.9 0.05 230 / 0.18);
+  --hero-mesh-3: oklch(0.92 0.04 160 / 0.2);
+  --hero-mesh-base-from: oklch(0.99 0.004 85);
+  --hero-mesh-base-to: oklch(0.97 0.01 188);
+  --hero-vignette: oklch(0.92 0.02 85 / 0.35);
   --atmosphere-1: oklch(0.88 0.06 188 / 0.35);
   --atmosphere-2: oklch(0.9 0.05 85 / 0.4);
   --atmosphere-3: oklch(0.85 0.04 230 / 0.25);
@@ -55,6 +61,12 @@
 
   --surface-elevated: oklch(0.21 0.025 265);
   --hero-ink: oklch(0.12 0.025 265);
+  --hero-mesh-1: oklch(0.45 0.1 188 / 0.35);
+  --hero-mesh-2: oklch(0.4 0.08 230 / 0.3);
+  --hero-mesh-3: oklch(0.35 0.06 160 / 0.25);
+  --hero-mesh-base-from: oklch(0.16 0.03 250);
+  --hero-mesh-base-to: oklch(0.12 0.025 265);
+  --hero-vignette: oklch(0.12 0.03 265 / 0.55);
   --atmosphere-1: oklch(0.45 0.1 188 / 0.18);
   --atmosphere-2: oklch(0.35 0.06 250 / 0.22);
   --atmosphere-3: oklch(0.4 0.08 230 / 0.12);
@@ -174,10 +186,14 @@
   .bg-hero-mesh {
     background-color: var(--hero-ink);
     background-image:
-      radial-gradient(ellipse 80% 70% at 20% 20%, oklch(0.45 0.1 188 / 0.35), transparent 55%),
-      radial-gradient(ellipse 60% 50% at 85% 15%, oklch(0.4 0.08 230 / 0.3), transparent 50%),
-      radial-gradient(ellipse 50% 40% at 60% 90%, oklch(0.35 0.06 160 / 0.25), transparent 55%),
-      linear-gradient(180deg, oklch(0.16 0.03 250), oklch(0.12 0.025 265));
+      radial-gradient(ellipse 80% 70% at 20% 20%, var(--hero-mesh-1), transparent 55%),
+      radial-gradient(ellipse 60% 50% at 85% 15%, var(--hero-mesh-2), transparent 50%),
+      radial-gradient(ellipse 50% 40% at 60% 90%, var(--hero-mesh-3), transparent 55%),
+      linear-gradient(180deg, var(--hero-mesh-base-from), var(--hero-mesh-base-to));
+  }
+
+  .bg-hero-vignette {
+    background: radial-gradient(ellipse at center, transparent 0%, var(--hero-vignette) 100%);
   }
 
   .surface-card {

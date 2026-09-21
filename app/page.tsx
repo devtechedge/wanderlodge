@@ -194,16 +194,16 @@ export default function Home() {
 
       <main className="flex-grow">
         {/* Hero Banner Section */}
-        <section id="hero-banner" className="relative overflow-hidden bg-hero-mesh py-20 text-white lg:py-32">
+        <section id="hero-banner" className="relative overflow-hidden bg-hero-mesh py-20 text-foreground lg:py-32">
           {/* Atmospheric grain + contour lines */}
-          <div className="absolute inset-0 opacity-[0.12] pointer-events-none">
+          <div className="absolute inset-0 opacity-[0.18] dark:opacity-[0.12] pointer-events-none text-brand">
             <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
               <path d="M0,50 Q25,20 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="0.4" />
               <path d="M0,30 Q30,70 60,30 T100,30" fill="none" stroke="currentColor" strokeWidth="0.25" />
               <path d="M0,70 Q40,40 70,70 T100,70" fill="none" stroke="currentColor" strokeWidth="0.2" />
             </svg>
           </div>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,oklch(0.12_0.03_265/0.55)_100%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-hero-vignette pointer-events-none" />
 
           <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10">
             <motion.div
@@ -211,15 +211,15 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3.5 py-1.5 text-[11px] font-semibold text-emerald-300 border border-white/10 uppercase tracking-[0.16em] mb-6 backdrop-blur-md">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-muted px-3.5 py-1.5 text-[11px] font-semibold text-brand border border-brand/20 uppercase tracking-[0.16em] mb-6 backdrop-blur-md dark:bg-white/5 dark:border-white/10 dark:text-emerald-300">
                 <Compass className="h-3.5 w-3.5 animate-spin-slow" />
                 <span>The WanderGuarantee Standard</span>
               </span>
-              <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl mx-auto leading-[1.05] text-balance">
+              <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl mx-auto leading-[1.05] text-balance text-foreground">
                 Find Sanctuary. <br />
-                <span className="text-emerald-300">Architectural Lodges</span> Built for Wilderness.
+                <span className="text-brand">Architectural Lodges</span> Built for Wilderness.
               </h1>
-              <p className="mx-auto mt-5 max-w-xl text-sm sm:text-base text-slate-300/90 leading-relaxed">
+              <p className="mx-auto mt-5 max-w-xl text-sm sm:text-base text-muted-foreground leading-relaxed">
                 Peer-to-peer luxury log cabins, glassy waterfront boathouses, and dry-sauna alpine chalets curated by local adventurers.
               </p>
             </motion.div>
@@ -233,7 +233,7 @@ export default function Home() {
             >
               <form
                 onSubmit={handleSearchSubmit}
-                className="rounded-[28px] border border-white/20 bg-white/95 p-2.5 sm:p-3 shadow-[var(--shadow-lift)] dark:border-white/10 dark:bg-slate-900/90 backdrop-blur-xl grid min-w-0 grid-cols-1 md:grid-cols-12 gap-2 items-center text-slate-800 dark:text-white overflow-hidden"
+                className="rounded-[28px] border border-border bg-card p-2.5 sm:p-3 shadow-[var(--shadow-lift)] backdrop-blur-xl grid min-w-0 grid-cols-1 md:grid-cols-12 gap-2 items-center text-foreground overflow-hidden"
               >
                 {/* Location input */}
                 <div className="md:col-span-4 flex min-w-0 items-center gap-2 px-3 py-2 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
